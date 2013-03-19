@@ -1,0 +1,59 @@
+#-*- coding: utf-8 -*-
+import share
+
+import os
+import sys
+import argparse
+
+from bottle import app
+from bottle import run
+from bottle import route
+from bottle import static_file
+from beaker.middleware import SessionMiddleware
+
+from settings import STATIC_ROOT
+from settings import APPS
+from settings import APP_PATH
+from platform_src.util import importer
+from platform_src.engines import db
+
+
+@route('/static/<path:path>')
+def static_files(path):
+    return static_file(path, STATIC_ROOT)
+
+
+def add_apps():
+    # add apps
+    for app_name in APPS:
+        app_name = '.'.join([APP_PATH, app_name])
+        importer(app_name)
+
+
+def init_app():
+    # session settings
+    session_opts = {
+        'session.type': 'file',
+        'session.cookie_expires': 300,
+        'session.data_dir': './session',
+        'session.auto': True
+    }
+    cur_app = SessionMiddleware(app(), session_opts)
+
+    add_apps()
+
+    run(app=cur_app, host='0.0.0.0', port='23975', reloader=True)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Options for Avalon:')
+    parser.add_argument('-d', '--deploy', action='store_true', default=False)
+    parser.add_argument('-D', '--syncdb', action='store_true', default=False)
+
+    args = parser.parse_args()
+    if args.syncdb:
+        add_apps()
+        db.Model.metadata.create_all(db.engine)
+
+    if args.deploy:
+        init_app()
