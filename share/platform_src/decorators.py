@@ -4,11 +4,6 @@ import markdown2
 
 from settings import MARKDOWN_PATH
 from settings import APP_PATH
-from settings import APPS
-from platform_src.utils import importer
-
-
-APP_DICT = {}
 
 
 def login_required():
