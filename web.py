@@ -14,7 +14,7 @@ from beaker.middleware import SessionMiddleware
 from settings import STATIC_ROOT
 from settings import APPS
 from settings import APP_PATH
-from platform_src.util import importer
+from platform_src.utils import importer
 from platform_src.engines import db
 
 
