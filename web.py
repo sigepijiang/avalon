@@ -53,6 +53,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.syncdb:
         add_apps()
+        db.Model.metadata.drop_all(db.engine)
         db.Model.metadata.create_all(db.engine)
 
     if args.deploy:
