@@ -10,12 +10,12 @@ from bottle import jinja2_view as view
 from sqlalchemy import func
 
 from platform_src.decorators import markdown2html
-from share.platform_src.utils import is_file_exists
+from platform_src.utils import is_file_exists
 from settings import MARKDOWN_PATH
 from settings import APPS
 
 from . import APP_NAME
-from .models import Blog
+from . import Blog
 
 
 @get('/<app_name:re:%s>/<blog_id:int>/' % APP_NAME, name='blog.page')
