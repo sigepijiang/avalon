@@ -12,7 +12,7 @@ class DataBaseOperation(object):
 
 db = DataBaseOperation()
 db.Model = declarative_base()
-db.engine = create_engine(DATABASE)
+db.engine = create_engine(DATABASE, echo=True)
 db.session = sessionmaker(bind=db.engine)()
 
 

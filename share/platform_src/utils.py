@@ -1,9 +1,6 @@
 #-*- coding: utf-8 -*-
 import os
 
-def importer(import_name):
-    return __import__(import_name, fromlist=[''])
-
 
 def base36_encode(number):
     assert number >= 0, 'positive integer required'

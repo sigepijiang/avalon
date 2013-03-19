@@ -11,6 +11,3 @@ STATIC_ROOT = PATH + '/static'
 MARKDOWN_PATH = PATH + '/views/markdown'
 
 APP_PATH = 'apps'
-APPS = [
-    'blog',
-]

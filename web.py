@@ -12,9 +12,7 @@ from bottle import static_file
 from beaker.middleware import SessionMiddleware
 
 from settings import STATIC_ROOT
-from settings import APPS
 from settings import APP_PATH
-from platform_src.utils import importer
 from platform_src.engines import db
 
 
@@ -24,10 +22,7 @@ def static_files(path):
 
 
 def add_apps():
-    # add apps
-    for app_name in APPS:
-        app_name = '.'.join([APP_PATH, app_name])
-        importer(app_name)
+    __import__(APP_PATH)
 
 
 def init_app():
