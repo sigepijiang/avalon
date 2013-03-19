@@ -11,3 +11,9 @@ STATIC_ROOT = PATH + '/static'
 MARKDOWN_PATH = PATH + '/views/markdown'
 
 APP_PATH = 'apps'
+
+SERVER_CONFIG = {
+        'host': '0.0.0.0',
+        'port': '23975'
+        'reloader': True
+}
