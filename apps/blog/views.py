@@ -36,6 +36,7 @@ def blog(app_name, blog_id):
 
 @get('/<app_name:re:%s>/<file_name>/' % APP_NAME, name='blog.redirect')
 def redirect_to_blog(app_name, file_name):
+    file_name += '.md'
     blog = Blog.query().filter(Blog.file_name==file_name).first()
     if not blog:
         if is_file_exists('/'.join([MARKDOWN_PATH, APP_NAME, file_name])):
