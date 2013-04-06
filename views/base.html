@@ -5,11 +5,11 @@
     <title>{{ title }}</title>
     <link href='/static/bootstrap/css/bootstrap.css' rel='stylesheet'/>
     <link href='/static/bootstrap/css/bootstrap-responsive.css' rel='stylesheet'/>
-    <!--<style>
+    <style>
         body {
             padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
         }
-    </style>-->
+    </style>
     {% block style %}
     {% endblock %}
 
@@ -19,6 +19,19 @@
     {% endblock %}
     </head>
     <body>
-        {{ content }}
+        {% include "header.html" %}
+
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span10">
+                    {{ content }}
+                </div>
+                <div class="span2">
+                    {% include "sider.html" %}
+                </div>
+            </div>
+        </div>
+
+        {% include "footer.html" %}
     </body>
 </html>

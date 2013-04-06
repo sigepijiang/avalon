@@ -38,7 +38,7 @@ def init_app():
 
     add_apps()
 
-    run(app=cur_app, **SERVER_CONFIG)
+    run(app=cur_app, host='0.0.0.0', port='23975', reloader=True)
 
 
 if __name__ == '__main__':
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.syncdb:
         add_apps()
-        db.Model.metadata.drop_all(db.engine)
+        #db.Model.metadata.drop_all(db.engine)
         db.Model.metadata.create_all(db.engine)
 
     if args.deploy:
