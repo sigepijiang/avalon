@@ -2,11 +2,15 @@
 
 import markdown2
 
-from settings import MARKDOWN_PATH
-from settings import APP_PATH
-
 
 def login_required():
+    pass
+
+
+def content2html():
+    pass
+
+def org2html():
     pass
 
 def markdown2html(func):

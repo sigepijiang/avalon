@@ -38,7 +38,7 @@ def init_app():
 
     add_apps()
 
-    run(app=cur_app, host='0.0.0.0', port='23975', reloader=True)
+    run(app=cur_app, **SERVER_CONFIG)
 
 
 if __name__ == '__main__':
