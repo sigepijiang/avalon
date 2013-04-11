@@ -12,6 +12,12 @@ from bottle import request
 @post('/test/')
 def blog():
     print request.__dict__
+    print dir(request)
+
+    for i in dir(request):
+        print i, getattr(request, i)
+    print request.POST.items()
+    print request.GET.items()
 
     message_dict = etree.parse(StringIO(request.data))
 
