@@ -27,7 +27,12 @@ def test_post():
     print request.POST.keys()
     print request.GET.items()
 
-    message_dict = etree.parse(StringIO(request.POST.keys()[0]))
+    message_xml = etree.parse(StringIO(request.POST.keys()[0]))
+    message_dict = {}
+
+
+    for node in message_xml.iter():
+        message_dict[node.tag] = node.text
 
     to_user_name = message_dict['ToUserName']
     from_user_name = message_dict['FromUserName']
@@ -36,8 +41,8 @@ def test_post():
 
     result = '''
 <xml>
-    <ToUserName><![CDATA[{from_user_name}]]></ToUserName>
-    <FromUserName><![CDATA[to_user_name]]></FromUserName>
+    <ToUserName><![CDATA[{to_user_name}]]></ToUserName>
+    <FromUserName><![CDATA[from_user_name]]></FromUserName>
     <CreateTime>{create_time}</CreateTime>
     <MsgType><![CDATA[text]]></MsgType>
     <Content><![CDATA[指南]]></Content>
