@@ -9,8 +9,16 @@ from bottle import route, get, post, redirect
 from bottle import request
 
 
+@get('/test/')
+def test_get():
+    print request.GET
+
+    echostr = request.GET.get('echostr')
+    return echostr
+
+
 @post('/test/')
-def blog():
+def test_post():
     print request.__dict__
     print dir(request)
 
