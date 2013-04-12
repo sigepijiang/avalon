@@ -24,7 +24,7 @@ def test_post():
 
     for i in dir(request):
         print i, getattr(request, i)
-    print request.POST.items()
+    print request.POST.keys()
     print request.GET.items()
 
     message_dict = etree.parse(StringIO(request.data))
@@ -46,4 +46,6 @@ def test_post():
     '''.format(from_user_name=to_user_name,
             create_time=int(time()),
             to_user_name=from_user_name)
-    return result
+
+    if content == u'for_test':
+        return result
