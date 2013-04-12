@@ -53,4 +53,5 @@ def test_post():
             to_user_name=from_user_name)
 
     if content == u'for_test':
+        print result
         return result
