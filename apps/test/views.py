@@ -41,8 +41,8 @@ def test_post():
 
     result = '''
 <xml>
-    <ToUserName><![CDATA[{to_user_name}]]></ToUserName>
-    <FromUserName><![CDATA[from_user_name]]></FromUserName>
+    <ToUserName><![CDATA[{from_user_name}]]></ToUserName>
+    <FromUserName><![CDATA[to_user_name]]></FromUserName>
     <CreateTime>{create_time}</CreateTime>
     <MsgType><![CDATA[text]]></MsgType>
     <Content><![CDATA[指南]]></Content>
