@@ -27,7 +27,7 @@ def test_post():
     print request.POST.keys()
     print request.GET.items()
 
-    message_dict = etree.parse(StringIO(request.data))
+    message_dict = etree.parse(StringIO(request.POST.keys()[0]))
 
     to_user_name = message_dict['ToUserName']
     from_user_name = message_dict['FromUserName']
