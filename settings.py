@@ -14,6 +14,6 @@ APP_PATH = 'apps'
 
 SERVER_CONFIG = {
         'host': '0.0.0.0',
-        'port': '80',
+        'port': '12495',
         'reloader': True
 }
