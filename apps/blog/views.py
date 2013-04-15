@@ -27,16 +27,17 @@ def blog(app_name, blog_id):
         raise HTTPError(404)
 
     file_path = '/'.join([blog.file_path, blog.file_name])
+    file_type = blog.file_name.split('.')[:-1]
     if not is_file_exists(file_path):
         raise HTTPError(404)
 
     content = codecs.open(file_path, 'r', encoding='utf-8').read()
-    return dict(content=content)
+    return dict(content=content, file_type=file_type)
 
 
-@get('/<app_name:re:%s>/<file_name>/' % APP_NAME, name='blog.redirect')
-def redirect_to_blog(app_name, file_name):
-    file_name += '.md'
+@get('/<app_name:re:%s>/<file_name>.<file_type>/' % APP_NAME, name='blog.redirect')
+def redirect_to_blog(app_name, file_name, file_type):
+    file_name += '.' + file_type
     blog = Blog.query().filter(Blog.file_name==file_name).first()
     if not blog:
         if is_file_exists('/'.join([MARKDOWN_PATH, APP_NAME, file_name])):
