@@ -8,7 +8,7 @@ def login_required():
 
 
 CONTENT_CONVERTER = {
-        'md': markdown2.markdown2,
+        'md': markdown2.markdown,
         'org': '',
         }
 
