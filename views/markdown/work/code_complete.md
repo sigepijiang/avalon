@@ -9,6 +9,17 @@
 ## 什么是子程序(routine)
 子程序是为实现一个特定的目的而编写的可以被调用的方法或者过程。
 
+子程序分布
+e.g.  
+
+* function in C++
+* method in Java
+* function procedure in VB 
+* macro in C/C++
+* function in python ...
+
+一些不好的子程序写法：
+
 	# 曾经的新浪微博的自动回复脚本
 	def get_mention(): # get_mentions or get_mention_list
 		'''
@@ -53,14 +64,6 @@
 	# 应该保持一个最常用的和一个功能最常用的
 	int do_something(a, b, c, d, e){}
 	int do_something(a, b)
-	
-e.g.  
-
-* function in C++
-* method in Java
-* function procedure in VB 
-* macro in C/C++
-* function in python ...
 
 ## 创建子程序的正当理由
 * **降低复杂度** 更好的确认和发现问题
@@ -73,6 +76,8 @@ e.g.
 
         def is_something_true():
         	pass
+        
+        form.validate()
 			
 * 改善性能,很像降低复杂度这一特性
 * 创建类的很多理由同样也是
@@ -137,7 +142,7 @@ e.g.
 ## 子程序可以写多长
 一些例子
 
-* @开明 一个函数在10行以内
+* 一个函数在10行以内
 * basili和Perricone的研究发现 子程序的长度和错误量呈现反比（0-200）
 * 子程序的长度和错误量无关，结构复杂度？
 * 短小的子程序（<32）与较低的成本和错误率无关。而较长的子程序（>65）使得每行代码的成本下降
@@ -165,5 +170,5 @@ e.g.
 ### 设置函数的返回值
 
 ## 宏子程序和内联子程序
-* #define in C风格代码
+* \#define in C风格代码
 * inline in C 风格代码
