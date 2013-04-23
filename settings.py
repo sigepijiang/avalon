@@ -11,6 +11,7 @@ STATIC_ROOT = PATH + '/static'
 MARKDOWN_PATH = PATH + '/views/markdown'
 
 APP_PATH = 'apps'
+INSTALLED_APPS = ['blog', 'work']
 
 SERVER_CONFIG = {
         'host': '0.0.0.0',

@@ -1,9 +1,8 @@
 #-*- coding: utf-8 -*-
 import share
 
-import os
-import sys
 import argparse
+import importlib
 
 from bottle import app
 from bottle import run
@@ -13,6 +12,7 @@ from beaker.middleware import SessionMiddleware
 
 from settings import STATIC_ROOT
 from settings import APP_PATH
+from settings import INSTALLED_APPS
 from settings import SERVER_CONFIG
 from platform_src.engines import db
 
@@ -23,7 +23,9 @@ def static_files(path):
 
 
 def add_apps():
-    __import__(APP_PATH)
+    for cur_app in INSTALLED_APPS:
+        app_full_name = '.'.join([APP_PATH, cur_app])
+        importlib.import_module(app_full_name, APP_PATH)
 
 
 def init_app():
