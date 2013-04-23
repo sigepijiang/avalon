@@ -2,12 +2,10 @@
 
 import codecs
 
-from bottle import route, get, post, redirect
-from bottle import request
+from bottle import get, redirect
 from bottle import url
 from bottle import HTTPError
 from bottle import jinja2_view as view
-from sqlalchemy import func
 
 from platform_src.decorators import markdown2html
 from platform_src.utils import is_file_exists
