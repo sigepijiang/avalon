@@ -3032,7 +3032,6 @@ class Jinja2Template(BaseTemplate):
         for dictarg in args: kwargs.update(dictarg)
         _defaults = self.defaults.copy()
         _defaults.update(kwargs)
-        print _defaults
         return self.tpl.render(**_defaults)
 
     def loader(self, name):
