@@ -30,7 +30,7 @@ def blog(app_name, blog_id):
         raise HTTPError(404)
 
     content = codecs.open(file_path, 'r', encoding='utf-8').read()
-    return dict(content=content, file_type=file_type)
+    return dict(content=content, file_type=file_type, app_name=app_name)
 
 
 @get('/<app_name:re:%s>/<file_name>.<file_type>/' % APP_NAME, name='blog.redirect')

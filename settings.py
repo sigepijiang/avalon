@@ -12,9 +12,13 @@ MARKDOWN_PATH = PATH + '/views/markdown'
 
 APP_PATH = 'apps'
 INSTALLED_APPS = ['blog', 'work']
+PRIVATE_APPS = ['work']
 
 SERVER_CONFIG = {
         'host': '0.0.0.0',
         'port': '12495',
         'reloader': True
 }
+
+DOMAIN = 'http://%s:%s' % (SERVER_CONFIG['host'], SERVER_CONFIG['port'])
+SYS_TITLE = 'Avalon'

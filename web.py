@@ -1,9 +1,8 @@
 #-*- coding: utf-8 -*-
-import share
-
 import argparse
 import importlib
 
+import share
 from bottle import app
 from bottle import run
 from bottle import route

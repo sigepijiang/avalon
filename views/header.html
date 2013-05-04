@@ -1,0 +1,17 @@
+{% from 'macros.html' import render_head_item %}
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="{{ sys_env.domain }}">
+                {{ sys_env.sys_title }}
+            </a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    {% for app in sys_env.apps %}
+                    {{ render_head_item(app_name, app, sys_env, request) }}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

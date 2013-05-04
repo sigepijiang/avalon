@@ -1,15 +1,12 @@
 #-*- coding: utf-8 -*-
-
 import codecs
 
-from bottle import route, get, post, redirect
-from bottle import request
+from bottle import get, redirect
 from bottle import url
 from bottle import HTTPError
-from bottle import jinja2_view as view
-from sqlalchemy import func
 
 from platform_src.decorators import markdown2html
+from platform_src.template import jinja2_view as view
 from platform_src.utils import is_file_exists
 from settings import MARKDOWN_PATH
 
@@ -32,7 +29,7 @@ def work(app_name, work_id):
         raise HTTPError(404)
 
     content = codecs.open(file_path, 'r', encoding='utf-8').read()
-    return dict(content=content, file_type=file_type)
+    return dict(content=content, file_type=file_type, app_name=app_name)
 
 
 @get('/<app_name:re:%s>/<file_name>.<file_type>/' % APP_NAME, name='work.redirect')
