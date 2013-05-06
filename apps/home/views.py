@@ -46,8 +46,3 @@ def redirect_to_blog(app_name, file_name, file_type):
             raise HTTPError(404)
 
     return redirect(url('blog.page', app_name=APP_NAME, blog_id=blog.id))
-
-
-@get('/<app_name:re:%s>/' % APP_NAME, name='blog.index')
-def index():
-    pass

@@ -19,6 +19,12 @@ SERVER_CONFIG = {
         'port': '12495',
         'reloader': True
 }
+SESSION_CONFIG = {
+    'session.type': 'file',
+    'session.cookie_expires': 300,
+    'session.data_dir': './session',
+    'session.auto': True
+}
 
 DOMAIN = 'http://%s:%s' % (SERVER_CONFIG['host'], SERVER_CONFIG['port'])
 SYS_TITLE = 'Avalon'

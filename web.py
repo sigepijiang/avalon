@@ -13,6 +13,7 @@ from settings import STATIC_ROOT
 from settings import APP_PATH
 from settings import INSTALLED_APPS
 from settings import SERVER_CONFIG
+from settings import SESSION_CONFIG
 from platform_src.engines import db
 
 
@@ -29,13 +30,7 @@ def add_apps():
 
 def init_app():
     # session settings
-    session_opts = {
-        'session.type': 'file',
-        'session.cookie_expires': 300,
-        'session.data_dir': './session',
-        'session.auto': True
-    }
-    cur_app = SessionMiddleware(app(), session_opts)
+    cur_app = SessionMiddleware(app(), SESSION_CONFIG)
 
     add_apps()
 
