@@ -1,4 +1,4 @@
-z# High-Quality Routines 高质量的子程序
+# High-Quality Routines 高质量的子程序
 
 ## 相关
 * 构造子程序的步骤 9.3
@@ -173,6 +173,7 @@ e.g.
 * \#define in C风格代码
 * inline in C 风格代码
 
+---
 
 # 防御式编程
 ## 相关
