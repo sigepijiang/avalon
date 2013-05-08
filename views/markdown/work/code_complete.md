@@ -204,11 +204,11 @@ e.g.
 * 对于高健壮性代码，应该先使用断言再处理错误
 
 ## 错误处理技术
-*  返回中立值
+* 返回中立值
 * 换用下一个正确的数据
 * 返回和前次相同的数据
 * 换用接近的合法值
-* 酱警告信息纪录到日志文件中
+* 将警告信息纪录到日志文件中
 * 返回一个错误码
 * 调用错误处理子程序或对象
 * 显示出错消息
@@ -219,6 +219,190 @@ e.g.
 
 **高层次设计对错误处理方式的响应**，在高层和底层采取统一的方式处理错误。
 
+### Writing Solid Code 第二章（Assert Yourself）示例
+##### 保存两份代码
+
+这种C风格的代码大家可以看一下
+	
+	/* memcpy -- copy a nonoverlapping memory block. */
+	
+	void *memcpy(void *pvTo, void *pvfrom, size_t size)
+	{
+		byte *pbTo = (byte *)pvTo;
+		byte *pbFrom = (byte *)pvFrom;
+		if (pvTo == NULL || pvFrom == Null)
+		{
+			fprintf(stderr, 'Bad args in memcpy');
+			abort();
+		}
+		
+		while (size-- > 0)
+		{
+			*pbTo++ *pbFrom++;
+		}
+		
+		return (pvTo);
+	}
+	
+	/* memcpy -- copy a nonoverlapping memory block. */
+	/* Add debug copd */
+	void *memcpy(void *pvTo, void *pvfrom, size_t size)
+	{
+		byte *pbTo = (byte *)pvTo;
+		byte *pbFrom = (byte *)pvFrom;
+		#ifdef DEBUG
+		if (pvTo == NULL || pvFrom == Null)
+		{
+			fprintf(stderr, 'Bad args in memcpy');
+			abort();
+		}
+		#endif
+		
+		while (size-- > 0)
+		{
+			*pbTo++ *pbFrom++;
+		}
+		
+		return (pvTo);
+	}
+
+#### 使用断言
+
+	/* memcpy -- copy a nonoverlapping memory block. */
+	/* Add assert copd */
+	void *memcpy(void *pvTo, void *pvfrom, size_t size)
+	{
+		byte *pbTo = (byte *)pvTo;
+		byte *pbFrom = (byte *)pvFrom;
+		
+		assert(pvTo != NULL && pvFrom != NULL)
+		
+		while (size-- > 0)
+		{
+			*pbTo++ *pbFrom++;
+		}
+		
+		return (pvTo);
+	}
+	
+	/* 使用assert宏或者自定义 */
+	#ifdef DEBUG
+		void _Assert(char *, unsigned);
+		
+		#define ASSERT(f)		\
+			if (f)				\
+			{}					\
+			else
+				_Assert(__FILE__, __LINE__) //调用宏来传递信息
+	#else
+		#define ASSERT(f)
+	#endif
+	
+	/* _Assert的定义*/
+	void _Assert(char *strFile, unsigned uLine)
+	{	
+		fflush(NULL);
+		fprintf(stderr, '\nAssertion failed: %s. line %u', strFile, uLine);
+		fflush(stderr);
+		abort();
+	}
+	
+#### 去除代码中的未定义行为，或者用断言来捕获
+
+	/* memcpy -- copy a nonoverlapping memory block. */
+	/* Add assert copd */
+	/* check memeory overlap */
+	void *memcpy(void *pvTo, void *pvfrom, size_t size)
+	{
+		byte *pbTo = (byte *)pvTo;
+		byte *pbFrom = (byte *)pvFrom;
+		
+		assert(pvTo != NULL && pvFrom != NULL)
+		assert(pvTo > pbFrom + size && pvFrom > pbTo + size)
+		
+		while (size-- > 0)
+		{
+			*pbTo++ *pbFrom++;
+		}
+		
+		return (pvTo);
+	}
+
+#### 为不清楚的断言加上说明
+	
+	/* memcpy -- copy a nonoverlapping memory block. */
+	/* Add assert copd */
+	/* check memeory overlap */
+	void *memcpy(void *pvTo, void *pvfrom, size_t size)
+	{
+		byte *pbTo = (byte *)pvTo;
+		byte *pbFrom = (byte *)pvFrom;
+		
+		assert(pvTo != NULL && pvFrom != NULL)
+		/* Block overlap? Use memmove. */
+		assert(pvTo > pbFrom + size && pvFrom > pbTo + size)
+		
+		while (size-- > 0)
+		{
+			*pbTo++ *pbFrom++;
+		}
+		
+		return (pvTo);
+	}
+	
+	/* strdup -- allocate a dumplicate of a string */
+	char *strdup(char *str)
+	{
+		char *strNew;
+		
+		ASSERT(str != NULL);
+		
+		strNew = (char *)malloc(strlen(str) + 1);
+		
+		/* Should be replaced with code to handle the error conditon. */
+		ASSERT(strNew != Null); 
+		
+		strcpy(strNew, str);
+		
+		return (strNew);
+	}
+
+#### 不要再做假设
+
+应用Assert的又一个地方。作者举了个c实现内存设值`memset`的例子，有时为了加快`memset`，会将`byte *`指针转换成`long *`的。但是`byte *`的指针可能是个奇地址，如果转换成`long *`的，在有些系统上会出问题，因为`long *`的指针在这些系统上不能以奇地址开始。作者的方法是判断可否使用奇地址，然后在进行处理。 比较代码：
+
+	long *longfill(long *pl, long l, size_t size)
+
+
+	void *memset(void *pv, byte b, size_t size)
+	{
+		byte *pb = (byte *pv)
+		
+		#ifdefine MC680x0
+		// as long *
+		#endif 
+		
+		while (size-- > 0)
+			*pb++ = b;
+		
+		return (pv)
+	}
+	
+#### 使用断言排除不可能的情况
+如果你认为一种情况不会发生，就断言它不会发生。
+
+#### 进行防御式编程时，不要隐藏bug
+防御式编程是一种编程风格，主要目的是保护系统不受“非法”输入的破坏，但这样很容易掩盖bugs。*程序死应该死的壮烈一点*
+
+**健壮性与正确性**
+
+核电站温度监控，**局部异常该如何处理，沉默处理或者提交给工作人员**。
+（现在的新浪微博回复机器人代码）
+
+
+#### 使用第二套方法验证结果
+#### 不要等着bugs发生，使用启动检查。
+
 ## 异常
 * 用异常通知程序的其他部分，发生了不可忽略的错误
 * 只有在真正例外的情况下才抛出异常
@@ -226,8 +410,8 @@ e.g.
 * 避免在构造函数和析构函数中抛出异常，除非在同一的地方捕获
 * 在恰当的抽象层次抛出异常
 * 在异常消息中加入关于导致异常发生的全部消息
-* 避免使用空的catch语句
-* 了解所用函数库可能抛出的异常
+* **避免使用空的catch语句**
+* **了解所用函数库可能抛出的异常**
 * 考虑创建一个集中的异常报告机制
 * 在项目中对异常的使用标准化
 * 考虑异常的替换方案
