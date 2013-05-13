@@ -1,5 +1,7 @@
 #-*- coding: utf-8 -*-
+from datetime import datetime
 
+import sqlalchemy as sa
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
@@ -16,10 +18,6 @@ db.engine = create_engine(DATABASE, echo=False)
 db.session = sessionmaker(bind=db.engine)()
 
 
-class ClassProperty(property):
-    def __get__(self, cls, owner):
-        return self.fget.__get__(None, owner)()
-
 class TableOpt(object):
     @classmethod
     def create(cls, *args, **kwargs):
@@ -29,7 +27,7 @@ class TableOpt(object):
         return tmp
 
     def update(self):
-        db.commit()
+        db.session.commit()
         return self
 
     def delete(self):
@@ -41,3 +39,16 @@ class TableOpt(object):
     def query(cls):
         return db.session.query(cls)
 
+
+class ContentBaseModel(object):
+    id = sa.Column(sa.Integer(), primary_key=True)
+    title = sa.Column(sa.Unicode(256))
+    file_path = sa.Column(sa.Unicode(1024), nullable=False)
+    file_name = sa.Column(sa.Unicode(128), nullable=False)
+    is_show = sa.Column(sa.Boolean(), default=True)
+    date_created = sa.Column(sa.DateTime(), default=datetime.now)
+
+    def __init__(self, file_path, file_name, title=''):
+        self.title = title
+        self.file_path = file_path
+        self.file_name = file_name
