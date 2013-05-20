@@ -9,6 +9,9 @@ from sqlalchemy import create_engine
 from settings import DATABASE
 
 
+CONTENT_MODEL_DICT = {}
+
+
 class DataBaseOperation(object):
     pass
 

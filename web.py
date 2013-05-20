@@ -15,6 +15,7 @@ from settings import INSTALLED_APPS
 from settings import SERVER_CONFIG
 from settings import SESSION_CONFIG
 from platform_src.engines import db
+from platform_src.engines import CONTENT_MODEL_DICT
 
 
 @route('/static/<path:path>')
@@ -26,12 +27,12 @@ def add_apps():
     for cur_app in INSTALLED_APPS:
         app_full_name = '.'.join([APP_PATH, cur_app])
         importlib.import_module(app_full_name, APP_PATH)
+    print CONTENT_MODEL_DICT
 
 
 def init_app():
     # session settings
     cur_app = SessionMiddleware(app(), SESSION_CONFIG)
-
     add_apps()
 
     run(app=cur_app, **SERVER_CONFIG)
