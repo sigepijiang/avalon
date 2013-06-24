@@ -42,6 +42,9 @@ class TableOpt(object):
     def query(cls):
         return db.session.query(cls)
 
+    def as_dict(self):
+        return {}
+
 
 class ContentBaseModel(object):
     id = sa.Column(sa.Integer(), primary_key=True)
@@ -55,3 +58,7 @@ class ContentBaseModel(object):
         self.title = title
         self.file_path = file_path
         self.file_name = file_name
+
+
+class CommentBaseModel(object):
+    pass

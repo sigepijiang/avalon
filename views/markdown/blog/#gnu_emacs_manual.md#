@@ -23,7 +23,7 @@ GNU 和 终端下：
 * fr: 选中的窗口的名称。（只会在终端模式中显示，为`F1`）
 * buf: 窗口中显示的buffer缓冲区的名字，一般和文件的名字一样。
 * pos: `nn%`, `TOP`, `BOT`, `ALL`
-* line: L(\d)*, 
+* line: L(\d), 
 * major: 当前的模式
 * minor: 一些其他的模式 
 
@@ -212,4 +212,151 @@ C-h p/P
 * C-h i 
 * C-h F/K
 * C-h S, 查找符号（方法，变量，按键组合）, info-lookup-symbol
-* C-h l
+* C-h l, 查看输入历史
+* C-h e, 查看消息缓冲区
+* C-h m, 查看当前模式下的说明文档
+* C-h b, 查看按键绑定
+* C-h s, 查看系统环境
+
+### 帮助文件
+* C-h C-c, 版权说明, describe-coping
+* C-h C-d, debug模式的说明, view-emacs-debugging
+* C-h C-e, 关于如何获取扩展包, view-external-packages
+* C-h C-f,  FAQ, view-emacs-FAQ
+* C-h g, 关于GNU Project的介绍, describe-gnu-project 
+* C-h C-m, 关于本书的信息, view-order-manuals
+* C-h C-n, emacs的更新, view-emacs-news
+* C-h C-o, 关于如何下载最新的emacs, describe-distribution
+* C-h C-p, 已知的问题, view-emacs-problems
+* C-h C-t, emacs todo-list, view-emacs-todo
+* C-h C-w, GNU Emacs的担保, describe-no-warranty
+
+## 标记和选中区域
+### 设置标记
+* C-<SPC>, C-@, set-mark-command
+* C-x, C-x, 返回设置标记的初始位置并保持标记, exchange-point-and-mark 
+* C-g, 取消
+* 利用 'C-@ C-@' 以及 'C-u C-@'在缓冲区内跳转
+* M-@, 将当前位置到下一个单词结尾位置，且不移动光标, mark-word
+* C-M-@, 感觉和M-@相似, mark-sexp *未测试*
+* M-h, 标记本段, mark-paragraph
+* C-M-h, 标记一段函数定义, mark-defun
+* C-x C-p, 标记当前页, mark-page
+* C-x h, 全部标记, mark-whole-buffer
+
+### 对于标记的区域的操作
+* C-w, 删除
+* M-w, 拷贝到已删除列表
+* C-x C-l, C-x C-u 转换大小写
+* C-u C-/, C-\_, 撤销修改
+* M-%, 替换
+* 用C-x <TAB>, C-M-\ 缩进
+* M-x fill-region, 填充内容
+* M-$, 检查拼写,
+* M-x eval-region, 以lisp代码方式对待
+* C-x r s, 存储进一个寄存器
+* 存储进一个文件
+
+### 标记列表
+
+* C-<SPC> C-<SPC>
+* C-u C-<SPC>
+
+### 全局标记列表 *未测试*
+* C-x C-<SPC>, pop-global-mark
+
+### Shift选择 *不知道为什么无效*
+
+> Shift-selection only works if the Shifted cursor motion key is not already bound to a separate command.
+
+### 取消临时标记模式
+
+    M-x transient-mark-Mode
+
+## 删除和移动文本
+
+> In Emacs, killing means erasing text and coping it into the kill ring.
+
+> Yanking means bringing text from the kill ring back to the buffer.
+
+> Some applications user the terms "cutting" and "pasting" for similar operation.
+
+### Kill and Delete
+
+#### 移除(delete)
+
+* <DEL>
+* <Backspace>
+* <Delete>
+* C-d, delete-char
+* M-\, delete-horizontal-space
+* M-<SPC>, 只留一个空格, just-one-space
+* C-x C-o, 删除附近的空白行, delete-blank-lines
+* M-^, 删除两行之间的换行符, delete-indentation
+
+#### 删除一行
+
+* C-k, kill-Line
+* C-S-backspace, kill-whole-line *无效*
+
+#### 其他删除命令
+
+* C-w, kill-region
+* M-w, kill-ring-save
+* M-d, kill-word
+* M-<DEL> backward-kill-word
+* C-x <DEL>, backward-kill-sentence
+* M-k, kill-sentence
+* C-M-k, kill-sexp
+* M-z char, zap-to-char
+
+#### 删除的选项
+
+### Yanking
+* C-y, yank
+* M-y, yank-pop
+* C-M-w, append-next-kill
+
+#### 删除列表
+
+### 剪切复制
+
+#### 使用剪贴板
+
+> Prior to Emacs 24,  the kill and yank commands used the primary 
+> selection, not the clipboard
+
+#### 使用其他其他窗口程序完成剪贴和复制
+
+#### 添加文本
+* M-x append-to-buffer
+* M-x prepend-to-buffer
+* M-x copy-to-buffer
+* M-x insert-buffer
+* M-x append-to-file
+
+### 矩形区域
+### CUA模式
+
+## 寄存器
+存放文本，矩形区域，位置和其他东西。
+
+    M-x view-register <RET> r
+
+### 位置
+* C-x r <SPC> r 保存到r寄存器, point-to-register
+* C-x r j r 跳到r寄存器, jump-to-register
+
+### 文本
+* C-x r s r 保存选中区域到r寄存器
+* C-x r i r 插入文本
+* M-x append-to-register <RET> r
+* M-x prepend-to-register <RET> r
+* C-u C-x r s r 将选中文本移动到寄存器r
+
+### 矩形区域
+* C-x r r r 保存选中区域 copy-rectangle-to-register
+* C-x r i r 插入
+
+
+

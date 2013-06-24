@@ -1,0 +1,15 @@
+#! /usr/bin/env bash
+
+BASE="$(dirname $PWD/$0)"
+echo "BASE: $BASE"
+
+PY_ENV="$BASE/.py"
+if [ ! -d $PY_ENV ]; then
+    virtualenv $PY_ENV
+fi
+echo "PYTHON ENVIRONMENT: $PY_ENV"
+
+TOOL_PATH="$BASE/tools"
+echo "TOOL_PATN: $TOOL_PATH"
+
+sh $TOOL_PATH/init

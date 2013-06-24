@@ -19,7 +19,7 @@ from . import Blog
 @view('blog')
 @markdown2html
 def blog(app_name, blog_id):
-    blog = Blog.query().filter(Blog.id==blog_id).first()
+    blog = Blog.query().filter(Blog.id == blog_id).first()
 
     if not blog:
         raise HTTPError(404)
@@ -33,15 +33,16 @@ def blog(app_name, blog_id):
     return dict(content=content, file_type=file_type, app_name=app_name)
 
 
-@get('/<app_name:re:%s>/<file_name>.<file_type>/' % APP_NAME, name='blog.redirect')
+@get('/<app_name:re:%s>/<file_name>.<file_type>/' % APP_NAME,
+     name='blog.redirect')
 def redirect_to_blog(app_name, file_name, file_type):
     file_name += '.' + file_type
-    blog = Blog.query().filter(Blog.file_name==file_name).first()
+    blog = Blog.query().filter(Blog.file_name == file_name).first()
     if not blog:
         if is_file_exists('/'.join([MARKDOWN_PATH, APP_NAME, file_name])):
             blog = Blog.create(
-                    file_path='/'.join([MARKDOWN_PATH, APP_NAME]),
-                    file_name=file_name)
+                file_path='/'.join([MARKDOWN_PATH, APP_NAME]),
+                file_name=file_name)
         else:
             raise HTTPError(404)
 
@@ -49,5 +50,7 @@ def redirect_to_blog(app_name, file_name, file_type):
 
 
 @get('/<app_name:re:%s>/' % APP_NAME, name='blog.index')
-def index():
-    pass
+@view('app_index')
+def index(app_name):
+    blog_list = Blog.query.order_by(Blog.id.desc()).all()
+    return dict(blog_list=blog_list, app_name=app_name)
