@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+pip install bottle
+pip install sqlalchemy
+pip install beaker
+pip install jinja2
+pip install markdown2
+pip install pyyaml
+pip install pygments
+pip install ipython
+pip install mysql-python
+pip install alembic
+
+if [ ! -d $PYLIB_PATH/share ]; then
+    ln -s $BASE/share $PYLIB_PATH/share
+fi

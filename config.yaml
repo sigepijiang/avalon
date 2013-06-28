@@ -1,0 +1,8 @@
+DEVELOPMENT: &dev
+    VERSION: '3.1'
+
+    DB_CONFIG: ''
+
+
+PRODUCT:
+    <<: *dev

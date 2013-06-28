@@ -1,15 +1,21 @@
 #! /usr/bin/env bash
 
-BASE="$(dirname $PWD/$0)"
-echo "BASE: $BASE"
+export BASE="$(dirname $PWD/$0)"
 
-PY_ENV="$BASE/.py"
+export PY_ENV="$BASE/.py"
 if [ ! -d $PY_ENV ]; then
     virtualenv $PY_ENV
 fi
+
+export PYLIB_PATH="$PY_ENV/lib/python2.7/site-packages"
+export TOOL_PATH="$BASE/tools"
+
+
+echo "BASE: $BASE"
 echo "PYTHON ENVIRONMENT: $PY_ENV"
-
-TOOL_PATH="$BASE/tools"
 echo "TOOL_PATN: $TOOL_PATH"
+echo
 
+echo $PY_ENV/bin/activate
+source $PY_ENV/bin/activate
 sh $TOOL_PATH/init

@@ -1,5 +1,4 @@
 *.pyc
-*data.db
 *.DS_Store
 session/*
 #*
