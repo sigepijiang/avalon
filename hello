@@ -1,15 +1,33 @@
 #! /usr/bin/env bash
 
 export BASE="$(dirname $PWD/$0)"
-
 export PY_ENV="$BASE/.py"
+export PYLIB_PATH="$PY_ENV/lib/python2.7/site-packages"
+export TOOL_PATH="$BASE/tools"
+export UWSGI_CONFIG_PATH="$PY_ENV/etc/uwsgi"
+export NGINX_CONFIG_PATH="$PY_ENV/etc/nginx"
+export ENV_RUN_PATH="$PY_ENV/var/run"
+export ENV_LOG_PATH="$PY_ENV/var/log"
+
+if [ -n "${AVALON_ENVIRON}" ]; then
+    return
+fi
+if [ -n "$(echo $HOSTNAME | grep gkserver)" ]; then
+    export AVALON_ENVIRON="PRODUCTION"
+elif [ -n "$(echo $HOSTNAME | grep qaserver)" ]; then
+    export AVALON_ENVIRON="STAGING"
+else
+    export AVALON_ENVIRON="DEVELOPMENT"
+fi
+
 if [ ! -d $PY_ENV ]; then
     virtualenv $PY_ENV
 fi
 
-export PYLIB_PATH="$PY_ENV/lib/python2.7/site-packages"
-export TOOL_PATH="$BASE/tools"
-
+mkdir -p $UWSGI_CONFIG_PATH
+mkdir -p $NGINX_CONFIG_PATH
+mkdir -p $ENV_LOG_PATH
+mkdir -p $ENV_RUN_PATH
 
 echo "BASE: $BASE"
 echo "PYTHON ENVIRONMENT: $PY_ENV"
@@ -19,3 +37,4 @@ echo
 echo $PY_ENV/bin/activate
 source $PY_ENV/bin/activate
 sh $TOOL_PATH/init
+source $TOOL_PATH/functions.sh
