@@ -5,9 +5,9 @@ from bottle import RouteBuildError
 from bottle import makelist
 
 
-class App(Bottle):
+class Avalon(Bottle):
     def __init__(self, name, catchall=True, autojson=True):
-        super(App, self).__init__(catchall, autojson)
+        super(Avalon, self).__init__(catchall, autojson)
         self.name = name
 
     def register_blueprint(self, blueprint):

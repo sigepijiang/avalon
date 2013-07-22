@@ -1,0 +1,13 @@
+DEVELOPMENT: &dev
+    APPNAME: 'blog'
+    MODULE: 'blog:app'
+    DEBUG: true
+    DEFAULT_SUBDOMAIN: www
+
+STAGING:
+    <<: *dev
+
+PRODUCTION:
+    <<: *dev
+    DEBUG: false
+    MAIL_DEBUG: false

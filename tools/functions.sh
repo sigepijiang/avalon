@@ -1,3 +1,4 @@
+# 将尝试用python实现
 echo_info() {
     echo -e "\033[0;32;1m$1\033[0m"
 }
@@ -21,6 +22,78 @@ get_all_confs() {
         echo $(find $BASE/avalon/algo -name "app.yaml")                       
     fi
 }                                                                        
+
+_uwsgi_common() {
+    env UWSGI_VASSAL_VIRTUALENV="$PY_ENV" \
+        UWSGI_VASSAL_SET="base_dir=$BASE" uwsgi \
+        --virtualenv="$PY_ENV" \
+        --pidfile="$ENV_RUN_PATH/guokrplus.pid" \
+        --log-maxsize="$UWSGI_LOG_MAXSIZE" \
+        --cpu-affinity="$UWSGI_CPU_AFFINITY" \
+        --emperor="$UWSGI_EMPEROR" \
+        $@ \
+        --memory-report \
+        --log-zero \
+        --log-slow \
+        --log-4xx \
+        --log-5xx \
+        --log-big \
+        --log-sendfile
+}
+
+uwsgi_start() {
+    echo -n "Starting $UWSGI_DESC: "
+    if kill -0 $(cat $UWSGI_PIDFILE 2>/dev/null) 2>/dev/null; then
+        echo_error "failed."
+        echo "  $UWSGI_NAME is already running."
+    else
+        _uwsgi_common --daemonize="$UWSGI_LOGFILE"
+        echo_info "$UWSGI_NAME."
+    fi
+}
+
+uwsgi_debug() {
+    echo -n "Starting $UWSGI_DESC: "
+    if kill -0 $(cat $UWSGI_PIDFILE 2>/dev/null) 2>/dev/null; then
+        echo_error "failed."
+        echo "  $UWSGI_NAME is already running."
+    else
+        _uwsgi_common --catch-exceptions
+        echo_info "$UWSGI_NAME."
+    fi
+}
+
+uwsgi_reload() {
+    echo -n "Reloading $UWSGI_DESC: "
+    source "$PY_ENV/bin/activate"
+    error=$(uwsgi --reload $UWSGI_PIDFILE 2>&1 >/dev/null)
+    if [ -z "$error" ]; then
+        echo_info "$UWSGI_NAME."
+    else
+        echo_error "failed."
+        echo "  $error"
+    fi
+}
+
+uwsgi_stop() {
+    echo -n "Stopping $UWSGI_DESC: "
+    source "$PY_ENV/bin/activate"
+    error=$(uwsgi --stop $UWSGI_PIDFILE 2>&1 >/dev/null)
+    if [ -z "$error" ]; then
+        echo_info "$UWSGI_NAME."
+    else
+        echo_error "failed."
+        echo "  $error"
+    fi
+}
+
+uwsgi_restart() {
+    uwsgi_stop
+    while kill -0 $(cat $UWSGI_PIDFILE 2>/dev/null) 2>/dev/null ; do
+        echo -n '.'
+    done
+    uwsgi_start
+}
                                                                          
 get_all_apps() {                                                         
     for conf in $(get_all_confs); do                                     
@@ -44,7 +117,6 @@ goodbye() {
     unset PY_ENV
     unset PYLIB_PATH
     unset TOOL_PATH
-    unset UWSGI_CONFIG_PATH
     unset NGINX_CONFIG_PATH
     unset ENV_RUN_PATH
     unset ENV_LOG_PATH
@@ -65,7 +137,7 @@ _manage_add() {
             return 1
         fi
 
-        local vassal="${UWSGI_CONFIG_PATH}/${app}.json"
+        local vassal="$PY_ENV/etc/uwsgi/vassals/$app.json"
         if [ ! -f $vassal ]; then
             echo_info "Adding App $app..."
             python $BASE/tools/uwsgi_conf.py $conf > $vassal
@@ -74,7 +146,7 @@ _manage_add() {
 }
 
 _manage_list() {
-    APPS=$@
+    local APPS=$@
 
     if [ -z "$APPS" ]; then
         APPS=$(get_all_apps)
@@ -92,7 +164,7 @@ _manage_remove() {
     fi
 
     for app in $APPS; do
-        local vassal="${UWSGI_CONFIG_PATH}/${app}.json"
+        local vassal="$PY_ENV/etc/uwsgi/vassals/$app.json"
         if [ -e $vassal ]; then
             echo_info "Removing app $app..."
         fi
@@ -103,7 +175,13 @@ _manage_remove() {
 manage() {
     local ACTION=$1
     local APPS=${@:2}
-    local UWSGI_LOG_MAXSIZE=268435456
+    UWSGI_LOG_MAXSIZE=268435456
+    UWSGI_CPU_AFFINITY=2
+    UWSGI_EMPEROR="$PY_ENV/etc/uwsgi/vassals"
+    UWSGI_PIDFILE="$ENV_RUN_PATH/avalon.pid"
+    UWSGI_DESC="Avalon"
+    UWSGI_NAME="avalon"
+    UWSGI_LOGFILE="$PY_ENV/var/log/avalon.log"
 
     case $1 in
         add)
@@ -115,91 +193,114 @@ manage() {
         list)
             _manage_list $APPS
             ;;
+        # TODO
         update)
             _manage_update $APPS
             ;;
+        # TODO
         touch)
             if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
                 nginx_reload
             fi
             _manage_touch $APPS
             ;;
+        # TODO
         test)
             _manage_test $2
             RC=$?
             ;;
+        # TODO
         test_no_return)
             manage test --no-return
             ;;
+        # TODO
         start)
             if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
                 nginx_restart
             fi
             uwsgi_start
             ;;
+        # TODO
         debug)
             if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
                 nginx_restart
             fi
             uwsgi_debug
             ;;
+        # TODO
         console)
             _manage_console $2
             ;;
+        # TODO
         shell)
             _manage_shell $2
             ;;
+        # TODO
         stop)
             if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
                 nginx_stop
             fi
             uwsgi_stop
             ;;
+        # TODO
         restart|force-reload)
             if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
                 nginx_restart
             fi
             uwsgi_restart
             ;;
+        # TODO
         reload)
             if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
                 nginx_reload
             fi
             uwsgi_reload
             ;;
+        # TODO
         clear)
             _manage_clear $APPS
             ;;
+        # TODO
         create_dbs)
             _manage_create_dbs
             ;;
+        # TODO
         create_tables)
             _manage_create_tables
             ;;
+        # TODO
         create_app)
             _manage_create_app $APPS
             ;;
+        # TODO
         cronsync)
             _manage_cronsync $APPS
             ;;
+        # TODO
         cronlist)
             _manage_cronlist $APPS
             ;;
+        # TODO
         jar)
             _manage_jar
             ;;
+        # TODO
         uberjar)
             _manage_uberjar
             ;;
+        # TODO
         log)
             _manage_log
             ;;
+        # TODO
         jenkins)
             $BASE/tools/jenkins/jenkinshelper.py ${@:2}
             ;;
+        # TODO
         review)
             _manage_review $2
             ;;
+        # TODO
         celery)
             case $2 in
                 restart)
@@ -210,6 +311,7 @@ manage() {
                     ;;
             esac
             ;;
+        # TODO
         nginx)
             case $2 in
                 start)
@@ -236,6 +338,7 @@ manage() {
             esac
             ;;
         *)
+        # TODO
             echo "Usage: manage { add | remove | list | start | test | debug | stop | console | shell | clear | reload | touch | restart | force-reload | create_dbs | create_tables | create_app | cronsync | cronlist | jar | uberjar | celery }"
             ;;
     esac

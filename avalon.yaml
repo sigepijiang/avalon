@@ -2,6 +2,24 @@ DEVELOPMENT: &dev
     VERSION: '3.1'
 
     DB_CONFIG: ''
+    DOMAIN: 'avalon.com'
+
+    STATIC_PATH: ''
+
+    APP_ROUTER: &app_router
+        HOST: '0.0.0.0'
+        PORT: 23900
+        PROCESSES: 8
+        USE_HTTP: true
+        DISABLE_LOGGING: true
+        LOG_4XX: true
+
+    APP_BLOG: &app_blog
+        HOST: '0.0.0.0'
+        PORT: 23901
+        USE_HTTP: true
+        DISABLE_LOGGING: true
+        LOG_4XX: true
 
 
 PRODUCT:

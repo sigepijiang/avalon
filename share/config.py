@@ -24,11 +24,12 @@ def load_yaml(yamlfile):
     except KeyError:
         raise AvalonEnvironError(
             'Environment variable AVALON_ENVIRON is not provided')
+
     with open(yamlfile, 'rb') as fp:
         conf = yaml.load(fp.read())
+
     host_conf = 'HOST-%s' % socket.gethostname()
 
-    print conf
     if host_conf in conf:
         return conf[host_conf]
     try:
