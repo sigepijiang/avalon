@@ -2,7 +2,7 @@
 
 import codecs
 
-from bottle import get, redirect
+from share.bottle import MethodView
 from bottle import url
 from bottle import HTTPError
 
