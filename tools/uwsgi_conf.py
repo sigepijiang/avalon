@@ -36,6 +36,7 @@ def main():
         'chdir': ('%(base_dir)/' + chdir),
         'pep3333-input': '',
         'post-buffering': 4096,
+        'virtualenv': '%(base_dir)/.py',
     }
     if data.get('USE_HTTP', use_http):
         uwsgi['http-socket'] = '%(HOST)s:%(PORT)s' % data
@@ -98,7 +99,7 @@ def main():
         uwsgi['enable-threads'] = data['ENABLE_THREADS']
 
     uwsgi['env'] = [
-        'GUOKR_APPNAME=%s' % data['APPNAME'],
+        'AVALON_APPNAME=%s' % data['APPNAME'],
     ]
     print json.dumps({'uwsgi': uwsgi}),
 

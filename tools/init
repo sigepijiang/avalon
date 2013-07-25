@@ -12,4 +12,6 @@ pip install mysql-python
 pip install alembic
 pip install uwsgi
 
-ln -s -f $BASE/share $PYLIB_PATH/share
+if [ ! -d $PYLIB_PATH/share ]; then
+    ln -s $BASE/share $PYLIB_PATH/share
+fi

@@ -17,7 +17,6 @@ DEVELOPMENT: &dev
     APP_BLOG: &app_blog
         HOST: '0.0.0.0'
         PORT: 23901
-        USE_HTTP: true
         DISABLE_LOGGING: true
         LOG_4XX: true
 

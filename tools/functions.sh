@@ -27,7 +27,7 @@ _uwsgi_common() {
     env UWSGI_VASSAL_VIRTUALENV="$PY_ENV" \
         UWSGI_VASSAL_SET="base_dir=$BASE" uwsgi \
         --virtualenv="$PY_ENV" \
-        --pidfile="$ENV_RUN_PATH/guokrplus.pid" \
+        --pidfile="$ENV_RUN_PATH/avalon.pid" \
         --log-maxsize="$UWSGI_LOG_MAXSIZE" \
         --cpu-affinity="$UWSGI_CPU_AFFINITY" \
         --emperor="$UWSGI_EMPEROR" \
