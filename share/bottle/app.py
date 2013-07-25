@@ -6,16 +6,7 @@ from bottle import Bottle
 from bottle import Route
 from bottle import RouteBuildError
 from bottle import makelist
-from bottle import request
 from bottle import template
-
-
-HTTP_METHOD_MAP = {
-    'get': 'get',
-    'push': 'create',
-    'put': 'update',
-    'delete': 'delete'
-}
 
 
 class Avalon(Bottle):
@@ -39,45 +30,14 @@ class Blueprint(object):
         self.url_prefix = url_prefix
         self.url_rules = {}
 
-    def add_url_rule(self, rule, view_func, methods, endpoint, **options):
+    def add_url_rule(
+            self, rule, view_func, methods, endpoint, default=None, **options):
         route_list = []
         for method in makelist(methods):
             route = Route(None, rule, method, view_func)
             route_list.append(route)
 
         self.url_rules.update({endpoint: route_list})
-
-
-class MethodView(object):
-    decorator = []
-    methods = []
-
-    @classmethod
-    def as_view(cls, name):
-        def view_func(*args, **kwargs):
-            self = view_func.view_class(*args, **kwargs)
-            return self.dispatch_request(*args, **kwargs)
-
-        if cls.decorators:
-            view_func.__name__ = name
-            view_func.__module__ = cls.__module__
-            for decorator in cls.decorators:
-                view_func = decorator(view_func)
-
-        view_func.view_class = cls
-        view_func.__name__ = name
-        view_func.__doc__ = cls.__doc__
-        view_func.__module__ = cls.__module__
-        view_func.methods = cls.methods
-        return view_func
-
-    def dispatch_request(self, *args, **kwargs):
-        meth = getattr(self, request.method.lower(), None)
-        if meth is None and request.method == 'HEAD':
-            meth = getattr(self, 'get', None)
-        if not meth:
-            raise
-        return meth(*args, **kwargs)
 
 
 # like flask
