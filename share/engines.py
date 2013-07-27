@@ -1,24 +1,29 @@
 #-*- coding: utf-8 -*-
-from datetime import datetime
-
-import sqlalchemy as sa
+import sys
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
-
-from settings import DATABASE
-
-
-CONTENT_MODEL_DICT = {}
+from bottle import default_app
+from bottle import cached_property
 
 
 class DataBaseOperation(object):
-    pass
+    @cached_property
+    def Model(self):
+        return declarative_base()
+
+    @cached_property
+    def engine(self):
+        app = default_app()
+        return create_engine(
+            app.config.db_master, echo=app.config.enable_sql_echo)
+
+    @cached_property
+    def session(self):
+        return scoped_session(sessionmaker(bind=self.engine))
+
 
 db = DataBaseOperation()
-db.Model = declarative_base()
-db.engine = create_engine(DATABASE, echo=False)
-db.session = sessionmaker(bind=db.engine)()
 
 
 class TableOpt(object):
@@ -44,21 +49,3 @@ class TableOpt(object):
 
     def as_dict(self):
         return {}
-
-
-class ContentBaseModel(object):
-    id = sa.Column(sa.Integer(), primary_key=True)
-    title = sa.Column(sa.Unicode(256))
-    file_path = sa.Column(sa.Unicode(1024), nullable=False)
-    file_name = sa.Column(sa.Unicode(128), nullable=False)
-    is_show = sa.Column(sa.Boolean(), default=True)
-    date_created = sa.Column(sa.DateTime(), default=datetime.now)
-
-    def __init__(self, file_path, file_name, title=''):
-        self.title = title
-        self.file_path = file_path
-        self.file_name = file_name
-
-
-class CommentBaseModel(object):
-    pass

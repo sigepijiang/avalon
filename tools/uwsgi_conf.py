@@ -25,7 +25,7 @@ def main():
 
     appname = app_data['APPNAME']
     data = global_data['APP_' + appname.upper()]
-    use_http = global_data.get('USE_HTTP')
+    default_use_http = global_data.get('USE_HTTP')
     data.update(app_data)
 
     # uwsgi 读取 yaml 时对顺序有要求, 因此使用 json 来 dump
@@ -38,11 +38,8 @@ def main():
         'post-buffering': 4096,
         'virtualenv': '%(base_dir)/.py',
     }
-    if data.get('USE_HTTP', use_http):
+    if data.get('USE_HTTP', default_use_http):
         uwsgi['http-socket'] = '%(HOST)s:%(PORT)s' % data
-        #uwsgi['protocol'] = 'http'
-        #uwsgi['http-keepalive'] = 1
-        #uwsgi.setdefault('add-header', []).append('Connection: Keep-Alive')
     else:
         uwsgi['socket'] = '%(HOST)s:%(PORT)s' % data
 

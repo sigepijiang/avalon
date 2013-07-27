@@ -1,10 +1,11 @@
 DEVELOPMENT: &dev
     VERSION: '3.1'
 
-    DB_CONFIG: ''
     DOMAIN: 'avalon.com'
-
-    STATIC_PATH: ''
+    STATIC_PATH: 'static/src'
+    MEMCACHED: ''
+    ENABLE_SQL_ECHO: false
+    USE_HTTP: true
 
     APP_ROUTER: &app_router
         HOST: '0.0.0.0'
@@ -17,8 +18,12 @@ DEVELOPMENT: &dev
     APP_BLOG: &app_blog
         HOST: '0.0.0.0'
         PORT: 23901
-        DISABLE_LOGGING: true
+        PROCESSES: 2
+        USE_HTTP: true 
+        DISABLE_LOGGING: false
         LOG_4XX: true
+        TYPE: 'app'
+        DB_MASTER: 'mysql+mysqldb://blog:bbbb@localhost/blog'
 
 
 PRODUCT:

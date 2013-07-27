@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
+import os
 import functools
 
 from bottle import view, Jinja2Template
 from bottle import request
+from bottle import default_app
 
-from settings import INSTALLED_APPS
-from settings import PRIVATE_APPS
-from settings import DOMAIN
-from settings import SYS_TITLE
 import markdown2
 
 
@@ -29,7 +27,6 @@ def content2html(func):
         file_type = result.get('file_type')
         content = CONTENT_CONVERTER[file_type](content)
         result['content'] = content
-
         return result
     return call_f
 
@@ -50,22 +47,16 @@ def markdown2html(func):
     return call_f
 
 
-sys_env = {
-    'apps': INSTALLED_APPS,
-    'private_apps': PRIVATE_APPS,
-    'domain': DOMAIN,
-    'sys_title': SYS_TITLE,
-}
-
-
-def static_file(path):
-    return '/static/%s' % path
+def get_template_path():
+    app = default_app()
+    base_templates = os.path.join(app.home_path, 'share/bottle/templates')
+    app_templates = os.path.join(app.app_path, 'templates')
+    return [base_templates, app_templates]
 
 
 jinja2_view = functools.partial(
     view,
     template_adapter=Jinja2Template,
     request=request,
-    sys_env=sys_env,
-    static_file=static_file,
+    template_lookup=get_template_path()
 )

@@ -172,6 +172,11 @@ _manage_remove() {
     done
 }
 
+_manage_log() {
+    local LOG_PATH=$BASE/.py/var/log/avalon.log
+    tail -f $LOG_PATH
+}
+
 manage() {
     local ACTION=$1
     local APPS=${@:2}

@@ -11,11 +11,14 @@ HTTP_METHOD_MAP = {
 
 
 class MethodView(object):
-    decorator = []
+    decorators = []
     methods = []
 
+    def __init__(self, *args, **kwargs):
+        super(MethodView, self).__init__()
+
     @classmethod
-    def as_view(cls, name):
+    def as_view(cls, name=''):
         def view_func(*args, **kwargs):
             self = view_func.view_class(*args, **kwargs)
             return self.dispatch_request(*args, **kwargs)

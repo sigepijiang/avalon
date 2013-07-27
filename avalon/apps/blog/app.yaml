@@ -1,8 +1,6 @@
 DEVELOPMENT: &dev
-    APPNAME: 'blog'
     MODULE: 'blog:app'
     DEBUG: true
-    DEFAULT_SUBDOMAIN: www
 
 STAGING:
     <<: *dev

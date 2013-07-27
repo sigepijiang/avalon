@@ -1,56 +1,21 @@
 #-*- coding: utf-8 -*-
+from share.bottle.view import MethodView
+from share.bottle.errors import NotFound
 
-import codecs
-
-from share.bottle import MethodView
-from bottle import url
-from bottle import HTTPError
-
-from platform_src.decorators import markdown2html
-from platform_src.template import jinja2_view as view
-from platform_src.utils import is_file_exists
-from settings import MARKDOWN_PATH
-
-from . import APP_NAME
-from . import Blog
+from blog.models import TextModel
 
 
-@get('/<app_name:re:%s>/<blog_id:int>/' % APP_NAME, name='blog.page')
-@view('blog')
-@markdown2html
-def blog(app_name, blog_id):
-    blog = Blog.query().filter(Blog.id == blog_id).first()
+class TextView(MethodView):
+    def get(self, blog_id):
+        blog = TextModel.query().filter_by(
+            id=blog_id).first()
 
-    if not blog:
-        raise HTTPError(404)
+        if not blog:
+            raise NotFound('日志不存在')
 
-    file_path = '/'.join([blog.file_path, blog.file_name])
-    file_type = blog.file_name.split('.')[:-1]
-    if not is_file_exists(file_path):
-        raise HTTPError(404)
-
-    content = codecs.open(file_path, 'r', encoding='utf-8').read()
-    return dict(content=content, file_type=file_type, app_name=app_name)
+        return 'hello world'
 
 
-@get('/<app_name:re:%s>/<file_name>.<file_type>/' % APP_NAME,
-     name='blog.redirect')
-def redirect_to_blog(app_name, file_name, file_type):
-    file_name += '.' + file_type
-    blog = Blog.query().filter(Blog.file_name == file_name).first()
-    if not blog:
-        if is_file_exists('/'.join([MARKDOWN_PATH, APP_NAME, file_name])):
-            blog = Blog.create(
-                file_path='/'.join([MARKDOWN_PATH, APP_NAME]),
-                file_name=file_name)
-        else:
-            raise HTTPError(404)
-
-    return redirect(url('blog.page', app_name=APP_NAME, blog_id=blog.id))
-
-
-@get('/<app_name:re:%s>/' % APP_NAME, name='blog.index')
-@view('app_index')
-def index(app_name):
-    blog_list = Blog.query.order_by(Blog.id.desc()).all()
-    return dict(blog_list=blog_list, app_name=app_name)
+class TextRedirectView(MethodView):
+    def get(self, file_name, file_type):
+        pass
