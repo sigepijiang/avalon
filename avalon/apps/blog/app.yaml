@@ -1,4 +1,5 @@
 DEVELOPMENT: &dev
+    APPNAME: 'blog'
     MODULE: 'blog:app'
     DEBUG: true
 

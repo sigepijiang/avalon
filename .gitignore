@@ -1,5 +1,6 @@
 *.pyc
-*.DS_Store
+*.*DS_Store
 session/
 .py*
 .py/
+*.rdb
