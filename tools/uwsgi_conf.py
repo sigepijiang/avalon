@@ -23,7 +23,7 @@ def main():
     chdir = os.path.abspath(os.path.dirname(yamlfile))
     chdir = os.path.relpath(chdir, os.environ['BASE'])
 
-    appname = app_data['APPNAME']
+    appname = app_data['APP_NAME']
     data = global_data['APP_' + appname.upper()]
     default_use_http = global_data.get('USE_HTTP')
     data.update(app_data)
@@ -96,7 +96,7 @@ def main():
         uwsgi['enable-threads'] = data['ENABLE_THREADS']
 
     uwsgi['env'] = [
-        'AVALON_APPNAME=%s' % data['APPNAME'],
+        'AVALON_APPNAME=%s' % data['APP_NAME'],
     ]
     print json.dumps({'uwsgi': uwsgi}),
 

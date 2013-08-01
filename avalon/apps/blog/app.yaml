@@ -1,5 +1,6 @@
 DEVELOPMENT: &dev
-    APPNAME: 'blog'
+    APP_NAME: 'blog'
+    APP_TYPE: 'bottle'
     MODULE: 'blog:app'
     DEBUG: true
 

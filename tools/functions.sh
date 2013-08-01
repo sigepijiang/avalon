@@ -12,16 +12,42 @@ echo_error() {
 }
 
 get_all_confs() {                                                        
-    if [ -d "$BASE/avalon/apps" ]; then
-        echo $(find $BASE/avalon/apps -name "app.yaml")                       
-    fi
-    if [ -d "$BASE/avalon/services" ]; then
-        echo $(find $BASE/avalon/services -name "app.yaml")                       
-    fi
-    if [ -d "$BASE/avalon/algo" ]; then
-        echo $(find $BASE/avalon/algo -name "app.yaml")                       
-    fi
+    echo $(find $BASE/avalon -name "app.yaml")                       
 }                                                                        
+
+get_enabled_apps() {
+    for vassal in $(find $UWSGI_EMPEROR -name "*.json"); do
+        basename $vassal | cut -d . -f 1
+    done
+}
+
+_manage_update() {
+    APPS=$@
+
+    if [ -z "$APPS" ]; then
+        APPS=$(get_enabled_apps)
+    fi
+
+    for app in $APPS; do
+        conf=$(get_conf $app)
+        vassal="${UWSGI_EMPEROR}/${app}.json"
+        if [ -z "$conf" ]; then
+            echo_info "App $app has been removed."
+            rm -f "$vassal"
+        elif [ ! -f "$vassal" ]; then
+            echo_error "Vassal $app does not exist, ignored."
+        else
+            echo_info "Updating App $app..."
+            rm -f "$vassal"
+            python $BASE/tools/uwsgi_conf.py "$conf" > "$vassal"
+        fi
+    done
+
+    python $BASE/tools/make_url_map.py $(get_enabled_apps) 
+    if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
+        nginx_render
+    fi
+}
 
 _uwsgi_common() {
     env UWSGI_VASSAL_VIRTUALENV="$PY_ENV" \

@@ -57,13 +57,11 @@ class MethodView(object):
             return self.dispatch_request(*args, **kwargs)
 
         if cls.decorators:
-            view_func.__name__ = name
-            view_func.__module__ = cls.__module__
             for decorator in cls.decorators:
                 view_func = decorator(view_func)
 
         view_func.view_class = cls
-        view_func.__name__ = name
+        view_func.__name__ = name or cls.__name__ + view_func.__name__
         view_func.__doc__ = cls.__doc__
         view_func.__module__ = cls.__module__
         view_func.methods = cls.methods

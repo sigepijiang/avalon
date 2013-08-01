@@ -1,0 +1,6 @@
+blog:
+  app_name: blog
+  app_type: bottle
+  www:
+    main: {rule: '/blog/<blog_id:int>/', subdomain: www}
+    redirect: {rule: /blog/<file_name>.<file_type>/, subdomain: www}

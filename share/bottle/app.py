@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 import os
-import functools
 
 from bottle import Bottle
 from bottle import Route, Router
 from bottle import RouteBuildError
 from bottle import makelist
-from bottle import template
 
 from share.config import load_yaml
-from share.errors import AvalonConfigError
+from share.errors import AvalonConfigError, AvalonException
+from share.url_map import url_for
 from .utils import get_root_path
 
 
@@ -81,6 +80,15 @@ class Avalon(Bottle):
                 self.add_route(route)
         self.blueprints.append(blueprint)
 
+    def get_url(self, endpoint, *kwargs):
+        name = endpoint.split('.')[-1]
+        try:
+            return super(Avalon, self).get_url(name, *kwargs)
+        except RouteBuildError:
+            pass
+
+        return url_for(endpoint, kwargs)
+
 
 class Blueprint(object):
     def __init__(self, name, subdomain=None, url_prefix=None):
@@ -92,36 +100,13 @@ class Blueprint(object):
     def add_url_rule(self, rule, view_func,
                      methods, endpoint, defaults={}, **options):
         route_list = []
+        endpoint = endpoint or view_func.__name__
         for method in makelist(methods):
             route = Route(
-                None, rule, method, view_func, defaults=defaults)
+                None, rule, method, view_func, defaults=defaults,
+                name=endpoint)
             route_list.append(route)
 
-        self.url_rules.update({endpoint: route_list})
-
-
-# like flask
-def url_for(name, **options):
-    if not isinstance(name, (str, unicode)):
-        raise RouteBuildError('The <name> should be a <str> or <unicode>')
-
-    try:
-        app, info = name.split(':')
-    except ValueError:
-        raise RouteBuildError(
-            'The <name> should like "<app>:<blueprint>.<endpoint>"')
-
-    try:
-        blueprint, endpoint = info.split('.')
-    except ValueError:
-        raise RouteBuildError(
-            'The <name> should like "<app>:<blueprint>.<endpoint>"')
-
-
-def get_template_path():
-    os
-    pass
-
-
-template = functools.partial(
-    template, template_lookup=get_template_path())
+        if self.url_rules.get(endpoint):
+            raise AvalonException('the endpoint has been set.')
+        self.url_rules[endpoint] = route_list
