@@ -3,7 +3,6 @@ import os
 
 from bottle import Bottle
 from bottle import Route, Router
-from bottle import RouteBuildError
 from bottle import makelist
 
 from share.config import load_yaml
@@ -15,12 +14,13 @@ from .utils import get_root_path
 class Route(Route):
     def __init__(self, app, rule, method, callback, name=None,
                  plugins=None, skiplist=None, defaults={},
-                 **config):
+                 https=False, **config):
         super(Route, self).__init__(
             app, rule, method, callback,
             name, plugins, skiplist,
             **config)
         self.defaults = defaults
+        self.https = https
 
 
 class Router(Router):
@@ -51,14 +51,15 @@ class Avalon(Bottle):
 
             default_memcached = gloabal_config['MEMCACHED']
             default_enable_sql_echo = gloabal_config['ENABLE_SQL_ECHO']
-            self.config.static_path = os.path.join(
-                environ['BASE'], gloabal_config['STATIC_PATH'])
+            default_domain = gloabal_config['DOMAIN']
 
             gloabal_config = gloabal_config['APP_' + name.upper()]
             self.config.enable_sql_echo = gloabal_config.get(
                 'ENABLE_SQL_ECHO', default_enable_sql_echo)
             self.config.memcached = gloabal_config.get(
                 'MEMCACHED', default_memcached)
+            self.config.domain = gloabal_config.get(
+                'DOMAIN', default_domain)
 
             if len(
                 set(app_config.keys()) - set(gloabal_config.keys())
@@ -80,14 +81,29 @@ class Avalon(Bottle):
                 self.add_route(route)
         self.blueprints.append(blueprint)
 
-    def get_url(self, endpoint, *kwargs):
-        name = endpoint.split('.')[-1]
-        try:
-            return super(Avalon, self).get_url(name, *kwargs)
-        except RouteBuildError:
-            pass
+    def get_url(self, endpoint, **kwargs):
+        # TODO: endpoint = <blueprint>.<name>
+        # try:
+        #     b, n = endpoint.split[':'][-1].split('.')
+        # except ValueError:
+        #     raise RouteBuildError(
+        #         'endpoint should end with <blueprint>:<name>')
 
-        return url_for(endpoint, kwargs)
+        # blueprint = None
+        # for bp in self.blueprints:
+        #     if bp.name == b:
+        #         blueprint = bp
+        #         break
+        # if not blueprint:
+        #     raise RouteBuildError(
+        #         'blueprint "%s" not found' % b)
+
+        scheme, subdomain, path = url_for(endpoint, **kwargs)
+        return '%s://%s.%s%s' % (
+            scheme,
+            subdomain,
+            self.config.domain,
+            path)
 
 
 class Blueprint(object):
@@ -98,13 +114,15 @@ class Blueprint(object):
         self.url_rules = {}
 
     def add_url_rule(self, rule, view_func,
-                     methods, endpoint, defaults={}, **options):
+                     methods, endpoint, defaults={},
+                     https=False, **options):
         route_list = []
         endpoint = endpoint or view_func.__name__
         for method in makelist(methods):
             route = Route(
                 None, rule, method, view_func, defaults=defaults,
-                name=endpoint)
+                name=endpoint, https=https)
+            route.blueprint = self
             route_list.append(route)
 
         if self.url_rules.get(endpoint):

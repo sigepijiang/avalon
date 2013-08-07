@@ -22,15 +22,15 @@ get_enabled_apps() {
 }
 
 _manage_update() {
-    APPS=$@
+    local APPS=$@
 
     if [ -z "$APPS" ]; then
         APPS=$(get_enabled_apps)
     fi
 
     for app in $APPS; do
-        conf=$(get_conf $app)
-        vassal="${UWSGI_EMPEROR}/${app}.json"
+        local conf=$(get_conf $app)
+        local vassal="${UWSGI_EMPEROR}/${app}.json"
         if [ -z "$conf" ]; then
             echo_info "App $app has been removed."
             rm -f "$vassal"
@@ -41,9 +41,12 @@ _manage_update() {
             rm -f "$vassal"
             python $BASE/tools/uwsgi_conf.py "$conf" > "$vassal"
         fi
+
+        local app_info=($(python $BASE/tools/get_app_info.py $conf))
+        local app_type=${app_info[2]}
+        python $BASE/tools/make_$(echo $app_type)_url_map.py ${app_info[*]}
     done
 
-    python $BASE/tools/make_url_map.py $(get_enabled_apps) 
     if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
         nginx_render
     fi
@@ -147,6 +150,11 @@ goodbye() {
     unset ENV_RUN_PATH
     unset ENV_LOG_PATH
     unset AVALON_ENVIRON
+}
+
+nginx_render() {
+    $BASE/tools/nginx/render.py
+    nginx -p $BASE/.py/etc/nginx -c $BASE/.py/etc/nginx/nginx.conf -t
 }
 
 _manage_add() {

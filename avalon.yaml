@@ -7,13 +7,8 @@ DEVELOPMENT: &dev
     ENABLE_SQL_ECHO: false
     USE_HTTP: true
 
-    APP_ROUTER: &app_router
-        HOST: '0.0.0.0'
-        PORT: 23900
-        PROCESSES: 8
-        USE_HTTP: true
-        DISABLE_LOGGING: true
-        LOG_4XX: true
+    NGINX_HOST: 0.0.0.0
+    NGINX_PORT: 23900
 
     APP_BLOG: &app_blog
         HOST: '0.0.0.0'

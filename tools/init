@@ -13,6 +13,4 @@ pip install alembic
 pip install uwsgi
 pip install python-memcached 
 
-if [ ! -d $PYLIB_PATH/share ]; then
-    ln -s $BASE/share $PYLIB_PATH/share
-fi
+ln -s -f -n $BASE/share/share-python $PYLIB_PATH/share

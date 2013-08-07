@@ -4,12 +4,16 @@ import os
 import yaml
 from bottle import RouteBuildError
 
-from share.bottle import Router
-
 
 def _url_bottle_handle(rule, **kwargs):
-    Router()
-    pass
+    from share.bottle import Router
+    scheme = 'https' if rule['https'] else 'http'
+    subdomain = rule['subdomain']
+    rule = rule['rule']
+    router = Router()
+    router.add(rule, 'GET', lambda i: i, 'target')
+    path = router.build('target', **kwargs)
+    return scheme, subdomain, path
 
 
 URL_FACTORY = {
@@ -22,7 +26,7 @@ def get_url_map():
     global URL_MAP
     map_file = os.path.join(os.environ['BASE'], 'share/url_map.yaml')
     if not URL_MAP:
-        with open(map_file, 'wb') as f:
+        with open(map_file, 'rb') as f:
             URL_MAP = yaml.load(f)
     return URL_MAP
 
@@ -42,7 +46,7 @@ def get_endpoint_info(name):
     except ValueError:
         raise RouteBuildError(
             'The <name> should like "<app>:<blueprint>.<endpoint>"')
-    return app, blueprint, name
+    return app, blueprint, endpoint
 
 
 def url_for(endpoint, **kwargs):
@@ -51,8 +55,8 @@ def url_for(endpoint, **kwargs):
 
     try:
         rule = url_map[app][blueprint][name]
-    except KeyError:
-        raise RouteBuildError('Not found')
+    except KeyError as e:
+        raise RouteBuildError(e)
 
-    app_name = url_map[app]['app_name']
-    return URL_FACTORY[app_name](rule, **kwargs)
+    app_type = url_map[app]['app_type']
+    return URL_FACTORY[app_type](rule, **kwargs)

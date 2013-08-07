@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from share.bottle import MethodView, content2html, view
+from share.bottle import url
 from share.bottle import NotFound
 
 from blog.models import TextModel
@@ -19,5 +20,11 @@ class TextView(MethodView):
 
 
 class TextRedirectView(MethodView):
+    @view('blog.html')
+    @content2html
     def get(self, file_name, file_type):
-        pass
+        return dict(
+            file_name=file_name,
+            file_type=file_type)
+
+
