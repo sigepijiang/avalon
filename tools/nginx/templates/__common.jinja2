@@ -1,0 +1,9 @@
+{% macro uwsgi(upstream) -%}
+include uwsgi_params;
+uwsgi_pass {{ upstream }};
+{%- endmacro %}
+
+{% macro proxy(upstream, uri) -%}
+include proxy_params;
+proxy_pass http://{{ upstream }}{{ uri }};
+{%- endmacro %}

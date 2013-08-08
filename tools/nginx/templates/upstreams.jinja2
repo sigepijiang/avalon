@@ -1,0 +1,4 @@
+{% from "__nginx.jinja2" import upstream -%}
+{% for ups in upstreams -%}
+{{ upstream(ups.name, *ups.servers) }}
+{% endfor %}

@@ -10,7 +10,7 @@ pip install pygments
 pip install ipython
 pip install mysql-python
 pip install alembic
-pip install uwsgi
 pip install python-memcached 
+pip install uwsgi
 
 ln -s -f -n $BASE/share/share-python $PYLIB_PATH/share

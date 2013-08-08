@@ -1,0 +1,24 @@
+{%- from "__nginx.jinja2" import server, listen, server_name, location, alias, include -%}
+{%- from "__common.jinja2" import uwsgi, proxy -%}
+{% call server() %}
+{{ listen(port, is_default_server) }}
+{{ server_name(*server_names) }}
+
+{% include "sites/" ~ site_name ~ ".jinja2" ignore missing with context %}
+{% for loc in locations %}
+{% call location(loc.pattern, loc.op) %}
+{%- if loc.type == 'uwsgi' -%}
+{{ uwsgi('app_' ~ loc.appname) }}
+{%- elif loc.type == 'proxy' -%}
+{{ proxy('app_' ~ loc.appname) }}
+{%- elif loc.type == 'alias' -%}
+{{ alias(loc.alias) }}
+{%- elif loc.type == 'include' -%}
+{{ include(loc.module) }}
+{%- endif %}
+{% if loc.name -%}
+{% include "locations/" ~ loc.name ~ ".jinja2" ignore missing with context %}
+{%- endif -%}
+{% endcall %}
+{% endfor %}
+{% endcall %}

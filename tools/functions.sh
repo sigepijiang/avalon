@@ -16,7 +16,7 @@ get_all_confs() {
 }                                                                        
 
 get_enabled_apps() {
-    for vassal in $(find $UWSGI_EMPEROR -name "*.json"); do
+    for vassal in $(find $_UWSGI_VASSAL_PATH -name "*.json"); do
         basename $vassal | cut -d . -f 1
     done
 }
@@ -30,21 +30,21 @@ _manage_update() {
 
     for app in $APPS; do
         local conf=$(get_conf $app)
-        local vassal="${UWSGI_EMPEROR}/${app}.json"
+        local vassal="$_UWSGI_VASSAL_PATH/${app}.json"
         if [ -z "$conf" ]; then
             echo_info "App $app has been removed."
             rm -f "$vassal"
         elif [ ! -f "$vassal" ]; then
             echo_error "Vassal $app does not exist, ignored."
         else
-            echo_info "Updating App $app..."
+            echo_info "Updating App ${app}..."
             rm -f "$vassal"
-            python $BASE/tools/uwsgi_conf.py "$conf" > "$vassal"
+            python $TOOL_PATH/uwsgi_conf.py "$conf" > "$vassal"
         fi
 
-        local app_info=($(python $BASE/tools/get_app_info.py $conf))
+        local app_info=($(python $TOOL_PATH/get_app_info.py $conf))
         local app_type=${app_info[2]}
-        python $BASE/tools/make_$(echo $app_type)_url_map.py ${app_info[*]}
+        python $TOOL_PATH/make_${app_type}_url_map.py ${app_info[*]}
     done
 
     if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
@@ -53,13 +53,15 @@ _manage_update() {
 }
 
 _uwsgi_common() {
+    local UWSGI_LOG_MAXSIZE=268435456
+    local UWSGI_CPU_AFFINITY=2
     env UWSGI_VASSAL_VIRTUALENV="$PY_ENV" \
         UWSGI_VASSAL_SET="base_dir=$BASE" uwsgi \
         --virtualenv="$PY_ENV" \
-        --pidfile="$ENV_RUN_PATH/avalon.pid" \
+        --pidfile="$ENV_RUN_PATH/uwsgi.pid" \
         --log-maxsize="$UWSGI_LOG_MAXSIZE" \
         --cpu-affinity="$UWSGI_CPU_AFFINITY" \
-        --emperor="$UWSGI_EMPEROR" \
+        --emperor="$_UWSGI_VASSAL_PATH" \
         $@ \
         --memory-report \
         --log-zero \
@@ -71,33 +73,33 @@ _uwsgi_common() {
 }
 
 uwsgi_start() {
-    echo -n "Starting $UWSGI_DESC: "
-    if kill -0 $(cat $UWSGI_PIDFILE 2>/dev/null) 2>/dev/null; then
+    echo -n "Starting $_UWSGI_DESC: "
+    if kill -0 $(cat $ENV_RUN_PATH/uwsgi.pid 2>/dev/null) 2>/dev/null; then
         echo_error "failed."
-        echo "  $UWSGI_NAME is already running."
+        echo "  $_UWSGI_NAME is already running."
     else
-        _uwsgi_common --daemonize="$UWSGI_LOGFILE"
-        echo_info "$UWSGI_NAME."
+        _uwsgi_common --daemonize="$ENV_LOG_PATH/avalon.log"
+        echo_info "$_UWSGI_NAME."
     fi
 }
 
 uwsgi_debug() {
-    echo -n "Starting $UWSGI_DESC: "
-    if kill -0 $(cat $UWSGI_PIDFILE 2>/dev/null) 2>/dev/null; then
+    echo -n "Starting $_UWSGI_DESC: "
+    if kill -0 $(cat $ENV_RUN_PATH/uwsgi.pid 2>/dev/null) 2>/dev/null; then
         echo_error "failed."
-        echo "  $UWSGI_NAME is already running."
+        echo "  $_UWSGI_NAME is already running."
     else
         _uwsgi_common --catch-exceptions
-        echo_info "$UWSGI_NAME."
+        echo_info "$_UWSGI_NAME."
     fi
 }
 
 uwsgi_reload() {
-    echo -n "Reloading $UWSGI_DESC: "
+    echo -n "Reloading $_UWSGI_DESC: "
     source "$PY_ENV/bin/activate"
-    error=$(uwsgi --reload $UWSGI_PIDFILE 2>&1 >/dev/null)
+    error=$(uwsgi --reload $ENV_RUN_PATH/uwsgi.pid 2>&1 >/dev/null)
     if [ -z "$error" ]; then
-        echo_info "$UWSGI_NAME."
+        echo_info "$_UWSGI_NAME."
     else
         echo_error "failed."
         echo "  $error"
@@ -105,11 +107,11 @@ uwsgi_reload() {
 }
 
 uwsgi_stop() {
-    echo -n "Stopping $UWSGI_DESC: "
+    echo -n "Stopping $_UWSGI_DESC: "
     source "$PY_ENV/bin/activate"
-    error=$(uwsgi --stop $UWSGI_PIDFILE 2>&1 >/dev/null)
+    error=$(uwsgi --stop $ENV_RUN_PATH/uwsgi.pid 2>&1 >/dev/null)
     if [ -z "$error" ]; then
-        echo_info "$UWSGI_NAME."
+        echo_info "$_UWSGI_NAME."
     else
         echo_error "failed."
         echo "  $error"
@@ -118,7 +120,7 @@ uwsgi_stop() {
 
 uwsgi_restart() {
     uwsgi_stop
-    while kill -0 $(cat $UWSGI_PIDFILE 2>/dev/null) 2>/dev/null ; do
+    while kill -0 $(cat $ENV_RUN_PATH/uwsgi.pid 2>/dev/null) 2>/dev/null ; do
         echo -n '.'
     done
     uwsgi_start
@@ -132,7 +134,7 @@ get_all_apps() {
 
 get_conf() {
     for vassal in $(get_all_confs); do
-        v=$(echo $vassal|grep $1/app.yaml)
+        v=$(echo $vassal | grep $1/app.yaml)
         if [ -n "$v" ]; then
             echo $v
             return
@@ -143,18 +145,30 @@ get_conf() {
 goodbye() {
     deactivate
     unset BASE
+    unset ENV_PATH
+
+    unset TOOL_PATH
+
     unset PY_ENV
     unset PYLIB_PATH
-    unset TOOL_PATH
-    unset NGINX_CONFIG_PATH
+
+    unset ENV_ETC_PATH
     unset ENV_RUN_PATH
     unset ENV_LOG_PATH
+
+    unset NGINX_CONFIG_PATH
+    unset _UWSGI_VASSAL_PATH
+    unset _UWSGI_DESC
+    unset _UWSGI_NAME
+
     unset AVALON_ENVIRON
+
+    unset -f manage
 }
 
 nginx_render() {
     $BASE/tools/nginx/render.py
-    nginx -p $BASE/.py/etc/nginx -c $BASE/.py/etc/nginx/nginx.conf -t
+    nginx -p $NGINX_CONFIG_PATH -c $NGINX_CONFIG_PATH/nginx.conf -t
 }
 
 _manage_add() {
@@ -171,10 +185,10 @@ _manage_add() {
             return 1
         fi
 
-        local vassal="$PY_ENV/etc/uwsgi/vassals/$app.json"
+        local vassal="$_UWSGI_VASSAL_PATH/${app}.json"
         if [ ! -f $vassal ]; then
-            echo_info "Adding App $app..."
-            python $BASE/tools/uwsgi_conf.py $conf > $vassal
+            echo_info "Adding App ${app}..."
+            python $TOOL_PATH/uwsgi_conf.py $conf > $vassal
         fi
     done
 }
@@ -187,7 +201,7 @@ _manage_list() {
     fi
 
     for app in $APPS; do
-        echo_info "${app}"
+        echo_info "$app"
     done
 }
 
@@ -198,29 +212,22 @@ _manage_remove() {
     fi
 
     for app in $APPS; do
-        local vassal="$PY_ENV/etc/uwsgi/vassals/$app.json"
+        local vassal="$_UWSGI_VASSAL_PATH/$app.json"
         if [ -e $vassal ]; then
-            echo_info "Removing app $app..."
+            echo_info "Removing app ${app}..."
         fi
         rm -f "$vassal"
     done
 }
 
 _manage_log() {
-    local LOG_PATH=$BASE/.py/var/log/avalon.log
+    local LOG_PATH=$ENV_LOG_PATH/avalon.log
     tail -f $LOG_PATH
 }
 
 manage() {
     local ACTION=$1
     local APPS=${@:2}
-    UWSGI_LOG_MAXSIZE=268435456
-    UWSGI_CPU_AFFINITY=2
-    UWSGI_EMPEROR="$PY_ENV/etc/uwsgi/vassals"
-    UWSGI_PIDFILE="$ENV_RUN_PATH/avalon.pid"
-    UWSGI_DESC="Avalon"
-    UWSGI_NAME="avalon"
-    UWSGI_LOGFILE="$PY_ENV/var/log/avalon.log"
 
     case $1 in
         add)

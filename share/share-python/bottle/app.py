@@ -82,7 +82,7 @@ class Avalon(Bottle):
         self.blueprints.append(blueprint)
 
     def get_url(self, endpoint, **kwargs):
-        # TODO: endpoint = <blueprint>.<name>
+        # TODO: endpoint = <blueprint>.<name> or <name>
         # try:
         #     b, n = endpoint.split[':'][-1].split('.')
         # except ValueError:
@@ -98,12 +98,7 @@ class Avalon(Bottle):
         #     raise RouteBuildError(
         #         'blueprint "%s" not found' % b)
 
-        scheme, subdomain, path = url_for(endpoint, **kwargs)
-        return '%s://%s.%s%s' % (
-            scheme,
-            subdomain,
-            self.config.domain,
-            path)
+        return url_for(endpoint, **kwargs)
 
 
 class Blueprint(object):
@@ -113,8 +108,7 @@ class Blueprint(object):
         self.url_prefix = url_prefix
         self.url_rules = {}
 
-    def add_url_rule(self, rule, view_func,
-                     methods, endpoint, defaults={},
+    def add_url_rule(self, rule, view_func, methods, endpoint, defaults={},
                      https=False, **options):
         route_list = []
         endpoint = endpoint or view_func.__name__
@@ -128,3 +122,13 @@ class Blueprint(object):
         if self.url_rules.get(endpoint):
             raise AvalonException('the endpoint has been set.')
         self.url_rules[endpoint] = route_list
+
+
+class APIBlueprint(Blueprint):
+    def __init__(self, name, url_prefix):
+        super(APIBlueprint, self).__init__(name, 'apis', url_prefix)
+
+
+class BackendsBlueprint(Blueprint):
+    def __init__(self, name, url_prefix):
+        super(APIBlueprint, self).__init__(name, 'backends', url_prefix)

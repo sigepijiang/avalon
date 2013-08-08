@@ -8,6 +8,10 @@ class AvalonException(Exception):
     pass
 
 
+class RouteBuildError(AvalonException):
+    pass
+
+
 class AvalonEnvironError(AvalonException):
     pass
 

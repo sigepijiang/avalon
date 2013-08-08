@@ -1,0 +1,50 @@
+{# common nginx block #}
+{% macro ngx_block(name, attrs=[]) -%}
+{{ name }} {%- for attr in attrs %} {{ attr }}{% endfor %} {
+    {{ caller()|indent }}
+}
+{%- endmacro %}
+
+{# server block #}
+{% macro server() -%}
+server {
+    {{ caller()|indent }}
+}
+{%- endmacro %}
+
+{# location block #}
+{% macro location(pattern, op='') -%}
+location {%- if op %} {{ op }}{% endif %} {{ pattern }} {
+    {{ caller()|indent }}
+}
+{%- endmacro %}
+
+{# upstream block #}
+{% macro upstream(name) %}
+upstream {{ name }} {
+{%- for serv in varargs %}
+    server {{ serv }};
+{%- endfor %}
+    fair;
+}
+{%- endmacro %}
+
+{# listen stat #}
+{% macro listen(port, is_default_server=False) -%}
+listen {{ port }}{% if is_default_server %} default_server{% endif %};
+{%- endmacro %}
+
+{# server_name stat #}
+{% macro server_name() %}
+server_name {%- for name in varargs %} {{ name }}{% endfor %};
+{%- endmacro %}
+
+{# alias stat #}
+{% macro alias(path) -%}
+alias {{ path }};
+{%- endmacro %}
+
+{# include stat #}
+{% macro include(module) -%}
+include {{ module }};
+{%- endmacro %}

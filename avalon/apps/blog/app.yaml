@@ -1,3 +1,4 @@
+# Multiple app config
 DEVELOPMENT: &dev
     APP_NAME: 'blog'
     APP_TYPE: 'bottle'

@@ -2,7 +2,9 @@
 import os
 
 import yaml
-from bottle import RouteBuildError
+
+from share.errors import RouteBuildError
+from share.utils import is_file_exists
 
 
 def _url_bottle_handle(rule, **kwargs):
@@ -22,9 +24,14 @@ URL_FACTORY = {
 URL_MAP = {}
 
 
-def get_url_map():
+def get_url_map(app_name):
     global URL_MAP
-    map_file = os.path.join(os.environ['BASE'], 'share/url_map.yaml')
+    map_file = os.path.join(
+        os.environ['BASE'],
+        'share/url_maps/%s.yaml' % app_name)
+    if not is_file_exists(map_file):
+        raise RouteBuildError('<%s> not avaliable!' % app_name)
+
     if not URL_MAP:
         with open(map_file, 'rb') as f:
             URL_MAP = yaml.load(f)
@@ -51,12 +58,16 @@ def get_endpoint_info(name):
 
 def url_for(endpoint, **kwargs):
     app, blueprint, name = get_endpoint_info(endpoint)
-    url_map = get_url_map()
+    url_map = get_url_map(app)
+    domain = url_map['domain']
 
     try:
-        rule = url_map[app][blueprint][name]
+        rule = url_map['blueprints'][blueprint][name]
     except KeyError as e:
         raise RouteBuildError(e)
 
-    app_type = url_map[app]['app_type']
-    return URL_FACTORY[app_type](rule, **kwargs)
+    app_type = url_map['app_type']
+    scheme, subdomain, path = URL_FACTORY[app_type](rule, **kwargs)
+
+    return '%(scheme)s://%(subdomain)s.%(domain)s/%(path)s' % dict(
+        scheme=scheme, subdomain=subdomain, domain=domain, path=path)

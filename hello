@@ -1,12 +1,23 @@
 #! /usr/bin/env bash
 
 export BASE="$(dirname $PWD/$0)"
+export ENV_PATH="$BASE/env"
+
+export TOOL_PATH="$BASE/tools"
+
 export PY_ENV="$BASE/.py"
 export PYLIB_PATH="$PY_ENV/lib/python2.7/site-packages"
-export TOOL_PATH="$BASE/tools"
-export NGINX_CONFIG_PATH="$PY_ENV/etc/nginx"
-export ENV_RUN_PATH="$PY_ENV/var/run"
-export ENV_LOG_PATH="$PY_ENV/var/log"
+
+export ENV_ETC_PATH="$ENV_PATH/etc"
+export ENV_RUN_PATH="$ENV_PATH/var/run"
+export ENV_LOG_PATH="$ENV_PATH/var/log"
+
+export NGINX_CONFIG_PATH="$ENV_ETC_PATH/nginx"
+
+# DONT'T START WITH UWSGI !!!
+export _UWSGI_VASSAL_PATH="$ENV_ETC_PATH/uwsgi/vassals"
+export _UWSGI_DESC='Avalon'
+export _UWSGI_NAME='avalon'
 
 if [ -n "${AVALON_ENVIRON}" ]; then
     return
@@ -23,10 +34,11 @@ if [ ! -d $PY_ENV ]; then
     virtualenv $PY_ENV
 fi
 
-mkdir -p $NGINX_CONFIG_PATH
+mkdir -p $ENV_ETC_PATH
 mkdir -p $ENV_LOG_PATH
 mkdir -p $ENV_RUN_PATH
-mkdir -p $PY_ENV/etc/uwsgi/vassals
+mkdir -p $NGINX_CONFIG_PATH
+mkdir -p $UWSGI_VASSAL_PATH
 
 echo "BASE: $BASE"
 echo "PYTHON ENVIRONMENT: $PY_ENV"

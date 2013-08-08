@@ -9,7 +9,6 @@ from share.utils import import_module
 
 
 def make_url_map():
-    print sys.argv
     app_name, app_path, app_type = sys.argv[1:]
     map_file = os.path.join(
         os.environ['BASE'],

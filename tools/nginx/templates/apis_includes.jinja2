@@ -1,0 +1,19 @@
+{%- from "__nginx.jinja2" import server, listen, server_name, location, alias, include -%}
+{%- from "__common.jinja2" import uwsgi, proxy -%}
+{% for loc in locations %}
+{% call location('/apis' ~ loc.pattern, loc.op) -%}
+set_by_lua $apis_path 'return string.sub(ngx.var.document_uri, 6)';
+{% if loc.type == 'uwsgi' -%}
+{{ uwsgi('app_' ~ loc.appname) }}
+uwsgi_param PATH_INFO $apis_path;
+uwsgi_param HTTP_HOST {{ servname }}{% if port not in (80, 443) %}:{{ port }}{% endif %};
+uwsgi_param SERVER_NAME {{ servname }};
+{%- elif loc.type == 'proxy' -%}
+{{ proxy('app_' ~ loc.appname, '$apis_path') }}
+proxy_set_header Host {{ servname }};
+{%- endif %}
+{% if loc.name -%}
+{% include "location/" ~ loc.name ~ ".jinja2" ignore missing with context %}
+{%- endif -%}
+{% endcall %}
+{% endfor %}

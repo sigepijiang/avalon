@@ -1,0 +1,30 @@
+set $m_url_root '{{ mobile_site_root }}';
+
+if ($http_user_agent ~* '(android|iphone|ipod|windows phone|mqqbrowser|blackberry|symbian)') {
+    set $mobile_request 'yes';    
+}
+
+if ($http_cookie ~ 'redirect_mobile=no') {
+    set $mobile_request 'no';    
+}
+
+if ($mobile_request = 'yes') {
+
+    rewrite '^/?$' 'http://$m_url_root/';
+
+    rewrite '^/site/?$' 'http://$m_url_root/articles/';
+    rewrite '^/site/all/?$' 'http://$m_url_root/articles/';
+    rewrite '^/site/([a-z]+)/?$' 'http://$m_url_root/site/$1/articles/';
+    rewrite '^/article/(\d+)/?$' 'http://$m_url_root/article/$1/';
+
+    rewrite '^/ask/?$' 'http://$m_url_root/ask/';
+    rewrite '^/question/(\d+)/?$' 'http://$m_url_root/question/$1/';
+
+    rewrite '^/group/?$' 'http://$m_url_root/posts/';
+    rewrite '^/group/all/?$' 'http://$m_url_root/posts/';
+    rewrite '^/group/all/(\d+)/?$' 'http://$m_url_root/posts/';
+    rewrite '^/group/hot_posts/?$' 'http://$m_url_root/posts/';
+    rewrite '^/group/(\d+)/?$' 'http://$m_url_root/group/$1/posts/';
+    rewrite '^/post/(\d+)/?$' 'http://$m_url_root/post/$1/';
+
+}

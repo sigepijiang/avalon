@@ -25,7 +25,8 @@ def main():
 
     appname = app_data['APP_NAME']
     data = global_data['APP_' + appname.upper()]
-    default_use_http = global_data.get('USE_HTTP')
+    default_use_http = global_data['UWSGI']['USE_HTTP']
+    default_enable_threads = global_data['UWSGI']['ENABLE_THREADS']
     data.update(app_data)
 
     # uwsgi 读取 yaml 时对顺序有要求, 因此使用 json 来 dump
@@ -92,8 +93,8 @@ def main():
     if 'PROCESSES' in data:
         uwsgi['processes'] = data['PROCESSES']
 
-    if 'ENABLE_THREADS' in data:
-        uwsgi['enable-threads'] = data['ENABLE_THREADS']
+    uwsgi['enable-threads'] = data.get(
+        'ENABLE_THREADS', default_enable_threads)
 
     uwsgi['env'] = [
         'AVALON_APPNAME=%s' % data['APP_NAME'],

@@ -1,0 +1,2 @@
+rewrite "^/group/latest/?$" "http://{{ server_names[0] }}/group/user/recent_replies/" permanent;
+rewrite "^/group/posts/(\d+)/?" "http://{{ server_names[0] }}/group/$1/" permanent;

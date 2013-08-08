@@ -5,7 +5,11 @@ DEVELOPMENT: &dev
     STATIC_PATH: 'static/src'
     MEMCACHED: ''
     ENABLE_SQL_ECHO: false
-    USE_HTTP: true
+
+    # 1.9.5 needed
+    UWSGI:   
+        ENABLE_THREADS: true
+        USE_HTTP: true
 
     NGINX_HOST: 0.0.0.0
     NGINX_PORT: 23900
@@ -15,8 +19,6 @@ DEVELOPMENT: &dev
         PORT: 23901
         PROCESSES: 2
         USE_HTTP: true 
-        DISABLE_LOGGING: false
-        LOG_4XX: true
         TYPE: 'app'
         DB_MASTER: 'mysql+mysqldb://blog:bbbb@localhost/blog'
 

@@ -1,0 +1,75 @@
+{% set chroot = chroot|default('/') -%}
+# user                    www-data;
+worker_processes        {{ workers }};
+pid                     {{ chroot }}var/run/nginx.pid;
+worker_rlimit_nofile    10240;
+error_log               {{ chroot }}var/log/nginx/error.log;
+
+events {
+    use                 {{ events['use'] }};
+    worker_connections  {{ events['worker_connections'] }};
+}
+
+http {
+
+    ##
+    # Basic Settings
+    ##
+
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+    client_body_temp_path {{ chroot }}var/lib/nginx/body;
+    uwsgi_temp_path {{ chroot }}var/lib/nginx/uwsgi 1 2;
+    client_max_body_size 4M;
+    # server_tokens off;
+
+    # server_names_hash_bucket_size 64;
+    # server_name_in_redirect off;
+
+    include {{ chroot }}etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    ##
+    # Logging Settings
+    ##
+
+    access_log {{ chroot }}var/log/nginx/access.log;
+    error_log {{ chroot }}var/log/nginx/error.log;
+
+    ##
+    # Gzip Settings
+    ##
+
+    gzip on;
+    gzip_disable "msie6";
+
+    # gzip_vary on;
+    # gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.1;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss application/atom+xml text/javascript image/svg+xml;
+
+    ##
+    # nginx-lua config
+    ##
+
+    lua_package_path "{{ chroot }}etc/nginx/?.lua;;";
+    lua_shared_dict gkshm 20m;
+
+    ##
+    # Virtual Host Configs
+    ##
+
+    include upstreams.conf;
+    include {{ chroot }}etc/nginx/conf.d/*.conf;
+    include {{ chroot }}etc/nginx/sites-enabled/*;
+
+    sub_filter www.guokr.com/ www.{{ domain_name }}
+    {%- if unified_port not in (80, 443) %}:{{ unified_port }}{% endif %}/;
+    sub_filter_once off;
+    sub_filter_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss application/atom+xml text/javascript image/svg+xml;
+}
