@@ -3,3 +3,4 @@
 session/
 .py/
 *.rdb
+env/
