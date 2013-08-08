@@ -1,1 +1,0 @@
-{"uwsgi": {"virtualenv": "%(base_dir)/.py", "http-socket": "0.0.0.0:23901", "processes": 2, "chdir": "%(base_dir)/avalon/apps/blog", "pep3333-input": "", "module": "blog:app", "buffer-size": 32768, "post-buffering": 4096, "master": 1, "env": ["AVALON_APPNAME=blog"], "so-keepalive": 1, "enable-threads": true}}
