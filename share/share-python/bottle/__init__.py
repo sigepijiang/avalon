@@ -5,5 +5,5 @@ from bottle import RouteBuildError, request
 from .app import Avalon, Blueprint, Router
 from .view import MethodView
 from .errors import NotFound, BadRequet
-from .template import Jinja2Template, view
+from .template import view
 from .app import url_for
