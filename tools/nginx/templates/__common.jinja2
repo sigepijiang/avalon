@@ -1,6 +1,12 @@
-{% macro uwsgi(upstream) -%}
+{% macro uwsgi(upstream, equal_domain=None) -%}
 include uwsgi_params;
+{% if equal_domain %}
+if ($domain = "{{ equal_domain }}") {
+    uwsgi_pass {{ upstream }};
+}
+{% else %}
 uwsgi_pass {{ upstream }};
+{% endif %}
 {%- endmacro %}
 
 {% macro proxy(upstream, uri) -%}

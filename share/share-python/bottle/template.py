@@ -6,7 +6,7 @@ from bottle import view, Jinja2Template
 from bottle import request
 from bottle import default_app
 
-from share.utils import static_file
+from .utils import static_file
 
 
 def get_template_path():

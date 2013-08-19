@@ -69,5 +69,5 @@ def url_for(endpoint, **kwargs):
     app_type = url_map['app_type']
     scheme, subdomain, path = URL_FACTORY[app_type](rule, **kwargs)
 
-    return '%(scheme)s://%(subdomain)s.%(domain)s/%(path)s' % dict(
+    return '%(scheme)s://%(subdomain)s.%(domain)s%(path)s' % dict(
         scheme=scheme, subdomain=subdomain, domain=domain, path=path)

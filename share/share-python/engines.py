@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
-import sys
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from bottle import default_app
 from bottle import cached_property
@@ -10,7 +10,9 @@ from bottle import cached_property
 class DataBaseOperation(object):
     @cached_property
     def Model(self):
-        return declarative_base()
+        model = declarative_base()
+        model.query = self.session.query_property()
+        return model
 
     @cached_property
     def engine(self):
@@ -21,6 +23,10 @@ class DataBaseOperation(object):
     @cached_property
     def session(self):
         return scoped_session(sessionmaker(bind=self.engine))
+
+    @cached_property
+    def relationship(self):
+        return relationship
 
 
 db = DataBaseOperation()
@@ -42,10 +48,6 @@ class TableOpt(object):
         db.session.delete(self)
         db.session.commit()
         return self
-
-    @classmethod
-    def query(cls):
-        return db.session.query(cls)
 
     def as_dict(self):
         return {}

@@ -5,14 +5,16 @@
 {{ server_name(*server_names) }}
 
 {% include "sites/" ~ site_name ~ ".jinja2" ignore missing with context %}
+set $domain "{{ domain }}";
+include apis_includes;
 {% for loc in locations %}
-{% call location(loc.pattern, loc.op) %}
-{%- if loc.type == 'uwsgi' -%}
-{{ uwsgi('app_' ~ loc.appname) }}
+{% call location(loc.name, loc.op) %}
+{%- if loc.app.app_type == 'uwsgi' -%}
+{{ uwsgi('app_' ~ loc.app.app_name) }}
 {%- elif loc.type == 'proxy' -%}
-{{ proxy('app_' ~ loc.appname) }}
-{%- elif loc.type == 'alias' -%}
-{{ alias(loc.alias) }}
+{{ proxy('app_' ~ loc.app.app_name) }}
+{%- elif loc.app.app_type == 'alias' -%}
+{{ alias(loc.app.app_alias) }}
 {%- elif loc.type == 'include' -%}
 {{ include(loc.module) }}
 {%- endif %}

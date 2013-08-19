@@ -47,7 +47,7 @@ _manage_update() {
         python $TOOL_PATH/make_${app_type}_url_map.py ${app_info[*]}
     done
 
-    if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
+    if [ "$AVALON_ENVIRON" != "PRODUCTION" ]; then
         nginx_render
     fi
 }
@@ -134,7 +134,7 @@ get_all_apps() {
 
 get_conf() {
     for vassal in $(get_all_confs); do
-        v=$(echo $vassal | grep $1/app.yaml)
+        local v=$(echo $vassal | grep $1/app.yaml)
         if [ -n "$v" ]; then
             echo $v
             return
@@ -166,9 +166,50 @@ goodbye() {
     unset -f manage
 }
 
-nginx_render() {
-    $BASE/tools/nginx/render.py
+nginx_test() {
     nginx -p $NGINX_CONFIG_PATH -c $NGINX_CONFIG_PATH/nginx.conf -t
+}
+
+nginx_render() {
+    python $BASE/tools/nginx/render.py
+    nginx -p $NGINX_CONFIG_PATH -c $NGINX_CONFIG_PATH/nginx.conf -t
+}
+
+nginx_reload() {
+    echo -n "Reloading nginx: "
+    if nginx -p $NGINX_CONFIG_PATH -c $NGINX_CONFIG_PATH/nginx.conf -s reload 2>/dev/null; then
+        echo_info "nginx."
+    else
+        echo_error "failed."
+    fi
+}
+
+nginx_stop() {
+    echo -n "Stoping nginx: "
+    if nginx -p $NGINX_CONFIG_PATH -c $NGINX_CONFIG_PATH/nginx.conf -s stop 2>/dev/null; then
+        echo_info "nginx."
+    else
+        echo_error "failed."
+    fi
+}
+
+nginx_start() {
+    echo -n "Starting nginx: "
+    if nginx -p $NGINX_CONFIG_PATH -c $NGINX_CONFIG_PATH/nginx.conf 2>/dev/null; then
+        echo_info "nginx."
+    else
+        echo_error "failed."
+    fi
+}
+
+nginx_restart() {
+    echo -n "Restarting nginx: "
+    nginx -p $NGINX_CONFIG_PATH -c $NGINX_CONFIG_PATH/nginx.conf -s stop 2>/dev/null
+    if nginx -p $NGINX_CONFIG_PATH -c $NGINX_CONFIG_PATH/nginx.conf 2>/dev/null; then
+        echo_info "nginx."
+    else
+        echo_error "failed."
+    fi
 }
 
 _manage_add() {
@@ -245,7 +286,7 @@ manage() {
             ;;
         # TODO
         touch)
-            if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
+            if [ "$AVALON_ENVIRON" != "PRODUCTION" ]; then
                 nginx_reload
             fi
             _manage_touch $APPS
@@ -261,14 +302,14 @@ manage() {
             ;;
         # TODO
         start)
-            if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
+            if [ "$AVALON_ENVIRON" != "PRODUCTION" ]; then
                 nginx_restart
             fi
             uwsgi_start
             ;;
         # TODO
         debug)
-            if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
+            if [ "$AVALON_ENVIRON" != "PRODUCTION" ]; then
                 nginx_restart
             fi
             uwsgi_debug
@@ -283,21 +324,21 @@ manage() {
             ;;
         # TODO
         stop)
-            if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
+            if [ "$AVALON_ENVIRON" != "PRODUCTION" ]; then
                 nginx_stop
             fi
             uwsgi_stop
             ;;
         # TODO
         restart|force-reload)
-            if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
+            if [ "$AVALON_ENVIRON" != "PRODUCTION" ]; then
                 nginx_restart
             fi
             uwsgi_restart
             ;;
         # TODO
         reload)
-            if [ "$GUOKR_ENVIRON" != "PRODUCTION" ]; then
+            if [ "$AVALON_ENVIRON" != "PRODUCTION" ]; then
                 nginx_reload
             fi
             uwsgi_reload

@@ -25,8 +25,10 @@ def id2ukey(source):
 def ukey2id(source):
     return base36_decode(source)
 
+
 def is_file_exists(path):
     return os.path.exists(path)
+
 
 class locked_cached_property(object):
     """A decorator that converts a function into a lazy property.  The
@@ -54,8 +56,11 @@ class locked_cached_property(object):
             return value
 
 
-def static_file(path):
-    return '/static/%s' % path
+def _static_file(domain, port, path):
+    if port in ('80', 80):
+        return 'http://static.%s/%s' % (domain, port, path)
+    else:
+        return 'http://static.%s:%s/%s' % (domain, port, path)
 
 
 # copied from django

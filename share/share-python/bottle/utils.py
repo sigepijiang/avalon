@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import functools
 import pkgutil
+
+from . import default_app
+
+from share.utils import _static_file
 
 
 # copied from flask
@@ -36,3 +41,9 @@ def get_root_path(import_name):
 
     # filepath is import_name.py for a module, or __init__.py for a package.
     return os.path.dirname(os.path.abspath(filepath))
+
+
+static_file = functools.partial(
+    _static_file,
+    default_app().config.domain,
+    default_app().config.port)

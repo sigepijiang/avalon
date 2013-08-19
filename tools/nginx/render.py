@@ -13,7 +13,7 @@ import platform
 import multiprocessing
 
 from jinja2 import Environment, FileSystemLoader
-from guokr.platform.config import load_yaml
+from share.config import load_yaml
 
 import parser
 
@@ -26,94 +26,32 @@ CONF = None
 def config():
     global CONF
     if CONF is None:
-        CONF = load_yaml(os.path.join(BASE, 'guokr.yaml'))
-        #_CONF = conf(
-        #    yaml['UNIFIED_PORT'],
-        #    'www',
-        #    yaml['DOMAIN_NAME'],
-        #    os.path.join(os.environ['BASE'], yaml['STATIC_DIR']),
-        #    os.path.join(os.environ['BASE'], yaml['MOBILE_STATIC_DIR']),
-        #    os.path.join(os.environ['BASE'], yaml['YOUTHPLAN_DIR']),
-        #    os.path.join(os.environ['BASE'], yaml['SPECIAL_DIR']),
-        #    yaml)
+        CONF = load_yaml(os.path.join(BASE, 'avalon.yaml'))
     return CONF
 
 
-def uwsgi_adapter(app):
-    return {'type': 'uwsgi',
-            'appname': app}
-
-
-def proxy_adapter(app):
-    return {'type': 'proxy',
-            'appname': app}
-
-
-def static_adapter(app):
-    return {'type': 'alias',
-            'alias': os.path.join(BASE, config()['STATIC_DIR'])}
-
-
-def mstatic_adapter(app):
-    return {'type': 'alias',
-            'alias': os.path.join(BASE, config()['MOBILE_STATIC_DIR'])}
-
-
-def youthplan_adapter(app):
-    return {'type': 'alias',
-            'alias': os.path.join(BASE, config()['YOUTHPLAN_DIR'])}
-
-def special_adapter(app):
-    return {'type': 'alias',
-            'alias': os.path.join(BASE, config()['SPECIAL_DIR'])}
-
-def apis_adapter(app):
-    return {'type': 'include',
-            'module': 'apis_includes.conf'}
-
-
-def adapter(app):
-    if app.endswith(':apis'):
-        app = ':apis'  # 所有的 apis 都是相同的
-    return {
-        ':apis': apis_adapter,
-        ':mstatic': mstatic_adapter,
-        ':static': static_adapter,
-        ':youthplan': youthplan_adapter,
-        ':special': special_adapter,
-        'galahad': proxy_adapter,
-        'bedivere': proxy_adapter,
-        'lancelot': proxy_adapter,
-    }.get(app, uwsgi_adapter)(app)
-
-
-def render_site(site):
+def render_domain_static(path, domain):
     conf = config()
-    port = conf['UNIFIED_PORT']
-    is_default_server = site.string == 'www'
-    server_names = ['%s.%s' % (site.string, conf['DOMAIN_NAME'])]
+    file_path = os.path.join(path, 'static.conf')
 
-    # By zy
-    if site.string == 'liuyan':
-        server_names.append('www.liuyanbaike.com')
-        server_names.append('liuyanbaike.com')
-    locations = []
-    site_name = site.string
-    for child in site.children:
-        loc = adapter(child.app)
-        loc['pattern'] = child.string
-        if child.is_regex:
-            loc['op'] = '~'
-        else:
-            # 尼玛正则表达式怎么转成易于识别的文件名啊
-            loc['name'] = \
-                '%s%s' % \
-                (site_name, child.string.replace('/', '.'))
-            loc['name'] = loc['name'].strip('.')
-        locations.append(loc)
-    return JENV.get_template('site.jinja2').render(
-        port=port, is_default_server=is_default_server,
-        site_name=site_name, server_names=server_names, locations=locations)
+    base_path = os.environ['BASE']
+    alias_path = os.path.join(
+        base_path, conf['STATIC_PATH'])
+    port = conf['NGINX']['LISTEN']
+    is_default_server = False
+    site_name = 'static'
+    server_names = ['.'.join(['static', domain.name])]
+    locations = [dict(
+        name='/', app=dict(
+            app_type='alias',
+            app_alias=alias_path))]
+    domain = domain.name
+    text = JENV.get_template('site.jinja2').render(
+        port=port,
+        is_default_server=is_default_server,
+        site_name=site_name, server_names=server_names,
+        locations=locations, domain=domain)
+    writefp(file_path, text)
 
 
 def render_upstreams():
@@ -135,29 +73,7 @@ def render_upstreams():
     return JENV.get_template('upstreams.jinja2').render(upstreams=upstreams)
 
 
-def render_apis_includes(site):
-    conf = config()
-    locations = []
-    port = conf['UNIFIED_PORT']
-    for child in site.children:
-        loc = adapter(child.app)
-        loc['pattern'] = child.string
-        if child.is_regex:
-            loc['op'] = '~'
-        else:
-            # 尼玛正则表达式怎么转成易于识别的文件名啊
-            loc['name'] = \
-                'apis_include/%s%s' % \
-                (child.app, child.string.replace('/', '.'))
-            loc['name'] = loc['name'].strip('.')
-        locations.append(loc)
-    servname = '%s.%s' % (site.string, conf['DOMAIN_NAME'])
-    return (JENV.get_template('apis_includes.jinja2')
-                .render(locations=locations,
-                        servname=servname, port=port))
-
-
-def render_nginx_conf():
+def render_nginx_conf(root):
     conf = config()
     workers = multiprocessing.cpu_count()
     events = dict(use='epoll', worker_connections=10240)
@@ -168,24 +84,54 @@ def render_nginx_conf():
     return (JENV.get_template('nginx.conf.jinja2')
                 .render(chroot=chroot(), workers=workers,
                         events=events,
-                        unified_port=conf['UNIFIED_PORT'],
-                        domain_name=conf['DOMAIN_NAME']))
+                        port=conf['NGINX']['LISTEN'],
+                        domain=conf['DOMAIN'],
+                        root=root))
+
+
+def render_apis_includes(path, root):
+    conf = config()
+    file_path = os.path.join(path, 'apis_includes')
+
+    port = conf['NGINX']['LISTEN']
+    text = JENV.get_template('apis_includes.jinja2').render(
+        root=root, port=port,)
+    writefp(file_path, text)
 
 
 def render_static(template):
     return JENV.get_template(template).render()
 
 
-def render_m_url_adapters():
+def render_domain(domain):
+    _chroot = chroot()
+    domain_config_path = os.path.join(
+        _chroot, 'etc/nginx/sites-available', domain.name)
+    symlink_path = os.path.join(
+        _chroot, 'etc/nginx/sites-enabled', domain.name)
+    makedirs(domain_config_path)
+    [render_subdomain(
+        domain_config_path, s) for s in domain.subdomains.values()]
+    symlink(domain_config_path, symlink_path)
+    render_domain_static(domain_config_path, domain)
+
+
+def render_subdomain(path, subdomain):
     conf = config()
-    domain = conf['DOMAIN_NAME']
-    port = conf['UNIFIED_PORT']
-    mobile_site = 'm'
-    mobile_site_root = '%s.%s%s' % (mobile_site,
-                                    domain,
-                                    ((':' + str(port)) if port != 80 else ''))
-    return (JENV.get_template('m_url_adapters.jinja2')
-                .render(mobile_site_root=mobile_site_root))
+    file_path = os.path.join(path, '%s.conf' % subdomain.name)
+
+    port = conf['NGINX']['LISTEN']
+    is_default_server = subdomain.name == 'www'
+    site_name = subdomain.name
+    server_names = ['.'.join([subdomain.name, subdomain.domain.name])]
+    locations = subdomain.locations.values()
+    domain = subdomain.domain.name
+    text = JENV.get_template('site.jinja2').render(
+        port=port,
+        is_default_server=is_default_server,
+        site_name=site_name, server_names=server_names,
+        locations=locations, domain=domain)
+    writefp(file_path, text)
 
 
 def chroot():
@@ -235,8 +181,12 @@ def install():
     makedirs(os.path.join(_chroot, 'var/log/nginx'))
     makedirs(os.path.join(_chroot, 'var/lib/nginx/body'))
 
+    root = parser.get_tree()
+    [render_domain(i) for i in root.domains.values()]
+    render_apis_includes(nginxbase, root)
+
     writefp(os.path.join(nginxbase, 'nginx.conf'),
-            render_nginx_conf())
+            render_nginx_conf(root))
 
     writefp(os.path.join(nginxbase, 'upstreams.conf'),
             render_upstreams())
@@ -249,20 +199,6 @@ def install():
 
     writefp(os.path.join(nginxbase, 'mime.types'),
             render_static('mime.types.jinja2'))
-
-    root = parser.build_tree()
-    for site in root.children:
-        writefp(os.path.join(available, 'site_%s.conf' % site.string),
-                render_site(site))
-        symlink('../sites-available/site_%s.conf' % site.string,
-                os.path.join(enabled, 'site_%s.conf' % site.string))
-
-        if site.string == 'apis':
-            writefp(os.path.join(nginxbase, 'apis_includes.conf'),
-                    render_apis_includes(site))
-        elif site.string == 'www':
-            writefp(os.path.join(nginxbase, 'm_url_adapters.conf'),
-                    render_m_url_adapters())
 
 
 if __name__ == '__main__':

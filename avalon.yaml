@@ -1,26 +1,31 @@
 DEVELOPMENT: &dev
     VERSION: '3.1'
 
-    DOMAIN: 'avalon.com'
+    DOMAIN: 'dev.avalon.com'
     STATIC_PATH: 'static/src'
     MEMCACHED: ''
     ENABLE_SQL_ECHO: false
 
-    # 1.9.5 needed
     UWSGI:   
         ENABLE_THREADS: true
-        USE_HTTP: true
+        USE_HTTP: false 
+        BUFFER-SIZE: 32768
+        LOG_2XX: true
+        LOG_3XX: true
+        LOG_4XX: true
+        LOG_5XX: true
 
-    NGINX_HOST: 0.0.0.0
-    NGINX_PORT: 23900
+    NGINX:
+        CHROOT: 'env/'
+        LISTEN: 23900
 
     APP_BLOG: &app_blog
         HOST: '0.0.0.0'
         PORT: 23901
         PROCESSES: 2
-        USE_HTTP: true 
+        USE_HTTP: false 
         TYPE: 'app'
-        DB_MASTER: 'mysql+mysqldb://blog:bbbb@localhost/blog'
+        DB_MASTER: 'postgresql+psycopg2://blog:bbbb@localhost/blog'
 
 
 PRODUCT:

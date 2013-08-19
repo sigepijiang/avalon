@@ -66,10 +66,11 @@ http {
 
     include upstreams.conf;
     include {{ chroot }}etc/nginx/conf.d/*.conf;
-    include {{ chroot }}etc/nginx/sites-enabled/*;
+    {% for d in root.domains.values() %}
+    include {{ chroot }}etc/nginx/sites-enabled/{{ d.name }}/*.conf;
+    {% endfor %}
 
-    sub_filter www.guokr.com/ www.{{ domain_name }}
-    {%- if unified_port not in (80, 443) %}:{{ unified_port }}{% endif %}/;
+    sub_filter www.guokr.com/ www.{{ domain }}{% if port not in (80, 443) %}:{{ port }}{% endif %}/;
     sub_filter_once off;
     sub_filter_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss application/atom+xml text/javascript image/svg+xml;
 }

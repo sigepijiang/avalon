@@ -1,177 +1,213 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-"""自动生成nginx配置
 
-目前可以生成 upstreams.conf, sites.conf 和 apis.conf 三个配置
-
-这个脚本目前写得挺乱的, 先凑合着用吧. 打算未来重构.
-
-"""
-
+import os
 import re
-from itertools import chain
-from werkzeug.routing import parse_rule, get_converter
-from guokr.platform.routing_rules import url_map
+
+import yaml
+
+from share.errors import AvalonRouteException
+
+
+APP_TYPE_MAP = {
+    'bottle': 'uwsgi'
+}
+
+
+def check_rule(rule):
+    wrong_list = ['apis', 'backends', 'services']
+    if len(rule.rule_tuple) == 0:
+        return
+
+    if rule.rule_tuple[0] in wrong_list:
+        raise AvalonRouteException(
+            '%s begins with %s' % (
+                rule.rule, ', '.join(wrong_list)))
+
+
+def is_regex_rule(value):
+    # for <bottle> or <flask>
+    if re.match('^.*<.*>.*$', value):
+        return True
+    return False
+
+
+class Root(object):
+    def __init__(self):
+        self.domains = {}
+        self.domain_rules = {}
+
+    def add_domain_rules(self, domain, rules):
+        self.domains.setdefault(domain, Domain(domain))
+        self.domain_rules.setdefault(domain, []).extend(rules)
+
+    def merge(self):
+        for domain in self.domains:
+            self.domains[domain].add_rules(self.domain_rules[domain])
+            self.domains[domain].merge()
 
 
 class Domain(object):
+    def __init__(self, name):
+        self.name = name
+        self.subdomains = {}
 
-    def __init__(self, port=None, is_default_server=None,
-                 server_names=None, locations=None):
-        self.port = port
-        self.is_default_server = is_default_server
-        self.server_names = server_names
-        if locations is None:
-            locations = []
-        self.locations = locations
+    def add_rules(self, rules):
+        for r in rules:
+            subdomain = self.subdomains.setdefault(
+                r.subdomain, Subdomain(self, r.subdomain))
+            subdomain.rules.append(r)
+
+    def merge(self):
+        for subdomain in self.subdomains.values():
+            subdomain.merge()
+
+    @property
+    def app_list(self):
+        apps = []
+        for s in self.subdomains.values():
+            for l in s.locations.values():
+                apps.append(l.app)
+        return {app.app_name: app for app in apps}.values()
+
+
+class App(object):
+    def __init__(self, app_name, app_type):
+        self.app_name = app_name
+        self.app_type = APP_TYPE_MAP[app_type]
+
+
+class Subdomain(object):
+    def __init__(self, domain, name):
+        self.domain = domain
+        self.name = name
+        self.rules = []
+        self.locations = {}
+
+    def merge(self):
+        merged_list = []
+        to_merge_list = []
+
+        for r in self.rules:
+            check_rule(r)
+            if len(r.rule_tuple) == 0:
+                to_merge_list.append(r)
+                continue
+
+            if r.rule_tuple[0] == r.app.app_name:
+                r.location_at = 0
+                merged_list.append(r)
+                continue
+
+            to_merge_list.append(r)
+
+        # check root path
+        root_count = len(filter(
+            lambda i: len(i.rule_tuple) == 0, to_merge_list))
+        if root_count > 1:
+            raise AvalonRouteException('There is two root route!')
+        root = filter(lambda i: len(i.rule_tuple) == 0, to_merge_list)
+        if root:
+            to_merge_list.remove(root[0])
+            merged_list.append(root[0])
+
+        self._merge_rule(merged_list, to_merge_list, 0)
+        self._merge_rule(merged_list, to_merge_list, 1)
+
+        if to_merge_list:
+            raise AvalonRouteException('There is rule to merge!')
+
+        self._make_location(merged_list)
+
+    def _merge_rule(self, merged_list, to_merge_list, location_at):
+        for r in to_merge_list:
+            token = r.rule_tuple[location_at]
+            if is_regex_rule(token):
+                raise AvalonRouteException(
+                    '%s url route can\'t config' % r.rule)
+
+            token_count = len(filter(
+                lambda i: (i.rule_tuple[:location_at + 1]
+                           == r.rule_tuple[:location_at + 1]),
+                merged_list))
+            if token_count == 0:
+                r.location_at = location_at
+                merged_list.append(r)
+                to_merge_list.remove(r)
+
+    def _make_location(self, merged_list):
+        self.locations = {
+            r.location: Location(
+                self,
+                name=r.location,
+                app=r.app) for r in merged_list}
 
 
 class Location(object):
-
-    def __init__(self, appname, type=None):
-        self.appname = appname
-        self.type = type
-
-
-class Node(object):
-
-    def __init__(self, string, app=False, is_domain=False,
-                 is_regex=False, is_root=False, parent=None):
-        self.string = string
+    def __init__(self, subdomain, name, app):
+        self.subdomain = subdomain
+        self.name = name
         self.app = app
-        self.is_domain = is_domain
-        self.is_regex = is_regex
-        self.is_root = is_root
-        self.parent = None
-        self.children = []
-
-    def merge_child(self, node):
-        if node in self.children:
-            return self.children[self.children.index(node)]
-        else:
-            self.children.append(node)
-            if self.app != node.app:
-                self.app = False
-            return node
-
-    def optimize(self):
-        """节点优化
-
-        合并 app 相同, location相似的节点, 展开 app 不同的节点
-
-        Returns: None
-
-        """
-        if self.is_root:
-            for domain in self.children:
-                domain.optimize()
-
-        elif self.is_domain:
-            if self.app is False:
-                # 下有多个 app 的情况
-                children = []
-                for loc in self.children:
-                    children.extend(loc.optimize_expand())
-            else:
-                # 只有一个 app 的情况
-                children = [Node('/', self.app, parent=self)]
-            self.children = children
-            children = children[:]
-            # 进一步优化, 合并相同前缀的节点
-            removed = []
-            for child in children:
-                for child_cmp in children:
-                    if not child.is_regex and \
-                       not child_cmp.is_regex and \
-                       child_cmp.app == child.app and \
-                       child_cmp.string != child.string and \
-                       child_cmp.string.startswith(child.string):
-                        removed.append(child_cmp)
-            for child in removed:
-                try:
-                    self.children.remove(child)
-                except ValueError:
-                    pass
-
-    def optimize_expand(self, locprefix=''):
-        """展开 app 不同的节点
-
-        Returns: list()
-
-        """
-        if self.app is False:
-            locprefix += '/' + self.string
-            siblings = []
-            for subloc in self.children:
-                siblings.extend(subloc.optimize_expand(locprefix))
-            for sibling in siblings:
-                sibling.parent = self.parent
-            return siblings
-
-        else:
-            location = locprefix + '/'
-            if self.is_regex:
-                if self.string not in ('.*', '.+'):
-                    location = re.escape(location) + self.string
-            else:
-                location += self.string
-            self.string = location
-            self.children = []
-            return [self]
-
-    def __eq__(self, another):
-        return (self.string == another.string and
-                self.is_domain == another.is_domain and
-                self.is_regex == another.is_regex and
-                self.is_root == another.is_root and
-                self.parent == another.parent)
-
-    def __repr__(self):
-        return 'Node(%s, %s)' % (repr(self.string), repr(self.app))
 
 
-def yield_nodes(rule):
+class Rule(object):
+    def __init__(self, subdomain, https, rule, app_name, app_type):
+        self.subdomain = subdomain
+        self.https = https
+        self.rule = rule
+        self.app = App(app_name, app_type)
+        self.location_at = -1
 
-    app = rule.endpoint.rsplit(':', 1)[0]
-    parent = None
+    @property
+    def rule_tuple(self):
+        return self.rule.strip('/').split('/')
 
-    def _build_node(string, parent, is_domain=False):
-        yielded = False
-        for converter, arguments, variable in parse_rule(string):
-            if converter is None:
-                for part in variable.split('/'):
-                    if part:
-                        node = Node(part, app=app,
-                                    is_domain=is_domain, parent=parent)
-                        yielded = True
-                        yield node
-                        parent = node
-            else:
-                convobj = get_converter(rule.map, converter, arguments)
-                node = Node(convobj.regex, app=app, is_domain=is_domain,
-                            is_regex=True, parent=parent)
-                yielded = True
-                yield node
-                parent = node
-        if not yielded:  # / can't be yielded
-            yield Node('', app=app, is_domain=is_domain, parent=parent)
-
-    return chain(
-        _build_node(rule.subdomain, parent, is_domain=True),
-        _build_node(rule.rule.rstrip('/'), parent))
+    @property
+    def location(self):
+        return '/%s' % '/'.join(self.rule_tuple[:self.location_at + 1])
 
 
-def build_tree():
-    root = current = Node('ROOT', is_root=True)
-    for rule in url_map.iter_rules():
-        for node in yield_nodes(rule):
-            if node.is_domain:
-                current = root
-            current = current.merge_child(node)
-    root.optimize()
+def get_url_maps(path, file_list):
+    result = {}
+    for i in file_list:
+        app_name = i.split('.')[0]
+        with open(os.path.join(path, i), 'rb') as f:
+            result[app_name] = yaml.load(f)
+    return result
+
+
+def get_rule_list(app_config):
+    result = []
+    app_name = app_config['app_name']
+    app_type = app_config['app_type']
+    blueprints = app_config['blueprints']
+    for subdomain, url_map in blueprints.items():
+        for endpoint, url in url_map.items():
+            result.append(Rule(
+                app_type=app_type, app_name=app_name, **url))
+    return result
+
+
+def build_tree(url_map):
+    root = Root()
+    for app_name, app_config in url_map.items():
+        rules = get_rule_list(app_config)
+        domain = app_config['domain']
+        root.add_domain_rules(domain, rules)
+
+    root.merge()
     return root
 
 
+def get_tree():
+    environ = os.environ
+    base_path = environ['BASE']
+    url_config_path = os.path.join(base_path, 'share/url_maps')
+    url_yamls = os.path.os.listdir(url_config_path)
+    url_map = get_url_maps(url_config_path, url_yamls)
+    return build_tree(url_map)
+
+
 if __name__ == '__main__':
-    root = build_tree()
+    root = get_tree()

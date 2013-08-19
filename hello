@@ -14,7 +14,7 @@ export ENV_LOG_PATH="$ENV_PATH/var/log"
 
 export NGINX_CONFIG_PATH="$ENV_ETC_PATH/nginx"
 
-# DONT'T START WITH UWSGI !!!
+# !!! DONT'T START WITH UWSGI !!! (...after 1.9.5)
 export _UWSGI_VASSAL_PATH="$ENV_ETC_PATH/uwsgi/vassals"
 export _UWSGI_DESC='Avalon'
 export _UWSGI_NAME='avalon'
@@ -38,7 +38,7 @@ mkdir -p $ENV_ETC_PATH
 mkdir -p $ENV_LOG_PATH
 mkdir -p $ENV_RUN_PATH
 mkdir -p $NGINX_CONFIG_PATH
-mkdir -p $UWSGI_VASSAL_PATH
+mkdir -p $_UWSGI_VASSAL_PATH
 
 echo "BASE: $BASE"
 echo "PYTHON ENVIRONMENT: $PY_ENV"

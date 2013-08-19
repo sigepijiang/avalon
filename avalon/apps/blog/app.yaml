@@ -5,6 +5,8 @@ DEVELOPMENT: &dev
     MODULE: 'blog:app'
     DEBUG: true
 
+    CONTENT_PATH: 'templates/'
+
 STAGING:
     <<: *dev
 

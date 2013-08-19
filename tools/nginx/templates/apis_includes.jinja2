@@ -1,19 +1,21 @@
-{%- from "__nginx.jinja2" import server, listen, server_name, location, alias, include -%}
+{%- from "__nginx.jinja2" import  location, alias, include -%}
 {%- from "__common.jinja2" import uwsgi, proxy -%}
-{% for loc in locations %}
-{% call location('/apis' ~ loc.pattern, loc.op) -%}
+{% for domain in root.domains.values() %}
+{% for app in domain.app_list %}
+{% call location('/apis/' ~ app.app_name) %}
 set_by_lua $apis_path 'return string.sub(ngx.var.document_uri, 6)';
-{% if loc.type == 'uwsgi' -%}
-{{ uwsgi('app_' ~ loc.appname) }}
+{% if app.app_type == 'uwsgi' %}
+{{ uwsgi('app_' ~ app.app_name, equal_domain=domain.name) }}
 uwsgi_param PATH_INFO $apis_path;
-uwsgi_param HTTP_HOST {{ servname }}{% if port not in (80, 443) %}:{{ port }}{% endif %};
-uwsgi_param SERVER_NAME {{ servname }};
-{%- elif loc.type == 'proxy' -%}
-{{ proxy('app_' ~ loc.appname, '$apis_path') }}
-proxy_set_header Host {{ servname }};
+uwsgi_param HTTP_HOST {{ 'apis.' ~ domain.name }}{% if port not in (80, 443) %}:{{ port }}{% endif %};
+uwsgi_param SERVER_NAME {{ 'apis.' ~ domain.name }};
+{%- elif app.app_type == 'proxy' -%}
+{{ proxy('app_' ~ app.app_name, '$apis_path') }}
+proxy_set_header Host {{ 'apis.' ~ domain.name }};
 {%- endif %}
-{% if loc.name -%}
-{% include "location/" ~ loc.name ~ ".jinja2" ignore missing with context %}
+{% if app.app_name -%}
+{% include "location/" ~ app.app_name ~ ".jinja2" ignore missing with context %}
 {%- endif -%}
 {% endcall %}
+{% endfor %}
 {% endfor %}

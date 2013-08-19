@@ -8,8 +8,8 @@ pip install markdown2
 pip install pyyaml
 pip install pygments
 pip install ipython
-pip install mysql-python
 pip install alembic
+pip install psycopg2
 pip install python-memcached 
 pip install uwsgi
 
