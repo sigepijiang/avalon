@@ -1,5 +1,5 @@
 # J-AVALON
-* version: 0.1.0
+* version: 0.0.1
 * author: Jade <jade.gly@gmail.com>
 * powered by: www.guokr.com 
 
@@ -7,13 +7,16 @@
 
 
 # LOG
-## 0.1.0 CHANGE LOG
+## 0.0.0 CHANGE LOG
 * uwsgi配置基本完成
 
+## 0.0.1 CHANGE LOG
+* NGINX配置完成
+
 # TODO
-* NGINX 配置 
+* app配置文件中的app_type改为app_base
 * 加入APP命名不可重复的限制
-* 一个app.yaml内配置多个应用
+* ~~一个app.yaml内配置多个应用~~
 * 前端文件可在app文件夹内指定
 * tools/functions.sh goodbye 干掉所有的自定义环境变量
 * 对 apis, backends 进行路径保护

@@ -19,7 +19,7 @@ def upgrade():
     op.create_table(
         'text',
         sa.Column('hashkey', sa.String(128), primary_key=True),
-        sa.Column('parent_hashkey', sa.String(128), primary_key=True),
+        sa.Column('parent_hashkey', sa.String(128)),
         sa.Column('content', sa.Unicode()))
 
     op.create_table(

@@ -23,7 +23,6 @@ DEVELOPMENT: &dev
         HOST: '0.0.0.0'
         PORT: 23901
         PROCESSES: 2
-        USE_HTTP: false 
         TYPE: 'app'
         DB_MASTER: 'postgresql+psycopg2://blog:bbbb@localhost/blog'
 
