@@ -26,6 +26,12 @@ DEVELOPMENT: &dev
         TYPE: 'app'
         DB_MASTER: 'postgresql+psycopg2://blog:bbbb@localhost/blog'
 
+    APP_AUTH: &app_auth
+        HOST: '0.0.0.0'
+        PORT: 23902
+        PROCESSES: 2
+        TYPE: 'app'
+        DB_MASTER: 'postgresql+psycopg2://auth:aaaa@localhost/auth'
 
 PRODUCT:
     <<: *dev

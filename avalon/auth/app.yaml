@@ -1,0 +1,16 @@
+# Multiple app config
+DEVELOPMENT: &dev
+    APP_NAME: 'auth'
+    APP_TYPE: 'bottle'
+    MODULE: 'auth:app'
+    DEBUG: true
+
+    CONTENT_PATH: 'templates/'
+
+STAGING:
+    <<: *dev
+
+PRODUCTION:
+    <<: *dev
+    DEBUG: false
+    MAIL_DEBUG: false
