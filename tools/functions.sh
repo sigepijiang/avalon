@@ -43,8 +43,8 @@ _manage_update() {
         fi
 
         local app_info=($(python $TOOL_PATH/get_app_info.py $conf))
-        local app_type=${app_info[2]}
-        python $TOOL_PATH/make_${app_type}_url_map.py ${app_info[*]}
+        local app_base=${app_info[2]}
+        python $TOOL_PATH/make_${app_base}_url_map.py ${app_info[*]}
     done
 
     if [ "$AVALON_ENVIRON" != "PRODUCTION" ]; then

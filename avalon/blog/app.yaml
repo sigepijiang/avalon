@@ -2,6 +2,7 @@
 DEVELOPMENT: &dev
     APP_NAME: 'blog'
     APP_TYPE: 'bottle'
+    APP_BASE: 'bottle'
     MODULE: 'blog:app'
     DEBUG: true
 

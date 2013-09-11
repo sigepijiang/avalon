@@ -10,7 +10,7 @@ import yaml
 from share.errors import AvalonRouteException
 
 
-APP_TYPE_MAP = {
+APP_BASE_MAP = {
     'bottle': 'uwsgi'
 }
 
@@ -73,9 +73,9 @@ class Domain(object):
 
 
 class App(object):
-    def __init__(self, app_name, app_type):
+    def __init__(self, app_name, app_base):
         self.app_name = app_name
-        self.app_type = APP_TYPE_MAP[app_type]
+        self.app_base = APP_BASE_MAP[app_base]
 
 
 class Subdomain(object):
@@ -152,11 +152,11 @@ class Location(object):
 
 
 class Rule(object):
-    def __init__(self, subdomain, https, rule, app_name, app_type):
+    def __init__(self, subdomain, https, rule, app_name, app_base):
         self.subdomain = subdomain
         self.https = https
         self.rule = rule
-        self.app = App(app_name, app_type)
+        self.app = App(app_name, app_base)
         self.location_at = -1
 
     @property
@@ -180,12 +180,12 @@ def get_url_maps(path, file_list):
 def get_rule_list(app_config):
     result = []
     app_name = app_config['app_name']
-    app_type = app_config['app_type']
+    app_base = app_config['app_base']
     blueprints = app_config['blueprints']
     for subdomain, url_map in blueprints.items():
         for endpoint, url in url_map.items():
             result.append(Rule(
-                app_type=app_type, app_name=app_name, **url))
+                app_base=app_base, app_name=app_name, **url))
     return result
 
 

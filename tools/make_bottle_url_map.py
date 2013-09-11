@@ -9,7 +9,7 @@ from share.utils import import_module
 
 
 def make_url_map():
-    app_name, app_path, app_type = sys.argv[1:]
+    app_name, app_path, app_base = sys.argv[1:]
     map_file = os.path.join(
         os.environ['BASE'],
         'share/url_maps/%s.yaml' % app_name)
@@ -23,7 +23,7 @@ def make_url_map():
 
 def get_app_url_map(app):
     result = {}
-    app_type = app.config.app_type
+    app_base = app.config.app_base
     app_name = app.config.app_name
     app_domain = app.config.domain
     blueprints = app.blueprints
@@ -32,7 +32,7 @@ def get_app_url_map(app):
     blueprint_keys.sort()
 
     result = {
-        'app_type': app_type,
+        'app_base': app_base,
         'app_name': app_name,
         'domain': app_domain,
         'blueprints': {},

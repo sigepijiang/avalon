@@ -11,9 +11,9 @@ def get_app_info():
 
     app_name = config['APP_NAME']
     app_path = os.path.dirname(yaml_path)
-    app_type = config['APP_TYPE']
+    app_base = config['APP_BASE']
 
-    print app_name, app_path, app_type
+    print app_name, app_path, app_base
 
 
 if __name__ == '__main__':

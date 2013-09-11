@@ -66,8 +66,8 @@ def url_for(endpoint, **kwargs):
     except KeyError as e:
         raise RouteBuildError(e)
 
-    app_type = url_map['app_type']
-    scheme, subdomain, path = URL_FACTORY[app_type](rule, **kwargs)
+    app_base = url_map['app_base']
+    scheme, subdomain, path = URL_FACTORY[app_base](rule, **kwargs)
 
     return '%(scheme)s://%(subdomain)s.%(domain)s%(path)s' % dict(
         scheme=scheme, subdomain=subdomain, domain=domain, path=path)

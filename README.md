@@ -12,11 +12,11 @@
 
 ## 0.0.1 CHANGE LOG
 * NGINX配置完成
+* app配置文件中的app_type改为app_base
 
 # TODO
-* app配置文件中的app_type改为app_base
-* 加入APP命名不可重复的限制
+* ~~加入APP命名不可重复的限制~~
 * ~~一个app.yaml内配置多个应用~~
 * 前端文件可在app文件夹内指定
 * tools/functions.sh goodbye 干掉所有的自定义环境变量
-* 对 apis, backends 进行路径保护
+* 对 apis, backends, services 进行路径保护

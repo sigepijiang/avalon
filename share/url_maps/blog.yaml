@@ -1,5 +1,5 @@
+app_base: bottle
 app_name: blog
-app_type: bottle
 blueprints:
   www:
     blog: {https: false, rule: '/blog/<blog_id:int>/', subdomain: www}
