@@ -19,19 +19,19 @@ DEVELOPMENT: &dev
         CHROOT: 'env/'
         LISTEN: 23900
 
-    APP_BLOG: &app_blog
+    APP_HERACLES: &app_blog
         HOST: '0.0.0.0'
         PORT: 23901
         PROCESSES: 2
         TYPE: 'app'
-        DB_MASTER: 'postgresql+psycopg2://blog:bbbb@localhost/blog'
+        DB_MASTER: 'postgresql+psycopg2://heracles:hhhh@localhost/heracles'
 
-    APP_AUTH: &app_auth
+    APP_ZEUS: &app_auth
         HOST: '0.0.0.0'
         PORT: 23902
         PROCESSES: 2
         TYPE: 'app'
-        DB_MASTER: 'postgresql+psycopg2://auth:aaaa@localhost/auth'
+        DB_MASTER: 'postgresql+psycopg2://zeus:zzzz@localhost/zeus'
 
 PRODUCT:
     <<: *dev

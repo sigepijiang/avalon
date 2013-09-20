@@ -8,12 +8,12 @@
 set $domain "{{ domain }}";
 include apis_includes;
 {% for loc in locations %}
-{% call location(loc.name, loc.op) %}
-{%- if loc.app.app_type == 'uwsgi' -%}
+{%- call location(loc.name, loc.op) %}
+{%- if loc.app.app_base == 'uwsgi' -%}
 {{ uwsgi('app_' ~ loc.app.app_name) }}
 {%- elif loc.type == 'proxy' -%}
 {{ proxy('app_' ~ loc.app.app_name) }}
-{%- elif loc.app.app_type == 'alias' -%}
+{%- elif loc.app.app_base == 'alias' -%}
 {{ alias(loc.app.app_alias) }}
 {%- elif loc.type == 'include' -%}
 {{ include(loc.module) }}

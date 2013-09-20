@@ -1,6 +1,6 @@
 # Multiple app config
 DEVELOPMENT: &dev
-    APP_NAME: 'blog'
+    APP_NAME: 'heracles'
     APP_TYPE: 'bottle'
     APP_BASE: 'bottle'
     MODULE: 'blog:app'

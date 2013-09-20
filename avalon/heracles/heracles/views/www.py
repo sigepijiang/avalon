@@ -4,7 +4,7 @@ from share.bottle import default_app
 from share.bottle import MethodView, view
 from share.bottle import NotFound
 
-from blog.models import BlogModel
+from heracles.models import BlogModel
 from ._decorators import content2html
 
 

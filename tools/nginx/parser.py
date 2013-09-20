@@ -84,6 +84,7 @@ class Subdomain(object):
         self.name = name
         self.rules = []
         self.locations = {}
+        self.suspicious_url = []
 
     def merge(self):
         merged_list = []
@@ -112,29 +113,40 @@ class Subdomain(object):
             to_merge_list.remove(root[0])
             merged_list.append(root[0])
 
-        self._merge_rule(merged_list, to_merge_list, 0)
-        self._merge_rule(merged_list, to_merge_list, 1)
-
-        if to_merge_list:
-            raise AvalonRouteException('There is rule to merge!')
+        location_at = 0
+        while to_merge_list:
+            self._merge_rule(merged_list, to_merge_list, location_at)
+            location_at += 1
 
         self._make_location(merged_list)
 
     def _merge_rule(self, merged_list, to_merge_list, location_at):
+        dealed_list = []
         for r in to_merge_list:
-            token = r.rule_tuple[location_at]
-            if is_regex_rule(token):
+            if len(r.rule_tuple) < location_at:
                 raise AvalonRouteException(
-                    '%s url route can\'t config' % r.rule)
+                    ('The length of rule <%s> is less than location_at(%s).'
+                     'Please find other urls like this.') % (
+                         r.rule, location_at))
 
-            token_count = len(filter(
-                lambda i: (i.rule_tuple[:location_at + 1]
-                           == r.rule_tuple[:location_at + 1]),
-                merged_list))
+            for token in r.rule_tuple[:location_at + 1]:
+                if is_regex_rule(token):
+                    raise AvalonRouteException(
+                        'The rule<%s> contains a reges expression.' % r.rule)
+
+            token_diff_app = filter(
+                lambda i: (
+                    i.rule_tuple[:location_at + 1]
+                    == r.rule_tuple[:location_at + 1]
+                    and i.app.app_name != r.app.app_name),
+                to_merge_list)
+            token_count = len(token_diff_app)
             if token_count == 0:
                 r.location_at = location_at
                 merged_list.append(r)
-                to_merge_list.remove(r)
+                dealed_list.append(r)
+
+        [to_merge_list.remove(i) for i in dealed_list]
 
     def _make_location(self, merged_list):
         self.locations = {

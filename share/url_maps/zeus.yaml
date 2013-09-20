@@ -1,0 +1,4 @@
+app_base: bottle
+app_name: zeus
+blueprints: {}
+domain: dev.avalon.com

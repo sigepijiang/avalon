@@ -1,11 +1,10 @@
 # Multiple app config
 DEVELOPMENT: &dev
-    APP_NAME: 'auth'
+    APP_NAME: 'zeus'
     APP_TYPE: 'bottle'
-    MODULE: 'auth:app'
+    APP_BASE: 'bottle'
+    MODULE: 'zeus:app'
     DEBUG: true
-
-    CONTENT_PATH: 'templates/'
 
 STAGING:
     <<: *dev

@@ -6,8 +6,8 @@ import sqlalchemy as sa
 from share.engines import db, TableOpt
 
 
-class AccountModel(db.Model, TableOpt):
-    __tablename__ = 'account'
+class TextMetaModel(db.Model, TableOpt):
+    __tablename__ = 'text_meta'
 
     id = sa.Column(sa.Integer(), primary_key=True)
     hashkey = sa.Column(
@@ -23,8 +23,8 @@ class AccountModel(db.Model, TableOpt):
         self.file_name = file_name
 
 
-class AccountAliasModel(db.Model, TableOpt):
-    __tablename__ = 'account_alias'
+class TextModel(db.Model, TableOpt):
+    __tablename__ = 'text'
 
     hashkey = sa.Column(sa.String(128), primary_key=True)
     parent_hashkey = sa.Column(sa.String(128))
