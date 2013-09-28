@@ -3,10 +3,10 @@ from datetime import datetime
 
 import sqlalchemy as sa
 
-from share.engines import db, TableOpt
+from share.engines import db
 
 
-class TextMetaModel(db.Model, TableOpt):
+class TextMetaModel(db.Model, db.TableOpt):
     __tablename__ = 'text_meta'
 
     id = sa.Column(sa.Integer(), primary_key=True)
@@ -23,7 +23,7 @@ class TextMetaModel(db.Model, TableOpt):
         self.file_name = file_name
 
 
-class TextModel(db.Model, TableOpt):
+class TextModel(db.Model, db.TableOpt):
     __tablename__ = 'text'
 
     hashkey = sa.Column(sa.String(128), primary_key=True)
@@ -31,7 +31,7 @@ class TextModel(db.Model, TableOpt):
     content = sa.Column(sa.Unicode())
 
 
-class BlogModel(db.Model, TableOpt):
+class BlogModel(db.Model, db.TableOpt):
     __tablename__ = 'blog'
 
     id = sa.Column(sa.Integer(), primary_key=True)
