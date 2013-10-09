@@ -57,10 +57,8 @@ def render_domain_static(path, domain):
 def render_upstreams():
     conf = config()
     upstreams = []
-    for app, appconf in conf.iteritems():
-        if not app.startswith('APP_'):
-            continue
-        ups = {'name': 'app_%s' % app[4:].lower(), 'servers': []}
+    for app, appconf in conf['APPS'].items():
+        ups = {'name': 'app_%s' % app, 'servers': []}
         host = appconf['HOST']
         if 'JAVA_PORT' in appconf:
             port = appconf['JAVA_PORT']

@@ -2,3 +2,5 @@ app_base: bottle
 app_name: zeus
 blueprints: {}
 domain: dev.avalon.com
+global_port: 23900
+port: 24102

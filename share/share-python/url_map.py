@@ -15,7 +15,8 @@ def _url_bottle_handle(rule, **kwargs):
     router = Router()
     router.add(rule, 'GET', lambda i: i, 'target')
     path = router.build('target', **kwargs)
-    return scheme, subdomain, path
+    global_port = rule['global_port']
+    return scheme, subdomain, path, global_port
 
 
 URL_FACTORY = {
@@ -67,7 +68,13 @@ def url_for(endpoint, **kwargs):
         raise RouteBuildError(e)
 
     app_base = url_map['app_base']
-    scheme, subdomain, path = URL_FACTORY[app_base](rule, **kwargs)
+    scheme, subdomain, path, global_port = URL_FACTORY[app_base](
+        rule, **kwargs)
 
-    return '%(scheme)s://%(subdomain)s.%(domain)s%(path)s' % dict(
-        scheme=scheme, subdomain=subdomain, domain=domain, path=path)
+    if global_port in ('80', 80):
+        return '%(scheme)s://%(subdomain)s.%(domain)s%(path)s' % dict(
+            scheme=scheme, subdomain=subdomain, domain=domain, path=path)
+    return ('%(scheme)s://%(subdomain)s.%(domain)s:'
+            '%(global_port)s%(path)s') % dict(
+                scheme=scheme, subdomain=subdomain,
+                domain=domain, path=path, global_port=global_port)

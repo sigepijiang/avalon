@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import functools
 
 from bottle import Bottle
 from bottle import Route, Router
@@ -8,6 +9,7 @@ from bottle import makelist
 from share.config import load_yaml
 from share.errors import AvalonConfigError, AvalonException
 from share.url_map import url_for
+from share.utils import _static_file
 from .utils import get_root_path
 
 
@@ -36,43 +38,40 @@ class Avalon(Bottle):
         self.name = name
         self.blueprints = []
         self.router = Router()
+        self._init_config(name)
 
+    def _init_config(self, name):
         try:
             environ = os.environ
             self.config.home_path = environ['BASE']
-            self.config.app_name = name
             self.config.environ = environ['AVALON_ENVIRON']
             self.config.app_path = get_root_path(name)
+            self.config.app_name = name
 
-            gloabal_config = load_yaml(
+            global_config = load_yaml(
                 os.path.join(self.config.home_path, 'avalon.yaml'))
             app_config = load_yaml(
                 os.path.join(get_root_path(name), '../app.yaml'))
-
-            default_memcached = gloabal_config['MEMCACHED']
-            default_enable_sql_echo = gloabal_config['ENABLE_SQL_ECHO']
-            default_domain = gloabal_config['DOMAIN']
-
-            gloabal_config = gloabal_config['APP_' + name.upper()]
-            self.config.enable_sql_echo = gloabal_config.get(
-                'ENABLE_SQL_ECHO', default_enable_sql_echo)
-            self.config.memcached = gloabal_config.get(
-                'MEMCACHED', default_memcached)
-            self.config.domain = gloabal_config.get(
-                'DOMAIN', default_domain)
+            gloabal_app_config = global_config.pop('APPS')[name.upper()]
 
             if len(
-                set(app_config.keys()) - set(gloabal_config.keys())
+                set(app_config.keys()) - set(gloabal_app_config.keys())
             ) < len(app_config):
                 raise AvalonConfigError('app设置与global冲突')
 
-            app_config.update(gloabal_config)
+            app_config.update(gloabal_app_config)
             for i in app_config.keys():
                 setattr(self.config, i.lower(), app_config[i])
+
+            global_config.pop('UWSGI')
+            nginx_config = global_config.pop('NGINX')
+            for i in global_config.keys():
+                setattr(self.config, i.lower(), global_config[i])
+            self.config.global_port = nginx_config['LISTEN']
         except KeyError as e:
             raise AvalonConfigError(e)
 
-    def register_blueprint(self, blueprint, url_prefix):
+    def register_blueprint(self, blueprint, url_prefix=''):
         for endpoint, route_list in blueprint.url_rules.items():
             for route in route_list:
                 rule_all = url_prefix or blueprint.url_prefix
@@ -100,9 +99,13 @@ class Avalon(Bottle):
 
         return url_for(endpoint, **kwargs)
 
+    def static_file_func(self):
+        return lambda path: _static_file(
+            self.config.domain, self.config.global_port, path)
+
 
 class Blueprint(object):
-    def __init__(self, name, subdomain=None, url_prefix=None):
+    def __init__(self, name, subdomain='', url_prefix=''):
         self.name = name
         self.subdomain = subdomain
         self.url_prefix = url_prefix

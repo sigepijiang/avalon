@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 
-from bottle import default_app
+from bottle import default_app, request
 from jinja2 import Environment, FileSystemLoader
+
+
+jinja2_env = None
 
 
 # default for jinja2
@@ -15,7 +18,16 @@ def get_template_path():
     return [base_templates, app_templates]
 
 
-jinja2_env = None
+def init_jinja2():
+    global jinja2_env
+
+    cur_app = default_app()
+
+    jinja2_env = Environment(
+        loader=FileSystemLoader(get_template_path()))
+    jinja2_env.globals.update(
+        static_file=cur_app.static_file_func(),
+        request=request)
 
 
 # DONT'T USE the view, template or Jinja2Template of bottle.
@@ -26,8 +38,8 @@ def view(tmp_name):
             global jinja2_env
 
             if not jinja2_env:
-                jinja2_env = Environment(
-                    loader=FileSystemLoader(get_template_path()))
+                init_jinja2()
+
             return jinja2_env.get_template(
                 tmp_name).render(
                     func(*args, **kwargs))

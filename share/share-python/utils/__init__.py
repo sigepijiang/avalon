@@ -9,7 +9,7 @@ def is_file_exists(path):
 
 def _static_file(domain, port, path):
     if port in ('80', 80):
-        return 'http://static.%s/%s' % (domain, port, path)
+        return 'http://static.%s/%s' % (domain, path)
     else:
         return 'http://static.%s:%s/%s' % (domain, port, path)
 

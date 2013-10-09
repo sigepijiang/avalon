@@ -51,7 +51,7 @@ class DataBaseOperation(object):
 
 
 class SqlalchemyUtil(object):
-    def server_datetime():
+    def server_datetime(self):
         return text('NOW()')
 
 

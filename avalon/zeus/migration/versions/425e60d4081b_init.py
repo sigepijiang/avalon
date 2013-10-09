@@ -23,7 +23,7 @@ def upgrade():
         sa.Column('nickname', sa.Unicode(32), nullable=False),
         sa.Column(
             'status',
-            sa.Enum(('active', 'frozen'), 'account_status_enum'),
+            sa.Enum('active', 'frozen', name='account_status_enum'),
             default='active'),
         sa.Column(
             'date_last_signed_in',
@@ -36,7 +36,7 @@ def upgrade():
         sa.Column('name', sa.Unicode(32)),
         sa.Column(
             'client_type',
-            sa.Enum(('main', 'public'), 'client_type_enum')),
+            sa.Enum('main', 'public', name='client_type_enum')),
         sa.Column(
             'domain',
             sa.String(64)),

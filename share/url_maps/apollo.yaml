@@ -1,0 +1,8 @@
+app_base: bottle
+app_name: apollo
+blueprints:
+  www:
+    main: {https: false, rule: /, subdomain: www}
+domain: dev.avalon.com
+global_port: 23900
+port: 24103

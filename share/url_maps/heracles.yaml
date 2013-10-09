@@ -5,3 +5,5 @@ blueprints:
     blog: {https: false, rule: '/blog/<blog_id:int>/', subdomain: www}
     blog_redirect: {https: false, rule: /blog/<file_name>.<file_type>/, subdomain: www}
 domain: dev.avalon.com
+global_port: 23900
+port: 24101

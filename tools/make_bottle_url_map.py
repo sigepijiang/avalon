@@ -35,6 +35,8 @@ def get_app_url_map(app):
         'app_base': app_base,
         'app_name': app_name,
         'domain': app_domain,
+        'port': app.config.port,
+        'global_port': app.config.global_port,
         'blueprints': {},
     }
     for name in blueprint_keys:

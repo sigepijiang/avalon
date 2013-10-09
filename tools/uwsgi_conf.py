@@ -24,7 +24,7 @@ def main():
     chdir = os.path.relpath(chdir, os.environ['BASE'])
 
     appname = app_data['APP_NAME']
-    data = global_data['APP_' + appname.upper()]
+    data = global_data['APPS'][appname.upper()]
     default_use_http = global_data['UWSGI']['USE_HTTP']
     default_enable_threads = global_data['UWSGI']['ENABLE_THREADS']
     data.update(app_data)

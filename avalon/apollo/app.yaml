@@ -1,0 +1,15 @@
+# Multiple app config
+DEVELOPMENT: &dev
+    APP_NAME: 'apollo'
+    APP_TYPE: 'bottle'
+    APP_BASE: 'bottle'
+    MODULE: 'apollo:app'
+    DEBUG: true
+
+STAGING:
+    <<: *dev
+
+PRODUCTION:
+    <<: *dev
+    DEBUG: false
+    MAIL_DEBUG: false
