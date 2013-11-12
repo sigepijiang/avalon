@@ -20,8 +20,8 @@ class MethodView(object):
     @classmethod
     def as_view(cls, name=''):
         def view_func(*args, **kwargs):
-            self = view_func.view_class(*args, **kwargs)
-            return self.dispatch_request(*args, **kwargs)
+            cls = view_func.view_class(*args, **kwargs)
+            return cls.dispatch_request(*args, **kwargs)
 
         if cls.decorators:
             for decorator in cls.decorators:

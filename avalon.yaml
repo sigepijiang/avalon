@@ -1,7 +1,7 @@
 DEVELOPMENT: &dev
     VERSION: '3.1'
 
-    DOMAIN: 'dev.avalon.com'
+    DOMAIN: 'dev.wishstone.me'
     STATIC_PATH: 'static/src'
     MEMCACHED: ''
     REDIS: ''

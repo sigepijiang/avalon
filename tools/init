@@ -16,5 +16,6 @@ pip install pep8
 pip install pyflakes
 pip install pylint
 pip install autopep8
+pip install wtforms 
 
 ln -s -f -n $BASE/share/share-python $PYLIB_PATH/share

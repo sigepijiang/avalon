@@ -4,19 +4,17 @@
     <meta http-equiv='Content-Type' content='text/html; charset=utf8'/>
     <title>{{ title }}</title>
     {% block style %}
+    <link href="{{ static_file('css/bootstrap.css') }}" rel="stylesheet" type="text/css"/>
     {% endblock %}
 
     {% block script %}
+    <script type="text/javascript" src="{{ static_file('js/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ static_file('js/bootstrap.js') }}"></script>
+    <script type="text/javascript" src="{{ static_file('js/avalon.js') }}"></script>
     {% endblock %}
     </head>
     <body>
-        {% block header %}
-        {% endblock %}
-
         {% block content %}
-        {% endblock %}
-        
-        {% block footer %}
         {% endblock %}
     </body>
 </html>

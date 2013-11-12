@@ -1,6 +1,8 @@
 app_base: bottle
 app_name: zeus
-blueprints: {}
-domain: dev.avalon.com
+blueprints:
+  account:
+    main: {https: false, rule: /, subdomain: account}
+domain: dev.wishstone.me
 global_port: 23900
 port: 24102

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import functools
 
 from bottle import Bottle
 from bottle import Route, Router
@@ -11,6 +10,7 @@ from share.errors import AvalonConfigError, AvalonException
 from share.url_map import url_for
 from share.utils import _static_file
 from .utils import get_root_path
+from .hooks import fill_user_data
 
 
 class Route(Route):
@@ -39,6 +39,8 @@ class Avalon(Bottle):
         self.blueprints = []
         self.router = Router()
         self._init_config(name)
+
+        self.add_hook('before_request', fill_user_data)
 
     def _init_config(self, name):
         try:
@@ -74,7 +76,7 @@ class Avalon(Bottle):
     def register_blueprint(self, blueprint, url_prefix=''):
         for endpoint, route_list in blueprint.url_rules.items():
             for route in route_list:
-                rule_all = url_prefix or blueprint.url_prefix
+                rule_all = url_prefix + blueprint.url_prefix
                 route.rule = rule_all + route.rule
                 route.app = self
                 self.add_route(route)

@@ -9,3 +9,6 @@ app = Avalon(__name__)
 default_app.push(app)
 
 
+from zeus.views import blueprint_account
+
+app.register_blueprint(blueprint_account)

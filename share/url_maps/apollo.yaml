@@ -2,7 +2,8 @@ app_base: bottle
 app_name: apollo
 blueprints:
   www:
+    about: {https: false, rule: /about, subdomain: www}
     main: {https: false, rule: /, subdomain: www}
-domain: dev.avalon.com
+domain: dev.wishstone.me
 global_port: 23900
 port: 24103

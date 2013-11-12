@@ -16,6 +16,16 @@ class AccountModel(db.Model, db.TableOpt):
         server_default=db.utils.server_datetime)
 
 
+class EmailModel(db.Model, db.TableOpt):
+    __tablename__ = 'email',
+    ukey = sa.Column(
+        sa.CHAR(7), sa.ForeignKey('account.ukey'), nullable=False)
+    email = sa.Column(sa.Unicode(320), primary_key=True)
+    password = sa.Column(sa.CHAR(40), nullable=False)
+    date_created = sa.Column(
+        sa.DateTime(), server_default=db.utils.server_datetime())
+
+
 class ClientModel(db.Model, db.TableOpt):
     __tablename__ = 'client',
     id = sa.Column('id', sa.Integer(), primary_key=True)

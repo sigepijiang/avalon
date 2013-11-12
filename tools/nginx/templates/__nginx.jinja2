@@ -41,7 +41,7 @@ server_name {%- for name in varargs %} {{ name }}{% endfor %};
 
 {# alias stat #}
 {% macro alias(path) -%}
-alias {{ path }};
+alias {{ path }}/;
 {%- endmacro %}
 
 {# include stat #}

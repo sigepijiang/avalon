@@ -30,6 +30,21 @@ def upgrade():
             sa.DateTime(),
             server_default=db.utils.server_datetime()),
     )
+
+    op.create_table(
+        'email',
+        sa.Column(
+            'ukey', sa.CHAR(7), sa.ForeignKey('account.ukey'),
+            nullable=False
+        ),
+        sa.Column('email', sa.Unicode(320), primary_key=True),
+        sa.Column(
+            'password', sa.CHAR(40), nullable=False),
+        sa.Column(
+            'date_created', sa.DateTime(),
+            server_default=db.utils.server_datetime()),
+    )
+
     op.create_table(
         'client',
         sa.Column('id', sa.Integer(), primary_key=True),
@@ -48,5 +63,6 @@ def upgrade():
 
 
 def downgrade():
+    op.drop_table('email')
     op.drop_table('account')
     op.drop_table('client')

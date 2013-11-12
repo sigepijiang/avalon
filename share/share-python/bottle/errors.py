@@ -9,4 +9,4 @@ class NotFound(HTTPError):
 
 class BadRequet(HTTPError):
     def __init__(self, body):
-        super(NotFound, self).__init__(400, body)
+        super(BadRequet, self).__init__(400, body)

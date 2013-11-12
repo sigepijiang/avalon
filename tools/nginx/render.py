@@ -43,7 +43,7 @@ def render_domain_static(path, domain):
     server_names = ['.'.join(['static', domain.name])]
     locations = [dict(
         name='/', app=dict(
-            app_type='alias',
+            app_base='alias',
             app_alias=alias_path))]
     domain = domain.name
     text = JENV.get_template('site.jinja2').render(
