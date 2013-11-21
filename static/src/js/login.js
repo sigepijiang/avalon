@@ -1,19 +1,27 @@
 Module('login', function() {
     function checkBtnPara(btn){
-        if ($.is.Function(btn) || btn.length > 0){
+        if ($.is.Function(btn) || ($.is.String(btn) && btn.length > 0)){
             return true;
         }
         return false;
     }
 
     function getBtnPara(btn){
-        if ($.is.Function(btn)){
-            return btn()
+        if (!checkBtnPara(btn)){
+            throw ('the element should be a str or function');
         }
-        return btn
+        result = btn;
+
+        if ($.is.Function(btn)){
+            result = btn()
+        }
+
+        return result;
     }
 
-    this.init = function(config){
+    this.exports.init = function(config){
+        config = config || {};
+
         var login_type = config.login_type || '',
             http_method = config.http_method || 'post',
             signUpBtn = config.signUpBtn,
@@ -22,16 +30,13 @@ Module('login', function() {
             
         return {
             signUp: function() {
-                checkBtnPara(signUpBtn);
-                btn = $(getBtnPara(btn));
+                btn = getBtnPara(btn);
             },
             signIn: function() {
-                checkBtnPara(signUpBtn);
-                btn = $(getBtnPara(btn));
+                btn = getBtnPara(btn);
             },
             logout: function() {
-                checkBtnPara(signUpBtn);
-                btn = $(getBtnPara(btn));
+                btn = getBtnPara(btn);
             },
             config: config,
         }

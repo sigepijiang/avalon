@@ -1,14 +1,12 @@
 #-*- coding: utf-8 -*-
-from bottle import default_app
-
-from share.bottle import Avalon
+from share.framework.bottle import Avalon
 
 
-# push the app into the stack FIRST!
 app = Avalon(__name__)
-default_app.push(app)
 
 
 from zeus.views import blueprint_account
+from zeus.apis import bp_apis
 
 app.register_blueprint(blueprint_account)
+app.register_blueprint(bp_apis, url_prefix='/zeus')

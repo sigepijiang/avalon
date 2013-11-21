@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from share.bottle import MethodView, view
+from share.framework.bottle import MethodView, view
 
 from zeus.models import AccountModel
 
@@ -15,3 +15,4 @@ class AuthView(MethodView):
         return
 
     def post(self):
+        pass

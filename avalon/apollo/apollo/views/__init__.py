@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from share.bottle.app import Blueprint
+from share.framework.bottle.app import Blueprint
 
 from .home import HomeView, AboutView
 

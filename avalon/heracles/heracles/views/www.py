@@ -1,8 +1,8 @@
 #-*- coding: utf-8 -*-
 import os
-from share.bottle import default_app
-from share.bottle import MethodView, view
-from share.bottle import NotFound
+from share.framework.bottle import default_app
+from share.framework.bottle import MethodView, view
+from share.framework.bottle import NotFound
 
 from heracles.models import BlogModel
 from ._decorators import content2html

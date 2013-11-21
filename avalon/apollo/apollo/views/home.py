@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from share.bottle import MethodView, view
+from share.framework.bottle import MethodView, view
 
 
 class HomeView(MethodView):

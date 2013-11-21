@@ -1,11 +1,13 @@
 DEVELOPMENT: &dev
-    VERSION: '3.1'
+    VERSION: '0.3.1'
 
     DOMAIN: 'dev.wishstone.me'
-    STATIC_PATH: 'static/src'
-    MEMCACHED: ''
-    REDIS: ''
     ENABLE_SQL_ECHO: false
+    MEMCACHED: 
+        - '0.0.0.0:11211'
+    NAMESPACE: 'e5ddcc00ecd34f3aad5f166274f04610'
+    REDIS: ''
+    STATIC_PATH: 'static/src'
 
     UWSGI:   
         ENABLE_THREADS: true

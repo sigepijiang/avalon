@@ -4,8 +4,8 @@ import codecs
 
 import markdown2
 
-from share.bottle.errors import NotFound
-from share.bottle.template import get_template_path
+from share.framework.bottle.errors import NotFound
+from share.framework.bottle.template import get_template_path
 
 CONTENT_CONVERTER = {
     'md': markdown2.markdown,

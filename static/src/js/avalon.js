@@ -24,7 +24,7 @@ $.extend({
 Module = function(name, func){
     function prepare(arg){
         if (arg.length != 2){
-            throw('require two parameters!');
+            throw('require two parameters <name> and <func>!');
         }
 
         if ($.is.String(name)){
@@ -36,15 +36,15 @@ Module = function(name, func){
         if (!$.is.Function(func)){
             throw('arg <func> is not a function!');
         }
+
+        if (avalon.hasOwnProperty(name)){
+            throw(name + ' has been declared!');
+        }
     }
 
     prepare(arguments);
 
-    if (avalon.hasOwnProperty(name)){
-        throw(name + ' has been declared!');
-    }
-
     that = {'exports': {}}; 
     func.apply(that);
-    avalon[name] = that;
+    avalon[name] = that.exports;
 }

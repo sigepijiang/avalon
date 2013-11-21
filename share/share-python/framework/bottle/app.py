@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 import os
 
-from bottle import Bottle
+from bottle import Bottle, default_app
 from bottle import Route, Router
 from bottle import makelist
 
+from share import app_stack
 from share.config import load_yaml
 from share.errors import AvalonConfigError, AvalonException
 from share.url_map import url_for
 from share.utils import _static_file
 from .utils import get_root_path
-from .hooks import fill_user_data
+from .hooks import fill_session, save_session
 
 
 class Route(Route):
@@ -40,7 +41,12 @@ class Avalon(Bottle):
         self.router = Router()
         self._init_config(name)
 
-        self.add_hook('before_request', fill_user_data)
+        # 不知道为什么不能用add_hook
+        self.hook('before_request')(fill_session)
+        self.hook('after_request')(save_session)
+
+        default_app.push(self)
+        app_stack.push(self)
 
     def _init_config(self, name):
         try:

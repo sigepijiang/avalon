@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from bottle import default_app, cached_property, url
+from bottle import default_app, cached_property, url, AppStack
 from bottle import RouteBuildError, request
 
 from .app import Avalon, Blueprint, Router
