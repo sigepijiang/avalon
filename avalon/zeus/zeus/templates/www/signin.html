@@ -1,0 +1,29 @@
+{% extends '_base.html' %}
+
+{% block style %}
+{{ super() }}
+<link href="{{ static_file('css/signin.css') }}" rel="stylesheet" type="text/css"/>"
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script type="text/javascript" src="{{ static_file('js/share/jquery.md5.js') }}"></script> 
+<script type="text/javascript" src="{{ static_file('js/zeus/modules/login.js') }}"></script> 
+<script type="text/javascript" src="{{ static_file('js/zeus/signin.js') }}"></script> 
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form id="signup" class="form-signin" method="POST">
+        <h2 class="form-signin-heading">Thanks for signing up</h2>
+        <input type="text" class="form-control" placeholder="Email address" required autofocus name="email">
+
+        <input type="password" class="form-control" placeholder="Password" required name="password_hash">
+
+        <label class="checkbox">
+            <input type="checkbox" name="will_remember"> Remember me
+        </label>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+</div> <!-- /container -->
+{% endblock %}

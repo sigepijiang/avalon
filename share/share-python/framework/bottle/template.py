@@ -47,3 +47,9 @@ def view(tmp_name):
                     func(*args, **kwargs))
         return call_f
     return decorator_f
+
+
+def render_template(tmp_name, **kwargs):
+    if not jinja2_env:
+        init_jinja2()
+    return jinja2_env.get_template(tmp_name).render(**kwargs)

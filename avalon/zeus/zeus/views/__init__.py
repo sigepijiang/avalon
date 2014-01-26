@@ -1,12 +1,17 @@
 #-*- coding: utf-8 -*-
 from share.framework.bottle.app import Blueprint
 
-from .auth import AuthView
+from .login import SigninView, SignUpView
 
 blueprint_account = Blueprint('account', subdomain='account')
 
 blueprint_account.add_url_rule(
-    '/',
-    view_func=AuthView.as_view(),
+    '/signin/',
+    view_func=SigninView.as_view(),
     methods=['GET', 'POST'],
-    endpoint='main')
+    endpoint='login')
+blueprint_account.add_url_rule(
+    '/signup/',
+    view_func=SignUpView.as_view(),
+    methods=['GET', 'POST'],
+    endpoint='signup')

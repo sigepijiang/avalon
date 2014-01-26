@@ -28,7 +28,7 @@ def upgrade():
         sa.Column(
             'date_last_signed_in',
             sa.DateTime(),
-            server_default=db.utils.server_datetime()),
+            server_default=db.utils.server_datetime),
     )
 
     op.create_table(
@@ -39,10 +39,10 @@ def upgrade():
         ),
         sa.Column('email', sa.Unicode(320), primary_key=True),
         sa.Column(
-            'password', sa.CHAR(40), nullable=False),
+            'password_hash', sa.CHAR(40), nullable=False),
         sa.Column(
             'date_created', sa.DateTime(),
-            server_default=db.utils.server_datetime()),
+            server_default=db.utils.server_datetime),
     )
 
     op.create_table(
@@ -58,7 +58,13 @@ def upgrade():
         sa.Column(
             'date_created',
             sa.DateTime(),
-            server_default=db.utils.server_datetime()),
+            server_default=db.utils.server_datetime),
+    )
+
+    op.create_table(
+        'ukey_sequence',
+        sa.Column('id', sa.Integer(), primary_key=True),
+        sa.Column('seq', sa.BigInteger()),
     )
 
 
@@ -66,3 +72,6 @@ def downgrade():
     op.drop_table('email')
     op.drop_table('account')
     op.drop_table('client')
+    op.drop_table('ukey_sequence')
+    op.execute('drop type account_status_enum;')
+    op.execute('drop type client_type_enum;')

@@ -16,10 +16,6 @@ class TableOpt(object):
         db.session.commit()
         return tmp
 
-    def update(self):
-        db.session.commit()
-        return self
-
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -50,8 +46,14 @@ class DataBaseOperation(object):
     def relationship(self):
         return relationship
 
+    @cached_property
+    def backref(self):
+        from sqlalchemy.orm import backref
+        return backref
+
 
 class SqlalchemyUtil(object):
+    @cached_property
     def server_datetime(self):
         return text('NOW()')
 

@@ -8,7 +8,7 @@ from share.utils import is_file_exists
 
 
 def _url_bottle_handle(rule, **kwargs):
-    from share.bottle import Router
+    from share.framework.bottle import Router
     scheme = 'https' if rule['https'] else 'http'
     subdomain = rule['subdomain']
     rule = rule['rule']

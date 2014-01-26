@@ -1,0 +1,25 @@
+# ZEUS 
+
+用户注册系统，这里还是借鉴了很多guokrplus的思路的。
+
+## 数据库
+### account
+### email
+### client
+
+## 视图
+### zeus.auth.signin
+### zeus:auth.signup
+* get
+* post
+    * success redirct heracles.blog.list
+    * fail back
+
+### logout
+
+## API
+### oauth
+
+## 其他
+### auth安全
+* https, ssl

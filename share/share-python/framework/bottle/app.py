@@ -119,11 +119,12 @@ class Blueprint(object):
         self.url_prefix = url_prefix
         self.url_rules = {}
 
-    def add_url_rule(self, rule, view_func, methods, endpoint, defaults={},
+    def add_url_rule(self, rule, view_func, methods,
+                     endpoint=None, defaults={},
                      https=False, **options):
         route_list = []
         endpoint = endpoint or view_func.__name__
-        for method in makelist(methods):
+        for method in makelist(map(lambda m: m.upper(), methods)):
             route = Route(
                 None, rule, method, view_func, defaults=defaults,
                 name=endpoint, https=https)
@@ -136,10 +137,10 @@ class Blueprint(object):
 
 
 class APIBlueprint(Blueprint):
-    def __init__(self, name, url_prefix):
+    def __init__(self, name, url_prefix=''):
         super(APIBlueprint, self).__init__(name, 'apis', url_prefix)
 
 
 class BackendsBlueprint(Blueprint):
-    def __init__(self, name, url_prefix):
+    def __init__(self, name, url_prefix=''):
         super(APIBlueprint, self).__init__(name, 'backends', url_prefix)

@@ -18,5 +18,7 @@ pip install pylint
 pip install autopep8
 pip install wtforms 
 pip install simplejson
+pip install requests
+pip install voluptuous
 
 ln -s -f -n $BASE/share/share-python $PYLIB_PATH/share

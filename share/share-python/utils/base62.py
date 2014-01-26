@@ -15,7 +15,7 @@ def base62_encode(number):
     while number != 0:
         number, i = divmod(number, 62)
         b62.append(digits[i])
-    return ''.join(reversed(b62))
+    return ('%7s' % ''.join(reversed(b62))).replace(' ', '0')
 
 
 def base62_decode(text):

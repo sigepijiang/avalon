@@ -2,7 +2,10 @@ app_base: bottle
 app_name: zeus
 blueprints:
   account:
-    main: {https: false, rule: /, subdomain: account}
+    login: {https: false, rule: /signin/, subdomain: account}
+    signup: {https: false, rule: /signup/, subdomain: account}
+  apis:
+    api_authapi: {https: false, rule: /zeus/auth.<format>, subdomain: apis}
 domain: dev.wishstone.me
 global_port: 23900
 port: 24102

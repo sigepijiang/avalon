@@ -7,6 +7,6 @@ class NotFound(HTTPError):
         super(NotFound, self).__init__(404, body)
 
 
-class BadRequet(HTTPError):
+class BadRequest(HTTPError):
     def __init__(self, body):
-        super(BadRequet, self).__init__(400, body)
+        super(BadRequest, self).__init__(400, body)

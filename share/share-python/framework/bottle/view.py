@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from bottle import request
 
+from .errors import NotFound
+
 
 HTTP_METHOD_MAP = {
     'get': 'get',
@@ -14,14 +16,14 @@ class MethodView(object):
     decorators = []
     methods = []
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         super(MethodView, self).__init__()
 
     @classmethod
     def as_view(cls, name=''):
         def view_func(*args, **kwargs):
-            cls = view_func.view_class(*args, **kwargs)
-            return cls.dispatch_request(*args, **kwargs)
+            view = view_func.view_class()
+            return view.dispatch_request(*args, **kwargs)
 
         if cls.decorators:
             for decorator in cls.decorators:
@@ -39,5 +41,5 @@ class MethodView(object):
         if meth is None and request.method == 'HEAD':
             meth = getattr(self, 'get', None)
         if not meth:
-            raise
+            raise NotFound('请求方法错误！')
         return meth(*args, **kwargs)

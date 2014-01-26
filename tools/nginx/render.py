@@ -58,7 +58,7 @@ def render_upstreams():
     conf = config()
     upstreams = []
     for app, appconf in conf['APPS'].items():
-        ups = {'name': 'app_%s' % app, 'servers': []}
+        ups = {'name': 'app_%s' % app.lower(), 'servers': []}
         host = appconf['HOST']
         if 'JAVA_PORT' in appconf:
             port = appconf['JAVA_PORT']
