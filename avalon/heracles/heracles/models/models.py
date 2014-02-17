@@ -6,23 +6,6 @@ import sqlalchemy as sa
 from share.engines import db
 
 
-class TextMetaModel(db.Model, db.TableOpt):
-    __tablename__ = 'text_meta'
-
-    id = sa.Column(sa.Integer(), primary_key=True)
-    hashkey = sa.Column(
-        sa.String(128), sa.ForeignKey('text.hashkey'), nullable=False)
-    file_type = sa.Column(sa.String(8), nullable=False)
-    file_name = sa.Column(sa.Unicode(128), nullable=False)
-
-    text = db.relationship('TextModel', backref='text_meta')
-
-    def __init__(self, file_path, file_name, title=''):
-        self.title = title
-        self.file_path = file_path
-        self.file_name = file_name
-
-
 class TextModel(db.Model, db.TableOpt):
     __tablename__ = 'text'
 
@@ -31,14 +14,39 @@ class TextModel(db.Model, db.TableOpt):
     content = sa.Column(sa.Unicode())
 
 
+
 class BlogModel(db.Model, db.TableOpt):
     __tablename__ = 'blog'
 
     id = sa.Column(sa.Integer(), primary_key=True)
-    text_id = sa.Column(sa.Integer(), sa.ForeignKey('text_meta.id'))
+    text_id = sa.Column(sa.String(128), sa.ForeignKey('text.hashkey'))
     title = sa.Column(sa.Unicode(128))
     summary = sa.Column(sa.Unicode(512))
     date_created = sa.Column(sa.DateTime(), default=datetime.now)
     date_modified = sa.Column(sa.DateTime(), default=datetime.now)
+    category_id = sa.Column(sa.Integer(), sa.ForeignKey('category.id'))
+    is_visible = sa.Column(sa.Boolean())
 
-    text_meta = db.relationship('TextMetaModel', backref='blog')
+    text = db.relationship('TextModel', backref='blog')
+
+
+class CategoryModel(db.Model, db.TableOpt):
+    __tablename__ = 'category'
+
+    id = sa.Column(sa.Integer(), primary_key=True)
+    title = sa.Column(sa.Unicode(32), nullable=False)
+
+
+class BlogTagsModel(db.Model, db.TableOpt):
+    __tablename__ = 'blog_tags'
+
+    blog_id = sa.Column(
+        sa.Integer(), sa.ForeignKey('blog.id'), primary_key=True)
+    tag_id = sa.Column(sa.Integer(), sa.ForeignKey('tag.id'), primary_key=True)
+
+
+class TagModel(db.Model, db.TableOpt):
+    __tablename__ = 'tag'
+
+    id = sa.Column(sa.Integer(), primary_key=True)
+    title = sa.Column(sa.Unicode(32))

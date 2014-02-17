@@ -1,1 +1,1 @@
-from .models import BlogModel, TextMetaModel, TextModel
+from .models import BlogModel,  TextModel, CategoryModel, TagModel

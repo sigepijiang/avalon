@@ -23,26 +23,42 @@ def upgrade():
         sa.Column('content', sa.Unicode()))
 
     op.create_table(
-        'text_meta',
+        'tag',
         sa.Column('id', sa.Integer(), primary_key=True),
-        sa.Column(
-            'hashkey', sa.String(128), sa.ForeignKey('text.hashkey')),
-        sa.Column('file_type', sa.String(32), nullable=False),
-        sa.Column('file_name', sa.Unicode(128), nullable=False))
+        sa.Column('title', sa.Unicode(32)))
+
+    op.create_table(
+        'category',
+        sa.Column('id', sa.Integer(), primary_key=True),
+        sa.Column('title', sa.Unicode(32)))
 
     op.create_table(
         'blog',
         sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column(
-            'text_id', sa.Integer(), sa.ForeignKey('text_meta.id')),
+            'text_id', sa.String(128), sa.ForeignKey('text.hashkey')),
         sa.Column('title', sa.Unicode(128)),
         sa.Column('summary', sa.String(512)),
         sa.Column('content', sa.Unicode()),
+        sa.Column('category_id', sa.Integer(), sa.ForeignKey('category.id')),
+        sa.Column('is_visible', sa.Boolean()),
         sa.Column('date_created', sa.DateTime(), default=datetime.now),
         sa.Column('date_modified', sa.DateTime(), default=datetime.now))
 
+    op.create_table(
+        'blog_tags',
+        sa.Column(
+            'blog_id', sa.Integer(),
+            sa.ForeignKey('blog.id'), primary_key=True),
+        sa.Column(
+            'tag_id', sa.Integer(),
+            sa.ForeignKey('tag.id'), primary_key=True),
+    )
+
 
 def downgrade():
+    op.drop_table('blog_tags')
     op.drop_table('blog')
-    op.drop_table('text_meta')
+    op.drop_table('category')
+    op.drop_table('tag')
     op.drop_table('text')

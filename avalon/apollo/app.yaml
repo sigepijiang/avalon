@@ -1,7 +1,7 @@
 # Multiple app config
 DEVELOPMENT: &dev
     APP_NAME: 'apollo'
-    APP_TYPE: 'bottle'
+    APP_TYPE: 'app'
     APP_BASE: 'bottle'
     MODULE: 'apollo:app'
     DEBUG: true
