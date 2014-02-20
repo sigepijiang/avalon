@@ -45,7 +45,7 @@ DEVELOPMENT: &dev
             DB_MASTER: 'postgresql+psycopg2://zeus:zzzz@localhost/zeus'
 
 
-PRODUCT:
+PRODUCTION:
     <<: *dev
     DOMAIN: 'wishstone.me'
 
