@@ -44,5 +44,11 @@ DEVELOPMENT: &dev
             TYPE: 'app'
             DB_MASTER: 'postgresql+psycopg2://zeus:zzzz@localhost/zeus'
 
+
 PRODUCT:
     <<: *dev
+    DOMAIN: 'wishstone.me'
+
+    NGINX:
+        CHROOT: 'env/'
+        LISTEN: 8080 

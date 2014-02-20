@@ -22,7 +22,7 @@ export _UWSGI_NAME='avalon'
 if [ -n "${AVALON_ENVIRON}" ]; then
     return
 fi
-if [ -n "$(echo $HOSTNAME | grep gkserver)" ]; then
+if [ -n "$(echo $HOSTNAME | grep iliya)" ]; then
     export AVALON_ENVIRON="PRODUCTION"
 elif [ -n "$(echo $HOSTNAME | grep qaserver)" ]; then
     export AVALON_ENVIRON="STAGING"
