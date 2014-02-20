@@ -51,4 +51,4 @@ PRODUCTION:
 
     NGINX:
         CHROOT: 'env/'
-        LISTEN: 8080 
+        LISTEN: 80 
