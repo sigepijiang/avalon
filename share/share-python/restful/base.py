@@ -43,10 +43,13 @@ class RESTfulAPI(object):
         return view_func
 
     def dispatch_request(self, *args, **kwargs):
+        result_format = kwargs.pop('format', 'json')
         meth = getattr(self, METHOD_MAP[request.method.lower()], None)
         if meth is None and request.method == 'HEAD':
             meth = getattr(self, 'get', None)
         if not meth:
             raise APINotFound()
-        return dict(
-            ok=True, time=time.time(), result=meth(*args, **kwargs))
+
+        if result_format == 'json':
+            return dict(
+                ok=True, time=time.time(), result=meth(*args, **kwargs))

@@ -20,3 +20,4 @@
 * 前端文件可在app文件夹内指定
 * tools/functions.sh goodbye 干掉所有的自定义环境变量
 * 对 apis, backends, services 进行路径保护
+* bottle: 为Route 和Router 添加subdomain支持 

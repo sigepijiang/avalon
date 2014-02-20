@@ -113,7 +113,7 @@ class Avalon(Bottle):
 
 
 class Blueprint(object):
-    def __init__(self, name, subdomain='', url_prefix=''):
+    def __init__(self, name, subdomain='www', url_prefix=''):
         self.name = name
         self.subdomain = subdomain
         self.url_prefix = url_prefix
@@ -137,10 +137,14 @@ class Blueprint(object):
 
 
 class APIBlueprint(Blueprint):
-    def __init__(self, name, url_prefix=''):
-        super(APIBlueprint, self).__init__(name, 'apis', url_prefix)
+    def __init__(self, name):
+        from bottle import default_app
+        super(APIBlueprint, self).__init__(
+            name, 'apis', '/' + default_app().name)
 
 
 class BackendsBlueprint(Blueprint):
-    def __init__(self, name, url_prefix=''):
-        super(APIBlueprint, self).__init__(name, 'backends', url_prefix)
+    def __init__(self, name):
+        from bottle import default_app
+        super(APIBlueprint, self).__init__(
+            name, 'backends', '/' + default_app().name)

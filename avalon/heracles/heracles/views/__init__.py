@@ -2,7 +2,7 @@
 from share.framework.bottle.app import Blueprint
 
 from .blog import BlogView, TextView
-from .index import IndexView
+from .index import BlogIndexView
 
 blueprint_www = Blueprint('www', subdomain='www')
 
@@ -18,7 +18,7 @@ blueprint_www.add_url_rule(
     endpoint='blog_redirect',)
 blueprint_www.add_url_rule(
     '/',
-    view_func=IndexView.as_view(),
+    view_func=BlogIndexView.as_view(),
     methods=['GET'],
-    endpoint='main',
+    endpoint='index',
 )

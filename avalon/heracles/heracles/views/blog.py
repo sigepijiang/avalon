@@ -8,16 +8,17 @@ from share.framework.bottle import NotFound
 from heracles.models import BlogModel
 
 
+class BlogListView(MethodView):
+    @view('blog.html')
+    def get(self):
+        return {}
+
+
 class BlogView(MethodView):
     @view('blog.html')
     def get(self, blog_id):
-        blog = BlogModel.query.filter_by(
-            id=blog_id).first()
-
-        if not blog:
-            raise NotFound('日志不存在')
-
-        return blog
+        blog = BlogModel.query.get(blog_id)
+        return dict(blog=blog)
 
 
 class TextView(MethodView):

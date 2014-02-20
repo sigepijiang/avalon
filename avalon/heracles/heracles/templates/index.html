@@ -14,17 +14,23 @@
 <div class="page">
     {% include 'blog_header.html' %}
     <div class="main">
-        <div class="blog-detail">
-            <h3>{{ blog.title }}</a></h3>
+        {% for blog in blog_list %}
+        <div class="blog">
+            <h3><a href="{{ url_for('heracles:www.blog', blog_id=blog.id) }}">{{ blog.title }}</a></h3>
             <span class="blog-time">{{ blog.date_created }}</span>
             <div class="text">
-                {{ blog.html }}
+                {{ blog.summary }}
+            </div>
+            <div class="meta">
+                <div class="read-more"><a href="{{ url_for('heracles:www.blog', blog_id=blog.id) }}">Read more &#8594;</a></div>
             </div>
         </div>
-        {% include "share.html" %}
+        {% endfor %}
+        {{ pager() }}
     </div>
     <div class="footer">
         © Scripta 2014<br/><a href="http://creativemarket.com/maketheweb">Scripta Theme</a> by <a href="http://maketheweb.pl">MakeTheWeb</a>
     </div>
 </div>
 {% endblock %}
+

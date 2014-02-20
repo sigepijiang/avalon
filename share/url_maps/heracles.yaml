@@ -1,10 +1,12 @@
 app_base: bottle
 app_name: heracles
 blueprints:
+  api:
+    api_updateopenapi: {https: false, rule: /heracles/blog/update.<format>, subdomain: apis}
   www:
     blog: {https: false, rule: '/blog/<blog_id:int>/', subdomain: www}
     blog_redirect: {https: false, rule: /blog/<file_name>.<file_type>/, subdomain: www}
-    main: {https: false, rule: /blog/, subdomain: www}
+    index: {https: false, rule: /blog/, subdomain: www}
 domain: dev.wishstone.me
 global_port: 23900
 port: 24101

@@ -44,7 +44,7 @@ def view(tmp_name):
 
             return jinja2_env.get_template(
                 tmp_name).render(
-                    func(*args, **kwargs))
+                    func(*args, **kwargs) or {})
         return call_f
     return decorator_f
 

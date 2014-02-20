@@ -2,13 +2,13 @@
 import os
 import codecs
 
-import markdown2
 
 from share.framework.bottle.errors import NotFound
 from share.framework.bottle.template import get_template_path
+from .markdown import markdown
 
 CONTENT_CONVERTER = {
-    'md': markdown2.markdown,
+    'md': markdown,
     'org': '',
 }
 

@@ -20,5 +20,6 @@ pip install wtforms
 pip install simplejson
 pip install requests
 pip install voluptuous
+pip install beautifulsoup4
 
 ln -s -f -n $BASE/share/share-python $PYLIB_PATH/share

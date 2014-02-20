@@ -4,8 +4,8 @@
 {% for app in domain.app_list %}
 {% call location('/apis/' ~ app.app_name) %}
 set_by_lua $apis_path 'return string.sub(ngx.var.document_uri, 6)';
-{% if app.app_type == 'uwsgi' %}
-{{ uwsgi('app_' ~ app.app_name, equal_domain=domain.name) }}
+{% if app.app_base in ['uwsgi'] %}
+{{ uwsgi('app_' ~ app.app_name) }}
 uwsgi_param PATH_INFO $apis_path;
 uwsgi_param HTTP_HOST {{ 'apis.' ~ domain.name }}{% if port not in (80, 443) %}:{{ port }}{% endif %};
 uwsgi_param SERVER_NAME {{ 'apis.' ~ domain.name }};

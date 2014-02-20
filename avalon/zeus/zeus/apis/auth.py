@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from share.framework.bottle.restful import RESTfulAPI
+from share.restful import RESTfulAPI
 
 
 class AuthAPI(RESTfulAPI):

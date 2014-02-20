@@ -1,0 +1,21 @@
+{% if total_count > pager_limit %}
+<div class="blog-pager">
+    {% if current_page > 1 %}
+    <a class="blog-pager-newer" href="?page={{ current_page - 1 }}">
+        <div class="blog-pager-newer">
+            <div class="blog-pager-newer-arrow"></div>
+            <div class="blog-pager-newer-text">Newer posts</div>
+        </div>
+    </a>
+    {% endif %}
+    <div class="blog-pager-index">Page {{ current_page }} of {{ total_count }}</div>
+    {% if current_page < total_count %}
+    <a class="blog-pager-older" href="/page/2/">
+        <div class="blog-pager-older">
+            <div class="blog-pager-older-arrow"></div>
+            <div class="blog-pager-older-text">Older posts</div>
+        </div>
+    </a>
+    {% endif %}
+</div>
+{% endif %}

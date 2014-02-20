@@ -47,4 +47,7 @@ Module = function(name, func){
     that = {'exports': {}}; 
     func.apply(that);
     avalon[name] = that.exports;
+    if (that.run && $.is.Function(that.run)){
+        that.run();
+    }
 }

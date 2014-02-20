@@ -1,14 +1,20 @@
 #-*- coding: utf-8 -*-
-import os
-from share.framework.bottle import default_app
 from share.framework.bottle import MethodView, view
-from share.framework.bottle import NotFound
+from share.framework.bottle import Pager
 
 from heracles.models import BlogModel
-from ._decorators import content2html
 
 
-class IndexView(MethodView):
+class BlogIndexView(MethodView):
+    pager_limit = 5
+
     @view('index.html')
     def get(self):
-        pass
+        query = BlogModel.query.filter(
+            BlogModel.is_visible.is_(True)
+        ).order_by(BlogModel.date_created.desc())
+
+        pager = Pager(self)
+        pager.set_total_count(query.count())
+
+        return dict(blog_list=query.all(), pager=pager)

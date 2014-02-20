@@ -19,7 +19,10 @@ def upgrade():
     op.create_table(
         'text',
         sa.Column('hashkey', sa.String(128), primary_key=True),
-        sa.Column('parent_hashkey', sa.String(128)),
+        sa.Column(
+            'parent_hashkey', sa.String(128),
+            sa.ForeignKey('text.hashkey')
+        ),
         sa.Column('content', sa.Unicode()))
 
     op.create_table(
@@ -35,6 +38,7 @@ def upgrade():
     op.create_table(
         'blog',
         sa.Column('id', sa.Integer(), primary_key=True),
+        sa.Column('file_name', sa.Unicode(64)),
         sa.Column(
             'text_id', sa.String(128), sa.ForeignKey('text.hashkey')),
         sa.Column('title', sa.Unicode(128)),
@@ -43,7 +47,8 @@ def upgrade():
         sa.Column('category_id', sa.Integer(), sa.ForeignKey('category.id')),
         sa.Column('is_visible', sa.Boolean()),
         sa.Column('date_created', sa.DateTime(), default=datetime.now),
-        sa.Column('date_modified', sa.DateTime(), default=datetime.now))
+        sa.Column('date_modified', sa.DateTime(), default=datetime.now)
+    )
 
     op.create_table(
         'blog_tags',
