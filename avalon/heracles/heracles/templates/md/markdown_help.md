@@ -4,9 +4,10 @@
 ## h2
 ###### h6
 
-测试删除 ~~test delete~~
+~~测试删除 test delete~~
 
 
+`test`
 `test`
 
 	def abc:
