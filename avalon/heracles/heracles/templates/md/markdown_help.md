@@ -1,4 +1,4 @@
-# MARKDOWN 语言的一些例子
+# MARKDOWN 的一些例子
 
 # h1
 ## h2
