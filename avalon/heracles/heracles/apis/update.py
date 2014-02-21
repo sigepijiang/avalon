@@ -4,10 +4,10 @@ import hashlib
 import re
 
 import bs4
-import markdown2
 
 from share.restful import RESTfulAPI
 from share.engines import db
+from share.markdown import markdown
 
 from heracles import app
 from heracles.models import BlogModel, TextModel
@@ -39,7 +39,7 @@ class UpdateOpenAPI(RESTfulAPI):
             blog = BlogModel.query.filter(
                 BlogModel.file_name == file_name).first()
             md = open(os.path.join(directory, file_name), 'r').read()
-            html = markdown2.markdown(md)
+            html = markdown(md)
             bs = bs4.BeautifulSoup(html)
 
             hashkey = hashlib.md5(md).hexdigest()
@@ -55,9 +55,6 @@ class UpdateOpenAPI(RESTfulAPI):
                 db.session.add(text)
                 db.session.add(blog)
             else:
-                print blog
-                print hashkey
-                print blog.text.hashkey
                 text = blog.text
                 if text.hashkey == hashkey:
                     continue

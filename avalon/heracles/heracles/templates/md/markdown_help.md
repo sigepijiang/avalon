@@ -4,7 +4,7 @@
 ## h2
 ###### h6
 
-测试删除 ~~test~~
+测试删除 ~~test delete~~
 
 
 `test`
