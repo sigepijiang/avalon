@@ -55,9 +55,12 @@ class UpdateOpenAPI(RESTfulAPI):
                 db.session.add(text)
                 db.session.add(blog)
             else:
+                print blog
+                print hashkey
+                print blog.text.hashkey
                 text = blog.text
                 if text.hashkey == hashkey:
-                    return
+                    continue
 
                 text = TextModel(content=html, hashkey=hashkey)
                 text.parent = blog.text

@@ -15,7 +15,7 @@ class TextModel(db.Model, db.TableOpt):
         sa.String(128), sa.ForeignKey('text.hashkey'))
     content = sa.Column(sa.Unicode())
 
-    parent = db.relationship('TextModel')
+    parent = db.relationship('TextModel', uselist=False)
 
 
 
@@ -32,7 +32,7 @@ class BlogModel(db.Model, db.TableOpt):
     category_id = sa.Column(sa.Integer(), sa.ForeignKey('category.id'))
     is_visible = sa.Column(sa.Boolean())
 
-    text = db.relationship('TextModel', backref='blog')
+    text = db.relationship('TextModel', backref='blog', uselist=False)
 
     @cached_property
     def html(self):
