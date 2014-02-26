@@ -24,15 +24,22 @@ class BlogModel(db.Model, db.TableOpt):
 
     id = sa.Column(sa.Integer(), primary_key=True)
     file_name = sa.Column(sa.Unicode(64))
-    text_id = sa.Column(sa.String(128), sa.ForeignKey('text.hashkey'))
     title = sa.Column(sa.Unicode(128))
+    text_id = sa.Column(sa.String(128), sa.ForeignKey('text.hashkey'))
     summary = sa.Column(sa.Unicode(512))
     date_created = sa.Column(sa.DateTime(), default=datetime.now)
     date_modified = sa.Column(sa.DateTime(), default=datetime.now)
     category_id = sa.Column(sa.Integer(), sa.ForeignKey('category.id'))
-    is_visible = sa.Column(sa.Boolean())
+    is_visible = sa.Column(
+        sa.Boolean(), default=True, server_default='true')
 
     text = db.relationship('TextModel', backref='blog', uselist=False)
+    tags = db.relationship(
+        'TagModel',
+        primaryjoin='BlogModel.id == BlogTagsModel.blog_id',
+        secondary=lambda: BlogTagsModel.__table__,
+        secondaryjoin='BlogTagsModel.tag == TagModel.title',
+    )
 
     @cached_property
     def html(self):
@@ -51,11 +58,10 @@ class BlogTagsModel(db.Model, db.TableOpt):
 
     blog_id = sa.Column(
         sa.Integer(), sa.ForeignKey('blog.id'), primary_key=True)
-    tag_id = sa.Column(sa.Integer(), sa.ForeignKey('tag.id'), primary_key=True)
+    tag = sa.Column(sa.Unicode(32), sa.ForeignKey('tag.title'), primary_key=True)
 
 
 class TagModel(db.Model, db.TableOpt):
     __tablename__ = 'tag'
 
-    id = sa.Column(sa.Integer(), primary_key=True)
-    title = sa.Column(sa.Unicode(32))
+    title = sa.Column(sa.Unicode(32), primary_key=True)

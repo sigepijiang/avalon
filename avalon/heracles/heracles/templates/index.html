@@ -22,6 +22,16 @@
                 {{ blog.summary }}
             </div>
             <div class="meta">
+                {% if blog.tags %}
+                <div class="tag-list pull-left">
+                    <p>
+                        <span class="tags-icon glyphicon glyphicon-tags"></span>
+                        {% for tag in blog.tags %}
+                        <a href="">{{ tag.title }}</a>
+                        {% endfor %}
+                    </p>
+                </div>
+                {% endif %}
                 <div class="read-more"><a href="{{ url_for('heracles:www.blog', blog_id=blog.id) }}">Read more &#8594;</a></div>
             </div>
         </div>

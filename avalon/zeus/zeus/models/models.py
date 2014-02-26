@@ -1,4 +1,6 @@
 #-*- coding: utf-8 -*-
+from datetime import datetime
+
 from bottle import default_app
 import random
 import sqlalchemy as sa
@@ -16,7 +18,8 @@ class AccountModel(db.Model, db.TableOpt):
         default='active')
     date_last_signed_in = sa.Column(
         sa.DateTime(),
-        server_default=db.utils.server_datetime)
+        default=datetime.now(),
+        server_default=sa.func.now())
 
 
 class EmailModel(db.Model, db.TableOpt):
@@ -26,7 +29,9 @@ class EmailModel(db.Model, db.TableOpt):
     email = sa.Column(sa.Unicode(320), primary_key=True)
     password_hash = sa.Column(sa.CHAR(40), nullable=False)
     date_created = sa.Column(
-        sa.DateTime(), server_default=db.utils.server_datetime)
+        sa.DateTime(),
+        default=datetime.now(),
+        server_default=sa.func.now())
 
     account = db.relationship(
         'AccountModel',
@@ -66,7 +71,8 @@ class ClientModel(db.Model, db.TableOpt):
     domain = sa.Column(sa.String(64))
     date_created = sa.Column(
         sa.DateTime(),
-        server_default=db.utils.server_datetime
+        default=datetime.now(),
+        server_default=sa.func.now()
     )
 
 

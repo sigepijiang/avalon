@@ -10,10 +10,10 @@ Create Date: 2013-09-25 15:46:11.654988
 revision = '425e60d4081b'
 down_revision = None
 
+from datetime import datetime
+
 from alembic import op
 import sqlalchemy as sa
-
-from share.engines import db
 
 
 def upgrade():
@@ -28,7 +28,8 @@ def upgrade():
         sa.Column(
             'date_last_signed_in',
             sa.DateTime(),
-            server_default=db.utils.server_datetime),
+            default=datetime.now(),
+            server_default=sa.func.now()),
     )
 
     op.create_table(
@@ -42,7 +43,8 @@ def upgrade():
             'password_hash', sa.CHAR(40), nullable=False),
         sa.Column(
             'date_created', sa.DateTime(),
-            server_default=db.utils.server_datetime),
+            default=datetime.now(),
+            server_default=sa.func.now()),
     )
 
     op.create_table(
@@ -58,7 +60,8 @@ def upgrade():
         sa.Column(
             'date_created',
             sa.DateTime(),
-            server_default=db.utils.server_datetime),
+            default=datetime.now(),
+            server_default=sa.func.now()),
     )
 
     op.create_table(

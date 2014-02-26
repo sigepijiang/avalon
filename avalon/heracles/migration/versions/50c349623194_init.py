@@ -27,8 +27,8 @@ def upgrade():
 
     op.create_table(
         'tag',
-        sa.Column('id', sa.Integer(), primary_key=True),
-        sa.Column('title', sa.Unicode(32)))
+        sa.Column('title', sa.Unicode(32), primary_key=True)
+    )
 
     op.create_table(
         'category',
@@ -39,15 +39,21 @@ def upgrade():
         'blog',
         sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column('file_name', sa.Unicode(64)),
+        sa.Column('title', sa.Unicode(128)),
         sa.Column(
             'text_id', sa.String(128), sa.ForeignKey('text.hashkey')),
-        sa.Column('title', sa.Unicode(128)),
         sa.Column('summary', sa.String(512)),
         sa.Column('content', sa.Unicode()),
         sa.Column('category_id', sa.Integer(), sa.ForeignKey('category.id')),
-        sa.Column('is_visible', sa.Boolean()),
-        sa.Column('date_created', sa.DateTime(), default=datetime.now),
-        sa.Column('date_modified', sa.DateTime(), default=datetime.now)
+        sa.Column('is_visible', sa.Boolean(), default=True, server_default='true'),
+        sa.Column(
+            'date_created', sa.DateTime(), default=datetime.now,
+            server_default=sa.func.now()
+        ),
+        sa.Column(
+            'date_modified', sa.DateTime(), default=datetime.now,
+            server_default=sa.func.now()
+        )
     )
 
     op.create_table(
@@ -56,8 +62,8 @@ def upgrade():
             'blog_id', sa.Integer(),
             sa.ForeignKey('blog.id'), primary_key=True),
         sa.Column(
-            'tag_id', sa.Integer(),
-            sa.ForeignKey('tag.id'), primary_key=True),
+            'tag', sa.Unicode(32),
+            sa.ForeignKey('tag.title'), primary_key=True),
     )
 
 

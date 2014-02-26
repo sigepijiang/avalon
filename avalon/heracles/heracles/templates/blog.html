@@ -17,6 +17,16 @@
         <div class="blog-detail">
             <h3>{{ blog.title }}</a></h3>
             <span class="blog-time">{{ blog.date_created }}</span>
+            {% if blog.tags %}
+            <div class="tag-list tag-list-top">
+                <p>
+                    <span class="tags-icon glyphicon glyphicon-tags"></span>
+                    {% for tag in blog.tags %}
+                    <a href="">{{ tag.title }}</a>
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
             <div class="text">
                 {{ blog.html }}
             </div>

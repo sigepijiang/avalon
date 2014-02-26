@@ -1,5 +1,5 @@
 @social_image: url(../../img/social.png);
-@font-family: @font-family;
+@font-family: pt-sans, 'PT Sans', sans-serif;
 
 a {
     text-decoration: none;
@@ -178,6 +178,35 @@ a {
                 }
             }
 
+            .tag-list-top {
+                padding-left: 7.5%;
+            }
+
+
+            .tag-list {
+                padding-left: 7.5%;
+
+                a:link {
+                    color: #76ace0;
+                }
+
+                a:visited {
+                    color: #76ace0;
+                }
+
+                a:hover {
+                    color: #0581d2;
+                    text-decoration: none;
+                }
+
+                .tags-icon {
+                    padding-right: 10px;
+                    color: black;
+                    font-family: 'Glyphicons Halflings';
+                    display: inline;
+                }
+            }
+
             .meta {
                 height: 20px;
                 width: 100%;
@@ -191,19 +220,6 @@ a {
                     float: right;
                     margin: 0px 15px 0px 0px;
                     text-align: right;
-                }
-
-                .read-more a:link {
-                    color: #76ace0;
-                }
-
-                .read-more a:visited {
-                    color: #76ace0;
-                }
-
-                .read-more a:hover {
-                    color: #0581d2;
-                    text-decoration: none;
                 }
             }
         }
