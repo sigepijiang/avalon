@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import codecs
-
+from functools import wraps
 
 from share.framework.bottle.errors import NotFound
 from share.framework.bottle.template import get_template_path
-from .markdown import markdown
+from share.utils.markdown import markdown
 
 CONTENT_CONVERTER = {
     'md': markdown,
@@ -14,6 +14,7 @@ CONTENT_CONVERTER = {
 
 
 def content2html(func):
+    @wraps(func)
     def call_f(*args, **kwargs):
         result = func(*args, **kwargs)
 
@@ -33,3 +34,18 @@ def content2html(func):
         result['content'] = content
         return result
     return call_f
+
+
+def auto_signin(func):
+    setattr(func, 'auto_signin', True)
+    return func
+
+
+def signin_required(func):
+    setattr(func, 'signin_required', True)
+    return func
+
+
+def authorization_required(func):
+    setattr(func, 'authorization_required', True)
+    return func

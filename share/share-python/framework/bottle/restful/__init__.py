@@ -1,6 +1,6 @@
-#-*- coding: utf-8 -*-
-
-from .base import Client
+from .base import RESTfulAPI, RESTfulOpenAPI, RESTfulBackendAPI
+from .client import Client
+from .validator import resful_validator
 
 
 # TODO: PEP302 APIImporter

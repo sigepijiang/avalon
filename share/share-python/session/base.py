@@ -25,10 +25,4 @@ class Session(dict):
         self.request = request
         self.timeout = timeout
         self.use_cookies = use_cookies
-
-    def __getitem__(self, key):
-        return self.get(key, None)
-
-    def __setitem__(self, key, value):
-        self[key] = value
-        return self
+        request.session = self

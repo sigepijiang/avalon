@@ -32,10 +32,10 @@ def get_url_map(app_name):
     if not is_file_exists(map_file):
         raise RouteBuildError('<%s> not avaliable!' % app_name)
 
-    if not URL_MAP:
+    if not URL_MAP.get(app_name, None):
         with open(map_file, 'rb') as f:
-            URL_MAP = yaml.load(f)
-    return URL_MAP
+            URL_MAP[app_name] = yaml.load(f)
+    return URL_MAP[app_name]
 
 
 def get_endpoint_info(name):
@@ -74,7 +74,8 @@ def url_for(endpoint, **kwargs):
     if global_port in ('80', 80):
         return '%(scheme)s://%(subdomain)s.%(domain)s%(path)s' % dict(
             scheme=scheme, subdomain=subdomain, domain=domain, path=path)
-    return ('%(scheme)s://%(subdomain)s.%(domain)s:'
-            '%(global_port)s%(path)s') % dict(
-                scheme=scheme, subdomain=subdomain,
-                domain=domain, path=path, global_port=global_port)
+    return (
+        '%(scheme)s://%(subdomain)s.%(domain)s:'
+        '%(global_port)s%(path)s') % dict(
+        scheme=scheme, subdomain=subdomain,
+        domain=domain, path=path, global_port=global_port)

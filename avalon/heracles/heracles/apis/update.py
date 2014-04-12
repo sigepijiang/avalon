@@ -7,9 +7,9 @@ from datetime import datetime
 
 import bs4
 
-from share.restful import RESTfulAPI
-from share.engines import db
-from share.markdown import markdown
+from share.framework.bottle.restful import RESTfulAPI
+from share.framework.bottle.engines import db
+from share.utils.markdown import markdown
 
 from heracles import app
 from heracles.models import BlogModel, TextModel
@@ -17,6 +17,7 @@ from heracles.models import BlogModel, TextModel
 
 class UpdateOpenAPI(RESTfulAPI):
     path = '/blog/update'
+    methods = ['POST']
 
     def _get_title_summary(self, bs):
         title = bs.h1.text

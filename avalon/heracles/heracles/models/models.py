@@ -4,7 +4,7 @@ from datetime import datetime
 from bottle import cached_property
 import sqlalchemy as sa
 
-from share.engines import db
+from share.framework.bottle.engines import db
 
 
 class TextModel(db.Model, db.TableOpt):

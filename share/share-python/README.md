@@ -1,0 +1,42 @@
+# share 的文档结构
+
+* framework
+    * bottle
+        * engines
+        * resetful
+        * shortcut
+        * app.py
+        * decorators.py
+        * errors.py
+        * hooks.py
+        * pager.py
+        * template.py
+        * view.py
+    * ...
+* engines
+    * db.py
+    * memory.py
+* restful
+    * base.py
+    * client.py
+    * errors.py
+* session
+    * base.py
+* templates
+    * jinja2
+        * \_base.html
+        * \_footer.html
+        * \_header.html
+        * \_macros.html
+        * \_sider.html
+    * ...
+* util
+    * base62.py 
+    * const.py
+    * decorators.py
+    * markdown.py
+    * snowflake.py
+* wtforms
+* config.py
+* errors.py
+* url_map.py

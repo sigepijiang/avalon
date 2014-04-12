@@ -2,7 +2,8 @@
 
 from share.framework.bottle import APIBlueprint
 
-from .auth import AuthAPI
+from .oauth2 import ClientOAuthAPI, UserOAuthAPI
 
 bp_apis = APIBlueprint('apis')
-AuthAPI.attach_to(bp_apis)
+ClientOAuthAPI.attach_to(bp_apis)
+UserOAuthAPI.attach_to(bp_apis)

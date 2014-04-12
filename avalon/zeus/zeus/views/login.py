@@ -3,10 +3,11 @@ import md5
 
 from bottle import request, redirect, url
 
-from share.engines import db
+from share.framework.bottle.engines import db
 from share.framework.bottle import MethodView, view, render_template
+from share.framework.bottle.restful import backends
 
-from zeus.models import EmailModel
+from zeus.models import AccountModel, EmailModel
 from .forms import LoginForm, SignUpForm
 
 
@@ -18,15 +19,18 @@ class SigninView(MethodView):
     def post(self):
         form = LoginForm(request.forms)
         if not form.validate():
-            return
+            return render_template(
+                'www/signin.html', error=u'用户不存在或者密码错误')
 
         data = form.data
         account = EmailModel.query.filter(
             EmailModel.email == data['email'],
-            EmailModel.password == md5.new(data['password']).hexdigest()
-        )
+            EmailModel.password_hash == md5.new(
+                data['password_hash']).hexdigest()
+        ).first()
         if not account:
-            return
+            return render_template(
+                'www/signin.html', error=u'用户不存在或者密码错误')
 
         request.session['ukey'] = account.ukey
         return redirect(data['success'] or url('apollo:www.main'))
@@ -40,12 +44,17 @@ class SignUpView(MethodView):
     def post(self):
         form = SignUpForm(request.forms)
         if not form.validate():
+            print form.errors
             return render_template('www/signup.html')
 
         try:
-            EmailModel.create(**form.data)
+            account = AccountModel.create(**form.data)
             db.session.commit()
-        except:
-            return render_template('www/signup.html', error='')
+        except Exception as e:
+            print e
+            return render_template('www/signup.html', error=e)
 
-        return redirect(url('heracles:www.main'))
+        request.session['ukey'] = account.ukey
+        backends.apollo.user.post(
+            ukey=account.ukey, nickname=account.nickname)
+        return redirect(url('apollo:www.main'))

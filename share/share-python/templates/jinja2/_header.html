@@ -34,11 +34,12 @@
                 <div class="form-group">
                     <input type="password" placeholder="Password" class="form-control">
                 </div>
-                <button id="signInBtn" type="submit" class="btn btn-success">Sign in</button>
-                <button id="signUpBtn" type="button" class="btn btn-primary">Sign up</button>
+                <a id="signInBtn" type="submit" class="btn btn-success" href="{{ url_for('zeus:account.login') }}">Sign in</a>
+                <a id="signUpBtn" type="button" class="btn btn-primary" href="{{ url_for('zeus:account.signup') }}">Sign up</a>
             </form>
             {% endif %}
         </div><!--/.navbar-collapse -->
     </div>
-    <script type="text/javascript" src="{{ static_file('js/login.js') }}"></script>
+    <script type="text/javascript" src="{{ static_file('js/zeus/modules/login.js') }}"></script>
+    <script type="text/javascript" src="{{ static_file('js/zeus/signup.js') }}"></script>
 </div>

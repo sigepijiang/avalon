@@ -50,13 +50,15 @@ def upgrade():
     op.create_table(
         'client',
         sa.Column('id', sa.Integer(), primary_key=True),
+        sa.Column('secret', sa.String(32), nullable=False),
         sa.Column('name', sa.Unicode(32)),
         sa.Column(
             'client_type',
-            sa.Enum('main', 'public', name='client_type_enum')),
+            sa.Enum('master', 'servant', name='client_type_enum')),
         sa.Column(
             'domain',
             sa.String(64)),
+        sa.Column('logo', sa.String(56)),
         sa.Column(
             'date_created',
             sa.DateTime(),
@@ -64,17 +66,10 @@ def upgrade():
             server_default=sa.func.now()),
     )
 
-    op.create_table(
-        'ukey_sequence',
-        sa.Column('id', sa.Integer(), primary_key=True),
-        sa.Column('seq', sa.BigInteger()),
-    )
-
 
 def downgrade():
     op.drop_table('email')
     op.drop_table('account')
     op.drop_table('client')
-    op.drop_table('ukey_sequence')
     op.execute('drop type account_status_enum;')
     op.execute('drop type client_type_enum;')

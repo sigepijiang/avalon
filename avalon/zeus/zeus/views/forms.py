@@ -11,7 +11,8 @@ class DisplaySuccessForm(Form):
 
 class LoginForm(Form):
     email = StringField(validators=[validators.Required()])
-    password = PasswordField(validators=[validators.Required()])
+    password_hash = PasswordField(validators=[validators.Required()])
+    success = StringField()
 
 
 class SignUpForm(Form):

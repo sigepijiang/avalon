@@ -1,12 +1,11 @@
 #-*- coding: utf-8 -*-
 from datetime import datetime
 
-from bottle import default_app
-import random
 import sqlalchemy as sa
 
-from share.engines import db
-from share.utils.base62 import base62_encode
+from share.framework.bottle.engines import db
+from share.utils.base62 import to_python
+from share.utils.snowflake import get_id
 
 
 class AccountModel(db.Model, db.TableOpt):
@@ -20,6 +19,14 @@ class AccountModel(db.Model, db.TableOpt):
         sa.DateTime(),
         default=datetime.now(),
         server_default=sa.func.now())
+
+    @classmethod
+    def create(cls, email, password_hash, nickname):
+        email = EmailModel.create(email, password_hash)
+        account = AccountModel(nickname=nickname, ukey=email.ukey)
+        account.email.append(email)
+        db.session.add(account)
+        return account
 
 
 class EmailModel(db.Model, db.TableOpt):
@@ -36,16 +43,14 @@ class EmailModel(db.Model, db.TableOpt):
     account = db.relationship(
         'AccountModel',
         backref=db.backref('email', lazy='joined'),
-        lazy='joined'
+        lazy='joined', uselist=False,
     )
 
     @classmethod
-    def create(self, email, password_hash, nickname):
-        new_ukey = UkeySequenceModel.get_new_ukey()
-        account = AccountModel(nickname=nickname, ukey=new_ukey)
-        email = EmailModel(email=email, password_hash=password_hash)
-        email.account = account
-        db.session.add(email)
+    def create(cls, email, password_hash):
+        new_ukey = to_python(get_id(1, 1))
+        email = EmailModel(
+            ukey=new_ukey, email=email, password_hash=password_hash)
         return email
 
 
@@ -65,37 +70,14 @@ class ClientModel(db.Model, db.TableOpt):
     __tablename__ = 'client'
 
     id = sa.Column('id', sa.Integer(), primary_key=True)
+    secret = sa.Column(sa.String(32), nullable=False)
     name = sa.Column('name', sa.Unicode(32))
     client_type = sa.Column(
         sa.Enum(('main', 'public'), 'client_type_enum'))
     domain = sa.Column(sa.String(64))
+    logo = sa.Column(sa.String(56))
     date_created = sa.Column(
         sa.DateTime(),
         default=datetime.now(),
         server_default=sa.func.now()
     )
-
-
-class UkeySequenceModel(db.Model, db.TableOpt):
-    __tablename__ = 'ukey_sequence'
-
-    id = sa.Column('id', sa.Integer(), primary_key=True)
-    seq = sa.Column('seq', sa.BigInteger())
-
-    @classmethod
-    def get_new_ukey(cls):
-        app = default_app()
-        fill_rate = app.config.fill_rate
-        seq = cls.query.first()
-        if not seq:
-            seq = UkeySequenceModel(seq=1)
-            db.session.add(seq)
-            db.commit()
-
-        while True:
-            if random.randint(1, 10) > fill_rate:
-                break
-            seq.seq += 1
-
-        db.session.commit()
-        return base62_encode(seq.seq)

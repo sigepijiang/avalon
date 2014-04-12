@@ -42,4 +42,17 @@ class MethodView(object):
             meth = getattr(self, 'get', None)
         if not meth:
             raise NotFound('请求方法错误！')
+
+        if getattr(meth, 'signin_required', False):
+            self.authorize()
+
+        if getattr(meth, 'auto_signin', False):
+            self.auto_signin()
+
         return meth(*args, **kwargs)
+
+    def authorize(self):
+        pass
+
+    def auto_signin(self):
+        pass

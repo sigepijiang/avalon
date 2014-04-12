@@ -1,6 +1,8 @@
 app_base: bottle
 app_name: apollo
 blueprints:
+  backends:
+    api_userbackendapi: {https: false, rule: /apollo/user.<format>, subdomain: backends}
   www:
     about: {https: false, rule: /about, subdomain: www}
     main: {https: false, rule: /, subdomain: www}

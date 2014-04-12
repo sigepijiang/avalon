@@ -1,6 +1,5 @@
 #-*- coding: utf-8 -*-
 import os
-
 import requests
 
 from share.config import load_yaml
@@ -16,7 +15,7 @@ def _get_config():
     return load_yaml(os.path.join(base, 'avalon.yaml'))
 
 
-class Client(object):
+class BaseClient(object):
     def __init__(self, path, subdomain, domain=None, port=None,
                  https=False, data_format='json'):
         self.path_list = path if isinstance(path, (list)) else [path]
@@ -52,25 +51,35 @@ class Client(object):
             if self.path_list else '')
 
     def __getattr__(self, key):
-        return Client(
+        return self.__class__(
             self.path_list + [key], self.subdomain, self.domain,
             self.port, self.https
         )
 
+    @property
+    def _access_token(self):
+        raise NotImplementedError()
+
     def get(self, **kwargs):
-        return requests.get(self._url, params=kwargs)
+        kwargs['access_token'] = self._access_token
+        return requests.get(
+            self._url, params=self._data()).json()['result']
 
     def post(self, **kwargs):
-        return requests.post(self._url, data=kwargs)
+        kwargs['access_token'] = self._access_token
+        return requests.post(
+            self._url, data=kwargs).json()['result']
 
     def put(self, **kwargs):
-        return requests.put(self._url, params=kwargs)
+        kwargs['access_token'] = self._access_token
+        return requests.put(
+            self._url, params=kwargs).json()['result']
 
     def delete(self, **kwargs):
-        return requests.delete(self._url, params=kwargs)
-
-    def __str__(self):
-        return '/' + self._path
+        kwargs['access_token'] = self._access_token
+        return requests.delete(
+            self._url, params=kwargs).json()['result']
 
     def __repr__(self):
+        raise NotImplementedError()
         return ('client<%s>: /' % self.subdomain) + self._path

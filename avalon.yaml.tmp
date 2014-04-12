@@ -1,0 +1,73 @@
+# 开发环境
+DEVELOPMENT: &dev
+    # 版本
+    VERSION: '0.3.2'
+
+    # 全局设置，会替换APPS内的字段
+    GLOBAL:
+        # 域名设置
+        DOMAIN: 'dev.wishstone.me'
+
+        # python sqlalchemy 打印sql语句设置
+        ENABLE_SQL_ECHO: false
+            
+        # memcached 地址 
+        MEMCACHED: 
+            - '0.0.0.0:11211'
+
+        # 命名空间，暂时还没什么用
+        NAMESPACE: 'e5ddcc00ecd34f3aad5f166274f04610'
+
+        # redis设置
+        REDIS: ''
+
+        # 前端文件设置
+        STATIC_PATH: 'static/src'
+
+    # UWSGI 设置
+    UWSGI:   
+        ENABLE_THREADS: true
+        USE_HTTP: false 
+        BUFFER-SIZE: 32768
+        LOG_2XX: true
+        LOG_3XX: true
+        LOG_4XX: true
+        LOG_5XX: true
+
+    # NGINX 设置()
+    NGINX:
+        CHROOT: 'env/'
+        LISTEN: 23900
+
+    # APP设置
+    APPS:
+        # app heracles 注意大小写
+        HERACLES: &app_heracles
+            HOST: '0.0.0.0'
+            PORT: 24101
+            PROCESSES: 2
+            TYPE: 'app'
+            DB_MASTER: 'postgresql+psycopg2://heracles:hhhh@localhost/heracles'
+
+        ZEUS: &app_zeus
+            HOST: '0.0.0.0'
+            PORT: 24102
+            PROCESSES: 2
+            TYPE: 'app'
+            DB_MASTER: 'postgresql+psycopg2://zeus:zzzz@localhost/zeus'
+
+        APOLLO: &app_apollo
+            HOST: '0.0.0.0'
+            PORT: 24103
+            PROCESSES: 2
+            TYPE: 'app'
+            DB_MASTER: 'postgresql+psycopg2://zeus:zzzz@localhost/zeus'
+
+
+PRODUCTION:
+    <<: *dev
+    DOMAIN: 'wishstone.me'
+
+    NGINX:
+        CHROOT: 'env/'
+        LISTEN: 80 

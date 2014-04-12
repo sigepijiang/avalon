@@ -5,7 +5,8 @@ blueprints:
     login: {https: false, rule: /signin/, subdomain: account}
     signup: {https: false, rule: /signup/, subdomain: account}
   apis:
-    api_authapi: {https: false, rule: /zeus/auth.<format>, subdomain: apis}
+    api_clientoauthapi: {https: false, rule: /zeus/oauth2/client.<format>, subdomain: apis}
+    api_useroauthapi: {https: false, rule: /zeus/oauth2/user.<format>, subdomain: apis}
 domain: dev.wishstone.me
 global_port: 23900
 port: 24102

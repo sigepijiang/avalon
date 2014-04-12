@@ -1,2 +1,6 @@
-from .base import RESTfulAPI
-from .errors import APINotFound, APIBadRequest
+#-*- coding: utf-8 -*-
+
+from .base import RESTfulBaseAPI
+from .client import BaseClient
+
+

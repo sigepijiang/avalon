@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 import os
+import requests
 
 from bottle import Bottle, default_app
 from bottle import Route, Router
 from bottle import makelist
 
-from share import app_stack
 from share.config import load_yaml
 from share.errors import AvalonConfigError, AvalonException
 from share.url_map import url_for
 from share.utils import _static_file
 from .utils import get_root_path
 from .hooks import fill_session, save_session
+from .restful import apis
 
 
 class Route(Route):
@@ -40,13 +41,13 @@ class Avalon(Bottle):
         self.blueprints = []
         self.router = Router()
         self._init_config(name)
+        self._access_token = {}
 
         # 不知道为什么不能用add_hook
-        self.hook('before_request')(fill_session)
-        self.hook('after_request')(save_session)
+        self.add_hook('before_request', fill_session)
+        self.add_hook('after_request', save_session)
 
         default_app.push(self)
-        app_stack.push(self)
 
     def _init_config(self, name):
         try:
@@ -111,6 +112,22 @@ class Avalon(Bottle):
         return lambda path: _static_file(
             self.config.domain, self.config.global_port, path)
 
+    @property
+    def access_token(self):
+        if not self._access_token:
+            url = apis.zeus.oauth2.client._url
+            resp = requests.post(url, data=dict(
+                client_id=self.config.client_id,
+                secret=self.config.client_secret,
+            ))
+            access_token = resp.json()['result']['access_token']
+            self._access_token = access_token
+        return self._access_token
+
+    @access_token.setter
+    def _set_access_token(self, v):
+        self._access_token = v
+
 
 class Blueprint(object):
     def __init__(self, name, subdomain='www', url_prefix=''):
@@ -146,5 +163,5 @@ class APIBlueprint(Blueprint):
 class BackendsBlueprint(Blueprint):
     def __init__(self, name):
         from bottle import default_app
-        super(APIBlueprint, self).__init__(
+        super(BackendsBlueprint, self).__init__(
             name, 'backends', '/' + default_app().name)

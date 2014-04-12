@@ -42,7 +42,7 @@ DEVELOPMENT: &dev
             PORT: 24103
             PROCESSES: 2
             TYPE: 'app'
-            DB_MASTER: 'postgresql+psycopg2://zeus:zzzz@localhost/zeus'
+            DB_MASTER: 'postgresql+psycopg2://apollo:aaaa@localhost/apollo'
 
 
 PRODUCTION:

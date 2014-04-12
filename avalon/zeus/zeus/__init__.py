@@ -9,4 +9,4 @@ from zeus.views import blueprint_account
 from zeus.apis import bp_apis
 
 app.register_blueprint(blueprint_account)
-app.register_blueprint(bp_apis, url_prefix='/zeus')
+app.register_blueprint(bp_apis)
