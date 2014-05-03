@@ -1,6 +1,5 @@
 #-*- coding: utf-8 -*-
 import uuid
-import socket
 
 
 from share.utils import const
@@ -8,7 +7,7 @@ from share.utils import const
 
 def new_session_id():
     return uuid.uuid3(
-        uuid.UUID(const.namespace), socket.gethostname()).hex
+        uuid.UUID(const.namespace), uuid.uuid4().hex).hex
 
 
 class Session(dict):

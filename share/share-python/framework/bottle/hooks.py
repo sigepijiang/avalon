@@ -20,7 +20,8 @@ def fill_session():
 
 
 def save_session():
-    memory.memcached.set(
-        mc_session_id(request),
-        simplejson.dumps(request.session))
-    response.set_cookie('session_id', request.session.session_id)
+    if request.session:
+        memory.memcached.set(
+            mc_session_id(request),
+            simplejson.dumps(request.session))
+        response.set_cookie('session_id', request.session.session_id)

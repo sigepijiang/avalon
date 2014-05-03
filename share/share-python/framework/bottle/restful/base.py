@@ -56,6 +56,11 @@ class RESTfulAPI(RESTfulBaseAPI):
         if client_id:
             request.client_id
 
+    def dispatch_request(self, *args, **kwargs):
+        request.session = None
+        return super(RESTfulAPI, self).dispatch_request(
+            *args, **kwargs)
+
 
 class RESTfulOpenAPI(RESTfulAPI):
     pass

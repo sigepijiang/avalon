@@ -7,6 +7,7 @@ from bottle import Route, Router
 from bottle import makelist
 
 from share.config import load_yaml
+from share.utils.base62 import to_url, to_python
 from share.errors import AvalonConfigError, AvalonException
 from share.url_map import url_for
 from share.utils import _static_file
@@ -28,6 +29,11 @@ class Route(Route):
 
 
 class Router(Router):
+    def __init__(self, strict=False):
+        super(Router, self).__init__(strict)
+        self.add_filter(
+            'uid', lambda conf: (r'\d+', to_python, lambda i: str(to_url(i))))
+
     def match(self, environ):
         target, args = super(Router, self).match(environ)
         [args.setdefault(k, v) for k, v in target.defaults.items()]
@@ -120,9 +126,9 @@ class Avalon(Bottle):
                 client_id=self.config.client_id,
                 secret=self.config.client_secret,
             ))
-            access_token = resp.json()['result']['access_token']
+            access_token = resp.json()['result']
             self._access_token = access_token
-        return self._access_token
+        return self._access_token['access_token']
 
     @access_token.setter
     def _set_access_token(self, v):

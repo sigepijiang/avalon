@@ -6,6 +6,8 @@ blueprints:
   www:
     about: {https: false, rule: /about, subdomain: www}
     main: {https: false, rule: /, subdomain: www}
+    profile: {https: false, rule: '/i/<ukey:uid>/', subdomain: www}
+    settings: {https: false, rule: '/i/<ukey:uid>/settings/', subdomain: www}
 domain: dev.wishstone.me
 global_port: 23900
 port: 24103

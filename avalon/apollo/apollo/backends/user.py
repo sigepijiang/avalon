@@ -14,8 +14,12 @@ class UserBackendAPI(RESTfulBackendAPI):
     methods = ['GET', 'POST']
 
     @authorization_required
-    def get(self):
-        pass
+    @resful_validator(forms.ukey)
+    def get(self, ukey):
+        user = UserModel.query.get(ukey)
+        if not user:
+            return {}
+        return user.as_dict()
 
     @resful_validator(forms.ukey, forms.nickname)
     @authorization_required

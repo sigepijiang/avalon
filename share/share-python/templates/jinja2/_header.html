@@ -26,6 +26,8 @@
                     </ul>
                 </li>-->
             </ul>
+
+            {{ request.ukey }}
             {% if not request.ukey %}
             <form id="navLoginForm" class="navbar-form navbar-right">
                 <div class="form-group">
@@ -37,6 +39,13 @@
                 <a id="signInBtn" type="submit" class="btn btn-success" href="{{ url_for('zeus:account.login') }}">Sign in</a>
                 <a id="signUpBtn" type="button" class="btn btn-primary" href="{{ url_for('zeus:account.signup') }}">Sign up</a>
             </form>
+            {% else %}
+            <ul class="nav navbar-nav navbar-right">
+                {% set user = user_meta(request.ukey) %}
+                <li>
+                    <a href="{{ url_for('apollo:www.profile', ukey=request.ukey) }}">{{ user.nickname }}</a>
+                </li>
+            </ul>
             {% endif %}
         </div><!--/.navbar-collapse -->
     </div>

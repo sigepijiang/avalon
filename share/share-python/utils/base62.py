@@ -8,6 +8,7 @@ digits_map = {s: i for i, s in enumerate(digits)}
 
 
 def base62_encode(number):
+    number = int(number)
     assert number >= 0, 'positive integer required'
     if number == 0:
         return '0'

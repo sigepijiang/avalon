@@ -63,7 +63,7 @@ class BaseClient(object):
     def get(self, **kwargs):
         kwargs['access_token'] = self._access_token
         return requests.get(
-            self._url, params=self._data()).json()['result']
+            self._url, params=kwargs).json()['result']
 
     def post(self, **kwargs):
         kwargs['access_token'] = self._access_token

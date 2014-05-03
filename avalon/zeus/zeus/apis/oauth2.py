@@ -43,6 +43,12 @@ class ClientOAuthAPI(RESTfulOpenAPI):
             date_created=time_now,
             date_expired=time_now + CLIENT_ACCESS_TOKEN_TIMEOUT,
         )
+        memory.memcached.set(
+            'ACCESS_TOKEN::%s' % access_token,
+            json.dumps(access_token_info),
+            # memcached 脑残啊, time < 30d 是相对时间, time > 30d 是绝对时间
+            time=time_now + CLIENT_ACCESS_TOKEN_TIMEOUT,
+        )
         return access_token_info
 
     def update(self):

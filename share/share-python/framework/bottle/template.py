@@ -5,6 +5,7 @@ from bottle import default_app, request
 from jinja2 import Environment, FileSystemLoader
 
 from share.url_map import url_for
+from .user import user_meta
 
 
 jinja2_env = None
@@ -29,7 +30,7 @@ def init_jinja2():
         loader=FileSystemLoader(get_template_path()))
     jinja2_env.globals.update(
         static_file=cur_app.static_file_func(),
-        request=request, url_for=url_for)
+        request=request, url_for=url_for, user_meta=user_meta)
 
 
 # DONT'T USE the view, template or Jinja2Template of bottle.
