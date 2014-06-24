@@ -3,3 +3,4 @@
 .py/
 *.rdb
 env/
+*node_modules
