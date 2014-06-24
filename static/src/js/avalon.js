@@ -38,7 +38,7 @@ Module = function(name, func){
         }
 
         if (avalon.hasOwnProperty(name)){
-            throw(name + ' has been declared!');
+            console.warn(name + ' has been declared!');
         }
     }
 

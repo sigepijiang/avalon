@@ -4,7 +4,7 @@ blueprints:
   backends:
     api_userbackendapi: {https: false, rule: /apollo/user.<format>, subdomain: backends}
   www:
-    about: {https: false, rule: /about, subdomain: www}
+    about: {https: false, rule: /about/, subdomain: www}
     main: {https: false, rule: /, subdomain: www}
     profile: {https: false, rule: '/i/<ukey:uid>/', subdomain: www}
     settings: {https: false, rule: '/i/<ukey:uid>/settings/', subdomain: www}

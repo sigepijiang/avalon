@@ -1,7 +1,7 @@
 $(function(){
-    var signup = avalon.login.init({
-        form: '#signup'
+    var signin = avalon.login.init({
+        form: '#signin'
     });
-    signup.signUp();
+    signin.signIn();
 });
 

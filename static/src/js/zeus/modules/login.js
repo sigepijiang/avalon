@@ -20,8 +20,13 @@ Module('login', function() {
     }
 
     function setPasswordHash(form){
-        var password = $(form).find('input[name="password_hash"]').val(),
+        var password = $(form).find('input[name="password_hash"]').val();
+        var password_hash = password;
+
+        if (password_hash != ''){
             password_hash = $.md5(password);
+        }
+
         $(form).find('input[name="password_hash"]').val(password_hash);
         $(form).find('input[name="password_repeat"]').val(password_hash);
     } 
@@ -61,9 +66,12 @@ Module('login', function() {
                 });
             },
             signIn: function() {
-                var form = $(getElementPara(form));
-                setPasswordHash(form);
-                return true;
+                var cur_form = $(getElementPara(form));
+
+                cur_form.submit(function(){
+                    setPasswordHash(this);
+                    return true;
+                });
             },
             config: config,
         }

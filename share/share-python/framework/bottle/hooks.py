@@ -21,7 +21,13 @@ def fill_session():
 
 def save_session():
     if request.session:
+        from bottle import default_app
+        app = default_app()
+
         memory.memcached.set(
             mc_session_id(request),
             simplejson.dumps(request.session))
-        response.set_cookie('session_id', request.session.session_id)
+        response.set_cookie(
+            'session_id', request.session.session_id,
+            domain=app.config.domain, path='/'
+        )

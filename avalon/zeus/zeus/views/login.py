@@ -44,14 +44,12 @@ class SignUpView(MethodView):
     def post(self):
         form = SignUpForm(request.forms)
         if not form.validate():
-            print form.errors
             return render_template('www/signup.html')
 
         try:
             account = AccountModel.create(**form.data)
             db.session.commit()
         except Exception as e:
-            print e
             return render_template('www/signup.html', error=e)
 
         request.session['ukey'] = account.ukey
