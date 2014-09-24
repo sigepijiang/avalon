@@ -16,7 +16,7 @@ def fill_session():
     session.update(simplejson.loads(
         memory.memcached.get(mc_session_id(request)) or '{}'))
     request.session = session
-    request.ukey = session.get('ukey')
+    request.ukey = session.get('ukey', None)
 
 
 def save_session():

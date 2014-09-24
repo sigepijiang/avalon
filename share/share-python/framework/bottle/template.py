@@ -34,7 +34,7 @@ def init_jinja2():
 
 
 # DONT'T USE the view, template or Jinja2Template of bottle.
-# It can't auto reload.
+# They can't auto reload.
 def view(tmp_name):
     def decorator_f(func):
         def call_f(*args, **kwargs):
@@ -43,6 +43,7 @@ def view(tmp_name):
             if not jinja2_env:
                 init_jinja2()
 
+            print func(*args, **kwargs)
             return jinja2_env.get_template(
                 tmp_name).render(
                     func(*args, **kwargs) or {})

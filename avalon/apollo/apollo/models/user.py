@@ -21,6 +21,7 @@ class UserModel(db.Model, db.TableOpt):
         sa.Enum('male', 'female', name='user_gender_enum'),
         nullable=False
     )
+    birthday = sa.Column(sa.DateTime())
     title = sa.Column(sa.Unicode(128))
     summary = sa.Column(sa.Unicode(256))
     date_created = sa.Column(sa.DateTime(), default=datetime.now)
@@ -31,8 +32,13 @@ class UserModel(db.Model, db.TableOpt):
     # )
     def as_dict(self):
         return dict(
-            ukey=self.ukey, uid=to_url(self.ukey), nickname=self.nickname,
-            avatar=self.avatar, gender=self.gender, title=self.title,
+            ukey=self.ukey,
+            uid=to_url(self.ukey),
+            nickname=self.nickname,
+            avatar=self.avatar,
+            gender=self.gender,
+            title=self.title,
             summary=self.summary,
-            date_created=self.date_created.isoformat()
+            birthday=self.birthday.isoformat() if self.birthday else '',
+            date_created=self.date_created.isoformat(),
         )

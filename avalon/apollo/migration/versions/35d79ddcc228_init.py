@@ -26,6 +26,7 @@ def upgrade():
         sa.Column(
             'gender',
             sa.Enum('male', 'female', name='user_gender_enum')),
+        sa.Column('birthday', sa.DateTime()),
         sa.Column('title', sa.Unicode(128)),
         sa.Column('summary', sa.Unicode(512)),
         sa.Column(

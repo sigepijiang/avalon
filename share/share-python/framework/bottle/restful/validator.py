@@ -2,6 +2,7 @@
 from bottle import request
 
 from share.restful.validator import resful_validator
+from share.framework.bottle.errors import APIBadRequest
 
 
 class resful_validator(resful_validator):
@@ -28,3 +29,6 @@ class resful_validator(resful_validator):
             else:
                 result[i] = params.getone(i)
         return result
+
+    def _raise(self, errors):
+        raise APIBadRequest(errors)

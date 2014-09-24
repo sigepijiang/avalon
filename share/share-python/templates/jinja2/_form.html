@@ -1,0 +1,42 @@
+{% macro render_field(field, id=None, label_class='col-sm-2', container_class='col-sm-6', placeholder=None, type='') %}
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
+    {% if field.type in ('StringField', 'TextAreaField') %}
+        <label for='{{ id or (field.name + '_input') }}' class="{{ label_class }} control-label">{{ field.label }}</label>
+
+        <div class="{{ container_class }}">
+            {{ field(class='form-control', id=id or (field.name + '_input')) }} 
+        </div>
+    {% endif %}
+
+    {% if field.type == 'DateTimeField' %}
+        <label for='{{ id or (field.name + '_input') }}' class="{{ label_class }} control-label">{{ field.label }}</label>
+
+        <div class="{{ container_class }}">
+            {{ field(class='form-control', id=id or (field.name + '_input'), type='datetime') }} 
+        </div>
+    {% endif %}
+
+    {% if field.type == 'DateField' %}
+        <label for='{{ id or (field.name + '_input') }}' class="{{ label_class }} control-label">{{ field.label }}</label>
+
+        <div class="{{ container_class }}">
+            {{ field(class='form-control', id=id or (field.name + '_input'), type='date') }} 
+        </div>
+    {% endif %}
+
+    {% if field.type == 'RadioField' %}
+        {% if field.label %}
+        <label for='{{ id or (field.name + '_input') }}' class="{{ label_class }} control-label">{{ field.label }}</label>
+        {% endif %}
+
+        <div class="{{ container_class }}">
+            {% for value, text in field.choices %}
+            <label class="radio-inline">
+                <input type="radio" name="gender" value="{{ value }}" {% if field.data == value %} checked {% endif %}/>
+                {{ text }}
+            </label>
+            {% endfor %}
+        </div>
+    {% endif %}
+    </div>
+{% endmacro %}

@@ -20,7 +20,7 @@ blueprint_www.add_url_rule(
 
 blueprint_www.add_url_rule(
     '/i/<ukey:uid>/settings/',
-    view_func=SettingsView.as_view(), methods=['GET'],
+    view_func=SettingsView.as_view(), methods=['GET', 'POST'],
     endpoint='settings'
 )
 

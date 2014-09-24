@@ -1,12 +1,14 @@
 {% extends '_base.html' %}
 
+{% block title %}Blog - Avalon{% endblock %}
+
 {% block script %}
 {{ super() }}
 <script type="text/javascript" src="{{ static_file('js/heracles/blog.js') }}"></script>
+<script src="//use.edgefonts.net/bitter:n4,i4,n7:all;pt-sans:n4,i4,n7,i7:all.js"></script> 
 {% endblock %}
 
 {% block style %}
-{{ super() }}
 <link href="{{ static_file('css/heracles/index.css') }}" rel="stylesheet" type="text/css"/>
 {% endblock %}
 

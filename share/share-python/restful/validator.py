@@ -23,6 +23,10 @@ class resful_validator(object):
         def call_f(*args, **kwargs):
             params = self._get_params()
             params, errors = self._validate(params)
+
+            if errors:
+                self._raise(errors)
+
             kwargs.update(params)
             return func(*args, **kwargs)
         return call_f
@@ -31,8 +35,15 @@ class resful_validator(object):
         result = {}
         errors = {}
         schema = voluptuous.Schema(self.validators)
-        result.update(schema(params))
+        try:
+            result.update(schema(params))
+        except voluptuous.MultipleInvalid as error_group:
+            for e in error_group.errors:
+                errors[e.path[0]] = e.message
         return result, errors
 
     def _get_params(self):
+        raise NotImplementedError()
+
+    def _raise(self, errors):
         raise NotImplementedError()

@@ -5,6 +5,8 @@ blueprints:
     api_updateopenapi: {https: false, rule: /heracles/blog/update.<format>, subdomain: apis}
   www:
     blog: {https: false, rule: '/blog/<blog_id:int>/', subdomain: www}
+    blog_create: {https: false, rule: /blog/create/, subdomain: www}
+    blog_edit: {https: false, rule: '/blog/<blog_id:int>/edit/', subdomain: www}
     blog_redirect: {https: false, rule: /blog/<file_name>.<file_type>/, subdomain: www}
     index: {https: false, rule: /blog/, subdomain: www}
 domain: dev.wishstone.me
