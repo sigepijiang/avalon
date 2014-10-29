@@ -76,4 +76,20 @@ Module('login', function() {
             config: config,
         }
     };
+
+    this.run = function (){
+        if ($('#signin').length > 0){
+            var signin = avalon.login.init({
+                form: '#signin'
+            });
+            signin.signIn();
+        }
+    
+        if ($('#signup').length > 0){
+            var signup = avalon.login.init({
+                form: '#signup'
+            });
+            signup.signUp();
+        }
+    }
 });
