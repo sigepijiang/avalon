@@ -19,7 +19,7 @@ import sqlalchemy as sa
 def upgrade():
     op.create_table(
         'account',
-        sa.Column('ukey', sa.CHAR(7), primary_key=True),
+        sa.Column('ukey', sa.CHAR(8), primary_key=True),
         sa.Column('nickname', sa.Unicode(32), nullable=False),
         sa.Column(
             'status',
@@ -35,7 +35,7 @@ def upgrade():
     op.create_table(
         'email',
         sa.Column(
-            'ukey', sa.CHAR(7), sa.ForeignKey('account.ukey'),
+            'ukey', sa.CHAR(8), sa.ForeignKey('account.ukey'),
             nullable=False
         ),
         sa.Column('email', sa.Unicode(320), primary_key=True),

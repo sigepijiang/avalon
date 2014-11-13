@@ -39,8 +39,8 @@ def render_domain_static(path, domain):
         base_path, conf['STATIC_PATH'])
     port = conf['NGINX']['LISTEN']
     is_default_server = False
-    site_name = 'static'
-    server_names = ['.'.join(['static', domain.name])]
+    site_name = 'nyx'
+    server_names = ['.'.join([site_name, domain.name])]
     locations = [dict(
         name='/', app=dict(
             app_base='alias',

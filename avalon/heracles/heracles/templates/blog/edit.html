@@ -5,10 +5,50 @@
 {% block script %}
 {{ super() }}
 <script src="//use.edgefonts.net/bitter:n4,i4,n7:all;pt-sans:n4,i4,n7,i7:all.js"></script> 
+<script type="text/javascript" src="{{ static_file('js/lib/epiceditor.js') }}"></script>
+
+<script>
+    var editorOpts = {
+        container: 'epiceditor',
+        textarea: null,
+        basePath: '',
+        clientSideStorage: true,
+        localStorageName: 'epiceditor',
+        useNativeFullscreen: true,
+        parser: marked,
+        file: {
+            name: 'epiceditor',
+            defaultContent: '',
+            autoSave: 100
+        },
+        theme: {
+            base: {{ static_file('/css/lib/epiceditor/base/epiceditor.css')|tojson|safe }},
+            preview: {{ static_file('/css/lib/epiceditor/preview/preview-dark.css')|tojson|safe }},
+            editor: {{ static_file('/css/lib/epiceditor/editor/epic-dark.css')|tojson|safe }}
+        },
+        button: {
+            preview: true,
+            fullscreen: true,
+            bar: "auto"
+        },
+        focusOnLoad: false,
+        shortcut: {
+            modifier: 18,
+            fullscreen: 70,
+            preview: 80
+        },
+        string: {
+            togglePreview: 'Toggle Preview Mode',
+            toggleEdit: 'Toggle Edit Mode',
+            toggleFullscreen: 'Enter Fullscreen'
+        },
+        autogrow: false
+    }
+</script>
+<script type="text/javascript" src="{{ static_file('js/heracles/blog_edit.js') }}"></script>
 {% endblock %}
 
 {% block style %}
-{{ super() }}
 {% endblock %}
 
 {% block header %}
@@ -18,6 +58,6 @@
 {% endblock %}
 
 {% block content %}
-<div id='editor'>
+<div id="epiceditor">
 </div>
 {% endblock %}

@@ -37,9 +37,10 @@ Module = function(name, func){
             throw('arg <func> is not a function!');
         }
 
-        if (avalon.hasOwnProperty(name)){
-            console.warn(name + ' has been declared!');
-        }
+    }
+
+    if (avalon.hasOwnProperty(name)){
+        return;
     }
 
     prepare(arguments);

@@ -10,7 +10,7 @@ from share.utils.snowflake import get_id
 
 class AccountModel(db.Model, db.TableOpt):
     __tablename__ = 'account'
-    ukey = sa.Column(sa.CHAR(7), primary_key=True)
+    ukey = sa.Column(sa.CHAR(8), primary_key=True)
     nickname = sa.Column(sa.Unicode(32), nullable=False)
     status = sa.Column(
         sa.Enum(('active', 'frozen'), 'account_status_enum'),
@@ -32,7 +32,7 @@ class AccountModel(db.Model, db.TableOpt):
 class EmailModel(db.Model, db.TableOpt):
     __tablename__ = 'email'
     ukey = sa.Column(
-        sa.CHAR(7), sa.ForeignKey('account.ukey'), nullable=False)
+        sa.CHAR(8), sa.ForeignKey('account.ukey'), nullable=False)
     email = sa.Column(sa.Unicode(320), primary_key=True)
     password_hash = sa.Column(sa.CHAR(40), nullable=False)
     date_created = sa.Column(
@@ -48,6 +48,7 @@ class EmailModel(db.Model, db.TableOpt):
 
     @classmethod
     def create(cls, email, password_hash):
+        # get_id(work_id, data_centor_id)
         new_ukey = to_python(get_id(1, 1))
         email = EmailModel(
             ukey=new_ukey, email=email, password_hash=password_hash)

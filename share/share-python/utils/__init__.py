@@ -9,9 +9,9 @@ def is_file_exists(path):
 
 def _static_file(domain, port, path):
     if port in ('80', 80):
-        return 'http://static.%s/%s' % (domain, path)
+        return 'http://nyx.%s/%s' % (domain, path.lstrip('/'))
     else:
-        return 'http://static.%s:%s/%s' % (domain, port, path)
+        return 'http://nyx.%s:%s/%s' % (domain, port, path.lstrip('/'))
 
 
 # copied from django

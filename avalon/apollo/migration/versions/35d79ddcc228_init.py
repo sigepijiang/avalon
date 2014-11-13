@@ -20,7 +20,7 @@ from sqlalchemy.dialects.postgresql import ENUM
 def upgrade():
     op.create_table(
         'user',
-        sa.Column('ukey', sa.CHAR(7), primary_key=True),
+        sa.Column('ukey', sa.CHAR(8), primary_key=True),
         sa.Column('nickname', sa.Unicode(32)),
         sa.Column('avatar', sa.String(56)),
         sa.Column(

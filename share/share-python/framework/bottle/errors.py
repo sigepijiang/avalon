@@ -19,9 +19,9 @@ class Unauthorized(HTTPError):
 
 class APINotFound(HTTPError):
     def __init__(self, body):
-        super(HTTPError, body).__init__(404, body)
+        super(HTTPError, self).__init__(404, body)
 
 
 class APIBadRequest(HTTPError):
     def __init__(self, body):
-        super(HTTPError, body).__init__(400, body)
+        super(HTTPError, self).__init__(400, body)

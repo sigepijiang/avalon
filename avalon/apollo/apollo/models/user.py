@@ -14,7 +14,7 @@ __all__ = ['UserModel']
 class UserModel(db.Model, db.TableOpt):
     __tablename__ = 'user'
 
-    ukey = sa.Column(sa.CHAR(7), primary_key=True)
+    ukey = sa.Column(sa.CHAR(8), primary_key=True)
     nickname = sa.Column(sa.Unicode(32), nullable=False)
     avatar = sa.Column(sa.String(56))
     gender = sa.Column(

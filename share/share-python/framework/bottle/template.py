@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
+import json
 
 from bottle import default_app, request
 from jinja2 import Environment, FileSystemLoader
+
 
 from share.url_map import url_for
 from .user import user_meta
@@ -30,7 +32,9 @@ def init_jinja2():
         loader=FileSystemLoader(get_template_path()))
     jinja2_env.globals.update(
         static_file=cur_app.static_file_func(),
-        request=request, url_for=url_for, user_meta=user_meta)
+        request=request, url_for=url_for, user_meta=user_meta,
+    )
+    jinja2_env.filters['tojson'] = json.dumps
 
 
 # DONT'T USE the view, template or Jinja2Template of bottle.
@@ -43,7 +47,6 @@ def view(tmp_name):
             if not jinja2_env:
                 init_jinja2()
 
-            print func(*args, **kwargs)
             return jinja2_env.get_template(
                 tmp_name).render(
                     func(*args, **kwargs) or {})

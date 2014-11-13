@@ -14,7 +14,8 @@ from .forms import LoginForm, SignUpForm
 class SigninView(MethodView):
     @view('www/signin.html')
     def get(self):
-        return {}
+        form = LoginForm(request.params)
+        return {'form': form}
 
     def post(self):
         form = LoginForm(request.forms)
@@ -23,6 +24,7 @@ class SigninView(MethodView):
                 'www/signin.html', error=u'用户不存在或者密码错误')
 
         data = form.data
+        print data
         account = EmailModel.query.filter(
             EmailModel.email == data['email'],
             EmailModel.password_hash == md5.new(
@@ -33,7 +35,7 @@ class SigninView(MethodView):
                 'www/signin.html', error=u'用户不存在或者密码错误')
 
         request.session['ukey'] = account.ukey
-        return redirect(data['success'] or url('apollo:www.main'))
+        return redirect(data.get('success') or url('apollo:www.main'))
 
 
 class SignUpView(MethodView):
@@ -50,6 +52,7 @@ class SignUpView(MethodView):
             account = AccountModel.create(**form.data)
             db.session.commit()
         except Exception as e:
+            print e
             return render_template('www/signup.html', error=e)
 
         request.session['ukey'] = account.ukey

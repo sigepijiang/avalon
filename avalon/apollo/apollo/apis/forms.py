@@ -4,11 +4,10 @@ import voluptuous
 
 
 ukey = {
-    voluptuous.Required('ukey'): voluptuous.Match(r'^[0-9a-zA-Z]{7}$'),
+    voluptuous.Required('ukey'): voluptuous.Match(r'^[0-9a-zA-Z]{8}$'),
 }
 
 nickname = {
-    voluptuous.Required('ukey'): voluptuous.Match(r'^[0-9a-zA-Z]{7}$'),
 }
 
 gender = {}

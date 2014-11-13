@@ -12,7 +12,7 @@ from share.errors import AvalonConfigError, AvalonException
 from share.url_map import url_for
 from share.utils import _static_file
 from .utils import get_root_path
-from .hooks import fill_session, save_session
+from .hooks import fill_session, save_session, db_session_rollback
 from .restful import apis
 
 
@@ -51,6 +51,7 @@ class Avalon(Bottle):
 
         # 不知道为什么不能用add_hook
         self.add_hook('before_request', fill_session)
+        self.add_hook('before_request', db_session_rollback)
         self.add_hook('after_request', save_session)
 
         default_app.push(self)
