@@ -7,7 +7,6 @@ from jinja2 import Environment, FileSystemLoader
 
 
 from share.url_map import url_for
-from .user import user_meta
 
 
 jinja2_env = None
@@ -24,6 +23,7 @@ def get_template_path():
 
 
 def init_jinja2():
+    from .user import user_meta
     global jinja2_env
 
     cur_app = default_app()

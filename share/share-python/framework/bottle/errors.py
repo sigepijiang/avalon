@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from bottle import HTTPError
+from bottle import HTTPError, error
+from .template import render_template
 
 
 class NotFound(HTTPError):
@@ -12,9 +13,9 @@ class BadRequest(HTTPError):
         super(BadRequest, self).__init__(400, body)
 
 
-class Unauthorized(HTTPError):
+class APIUnauthorized(HTTPError):
     def __init__(self, body):
-        super(Unauthorized, self).__init__(401, body)
+        super(APIUnauthorized, self).__init__(401, body)
 
 
 class APINotFound(HTTPError):
@@ -25,3 +26,13 @@ class APINotFound(HTTPError):
 class APIBadRequest(HTTPError):
     def __init__(self, body):
         super(HTTPError, self).__init__(400, body)
+
+
+@error(404)
+def error404(error):
+    return render_template('http404.html', error=error)
+
+
+@error(400)
+def error400(error):
+    return render_template('http400.html', error=error)

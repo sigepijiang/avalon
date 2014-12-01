@@ -4,7 +4,6 @@ from bottle import request
 
 from share.restful.base import RESTfulBaseAPI
 from share.framework.bottle.engines import memory
-from share.framework.bottle.errors import Unauthorized
 
 METHOD_MAP = {
     'get': 'get',
@@ -24,7 +23,6 @@ class RESTfulAPI(RESTfulBaseAPI):
                 f(meth)
             else:
                 raise
-
 
     def after_request(self, meth):
         for f in self.hooks.get('after_request', []):

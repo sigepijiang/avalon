@@ -5,10 +5,10 @@
 {% block script %}
 {{ super() }}
 <script type="text/javascript" src="{{ static_file('js/heracles/blog.js') }}"></script>
-<script src="//use.edgefonts.net/bitter:n4,i4,n7:all;pt-sans:n4,i4,n7,i7:all.js"></script> 
 {% endblock %}
 
 {% block style %}
+<link href="{{ static_file('css/heracles/blog_font.css') }}" rel="stylesheet" type="text/css"/>
 <link href="{{ static_file('css/heracles/index.css') }}" rel="stylesheet" type="text/css"/>
 {% endblock %}
 

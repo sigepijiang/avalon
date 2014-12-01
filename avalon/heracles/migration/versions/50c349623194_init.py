@@ -18,12 +18,11 @@ import sqlalchemy as sa
 def upgrade():
     op.create_table(
         'text',
+        sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column('hashkey', sa.String(128), primary_key=True),
-        sa.Column(
-            'parent_hashkey', sa.String(128),
-            sa.ForeignKey('text.hashkey')
-        ),
-        sa.Column('content', sa.Unicode()))
+        sa.Column('parent_id', sa.Integer(),),
+        sa.Column('content', sa.Unicode()),
+        sa.Column('html', sa.Unicode()))
 
     op.create_table(
         'tag',
@@ -38,14 +37,13 @@ def upgrade():
     op.create_table(
         'blog',
         sa.Column('id', sa.Integer(), primary_key=True),
-        sa.Column('file_name', sa.Unicode(64)),
         sa.Column('title', sa.Unicode(128)),
-        sa.Column(
-            'text_id', sa.String(128), sa.ForeignKey('text.hashkey')),
+        sa.Column('text_id', sa.Integer()),
         sa.Column('summary', sa.String(512)),
-        sa.Column('content', sa.Unicode()),
-        sa.Column('category_id', sa.Integer(), sa.ForeignKey('category.id')),
-        sa.Column('is_visible', sa.Boolean(), default=True, server_default='true'),
+        sa.Column('category_id', sa.Integer()),
+        sa.Column(
+            'is_visible', sa.Boolean(),
+            default=True, server_default='true'),
         sa.Column(
             'date_created', sa.DateTime(), default=datetime.now,
             server_default=sa.func.now()
@@ -58,13 +56,8 @@ def upgrade():
 
     op.create_table(
         'blog_tags',
-        sa.Column(
-            'blog_id', sa.Integer(),
-            sa.ForeignKey('blog.id'), primary_key=True),
-        sa.Column(
-            'tag', sa.Unicode(32),
-            sa.ForeignKey('tag.title'), primary_key=True),
-    )
+        sa.Column('blog_id', sa.Integer(), primary_key=True),
+        sa.Column('tag', sa.Unicode(32), primary_key=True),)
 
 
 def downgrade():

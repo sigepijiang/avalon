@@ -9,3 +9,4 @@ from .errors import NotFound, BadRequest
 from .template import view, render_template
 from .app import url_for
 from .pager import Pager
+from .decorators import signin_required

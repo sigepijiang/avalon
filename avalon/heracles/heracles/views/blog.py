@@ -1,10 +1,9 @@
 #-*- coding: utf-8 -*-
-import os
-from share.utils.decorators import content2html
-from share.framework.bottle import default_app
+from bottle import redirect, url
+
 from share.framework.bottle import MethodView, view
-from share.framework.bottle import NotFound
 from share.framework.bottle import Pager
+from share.framework.bottle import signin_required
 
 from heracles.models import BlogModel
 
@@ -24,12 +23,6 @@ class BlogIndexView(MethodView):
         return dict(blog_list=query.all(), pager=pager)
 
 
-class BlogListView(MethodView):
-    @view('blog/blog.html')
-    def get(self):
-        return {}
-
-
 class BlogView(MethodView):
     @view('blog/blog.html')
     def get(self, blog_id):
@@ -37,25 +30,9 @@ class BlogView(MethodView):
         return dict(blog=blog)
 
 
-class TextView(MethodView):
-    @view('blog/text.html')
-    @content2html
-    def get(self, file_name, file_type):
-        app = default_app()
-        app_path = app.config.app_path
-        file_path = os.path.join(
-            app_path, app.config.content_path, file_type,
-            '%s.%s' % (file_name, file_type))
-        if not os.path.exists(file_path):
-            raise NotFound('日志不存在')
-
-        return dict(
-            file_name=file_name,
-            file_type=file_type)
-
-
 class BlogEditView(MethodView):
     @view('blog/edit.html')
+    @signin_required
     def get(self, blog_id):
         if blog_id:
             blog = BlogModel.query.get(blog_id)
@@ -70,4 +47,4 @@ class BlogEditView(MethodView):
         else:
             blog = BlogModel()
 
-        return
+        return redirect(url('heracles:www.blog', blog_id=blog.id))
