@@ -183,6 +183,9 @@ class Rule(object):
 def get_url_maps(path, file_list):
     result = {}
     for i in file_list:
+        if i == 'README':
+            continue
+
         app_name = i.split('.')[0]
 
         with open(os.path.join(path, i), 'rb') as f:
