@@ -1,0 +1,6 @@
+[submodule "avalon/apollo"]
+	path = avalon/apollo
+	url = https://github.com/sigepijiang/apollo.git
+[submodule "avalon/zeus"]
+	path = avalon/zeus
+	url = https://github.com/sigepijiang/zeus.git
