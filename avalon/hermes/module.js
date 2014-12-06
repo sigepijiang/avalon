@@ -1,3 +1,0 @@
-Module = function (){
-    args = arguments;
-}
