@@ -59,7 +59,7 @@ Module('drawPlan', function(){
 							tmpStr;
 
 						if(coordinateStr.length) {
-							coordinateList = coordinateStr.split(' ');
+							coordinateList = coordinateStr.split('\n');
 						} else {
 							coordinateList = [];
 							return coordinateList;
@@ -84,7 +84,7 @@ Module('drawPlan', function(){
 							tmpStr;
 
 						if(coordinateStr.length) {
-							coordinateList = coordinateStr.split(' ');
+							coordinateList = coordinateStr.split('\n');
 						} else {
 							coordinateList = [];
 						}
@@ -100,7 +100,7 @@ Module('drawPlan', function(){
 								} else if(i == coordinateList.length - 1) {
 									return;
 								} else {
-									$planCoordinate.value += ' ' + tmpStr;
+									$planCoordinate.value += '\n' + tmpStr;
 								}
 							}
 						}
@@ -168,7 +168,7 @@ Module('drawPlan', function(){
 							planValue = document.getElementById('planCoordinate').value;
 
 						if(planValue.length) {
-							document.getElementById('planCoordinate').value += ' ' + curPos.x + ',' + curPos.y;
+							document.getElementById('planCoordinate').value += '\n' + curPos.x + ',' + curPos.y;
 						} else {
 							document.getElementById('planCoordinate').value = curPos.x + ',' + curPos.y;
 						}
