@@ -30,7 +30,7 @@ def get_url_map(app_name):
         os.environ['BASE'],
         'share/url_maps/%s.yaml' % app_name)
     if not is_file_exists(map_file):
-        raise RouteBuildError('<%s> not avaliable!' % app_name)
+        raise RouteBuildError('app <%s> not avaliable!' % app_name)
 
     if not URL_MAP.get(app_name, None):
         with open(map_file, 'rb') as f:
@@ -77,5 +77,5 @@ def url_for(endpoint, **kwargs):
     return (
         '%(scheme)s://%(subdomain)s.%(domain)s:'
         '%(global_port)s%(path)s') % dict(
-        scheme=scheme, subdomain=subdomain,
-        domain=domain, path=path, global_port=global_port)
+            scheme=scheme, subdomain=subdomain,
+            domain=domain, path=path, global_port=global_port)

@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 import socket
 import struct
+import json
 import sqlalchemy as sa
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.types import TypeDecorator, LargeBinary, CHAR, \
