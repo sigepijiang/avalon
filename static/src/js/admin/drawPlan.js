@@ -33,8 +33,7 @@ Module('drawPlan', function(){
 
 					// 画线
 					// 规则：
-					//	1.第一个元素为'rect'
-					//	2.每一个点用线连接，然后填充
+					//	每一个点用线连接，然后填充
 					function drawLines(coordinateList) {
 						ctx.beginPath();
 						for(var i in coordinateList) {
@@ -160,7 +159,6 @@ Module('drawPlan', function(){
 						// 存储svg信息
 						svgDataList.push(toSVG(list));
 						document.getElementById('svgList').childNodes[0].nodeValue = svgDataList;
-	console.log(toSVG(list));
 					};
 					document.getElementById('delBtn').onclick = delData;
 					canvas.onclick = function(e) {
@@ -184,6 +182,27 @@ Module('drawPlan', function(){
 					});
 				});
 			})(document.body.style);
+
+			var planCanvas = {
+				_w: 0, // canvas width
+				_h: 0, // canvas height
+				canvas: null,
+				ctx: null,
+				canvasBg: new Image(),
+				offsetX: 0, // canvas 的offset
+				offsetY: 0,
+				init: function(canvasEle, canvasBg) {
+
+				},
+				getPoint: function (e) { // 获取当前点的坐标，e为事件event对象
+					var x = e.offsetX,
+						y = e.offsetY;
+					return {
+						x: x,
+						y: y
+					}
+				}
+			}
         });
     }
 })
