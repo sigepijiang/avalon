@@ -4,3 +4,6 @@
 [submodule "avalon/zeus"]
 	path = avalon/zeus
 	url = https://github.com/sigepijiang/zeus.git
+[submodule "avalon/aphrodite"]
+	path = avalon/aphrodite
+	url = https://github.com/sigepijiang/aphrodite.git
