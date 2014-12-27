@@ -23,12 +23,12 @@ DEVELOPMENT: &dev
         LISTEN: 23900
 
     APPS:
-        HERACLES: &app_heracles
+        APHRODITE: &app_heracles
             HOST: '0.0.0.0'
             PORT: 24101
             PROCESSES: 2
             TYPE: 'app'
-            DB_MASTER: 'postgresql+psycopg2://heracles:hhhh@localhost/heracles'
+            DB_MASTER: 'postgresql+psycopg2://aphrodite:aaaa@localhost/aphrodite'
 
         ZEUS: &app_zeus
             HOST: '0.0.0.0'

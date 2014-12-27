@@ -3,6 +3,8 @@ import json
 from bottle import request
 
 from share.restful.base import RESTfulBaseAPI
+from share.framework.bottle.errors import APINotFound, APIBadRequest
+from share.framework.bottle.errors import APIUnauthorized
 from share.framework.bottle.engines import memory
 
 METHOD_MAP = {
@@ -56,8 +58,11 @@ class RESTfulAPI(RESTfulBaseAPI):
 
     def dispatch_request(self, *args, **kwargs):
         request.session = None
-        return super(RESTfulAPI, self).dispatch_request(
-            *args, **kwargs)
+        try:
+            return super(RESTfulAPI, self).dispatch_request(
+                *args, **kwargs)
+        except (APINotFound, APIBadRequest) as e:
+            return {'error': e.body, 'ok': False}
 
 
 class RESTfulOpenAPI(RESTfulAPI):
