@@ -571,7 +571,7 @@ console.log(planInfo)
 							planInfo['shop'] = [];
 						}
 						planInfo.shop.push(pointList);
-						lanCanvas.drawIndex(pointList[0].x, pointList[0].y, planInfo.shop.length - 1);
+						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planInfo.shop.length - 1);
 						updateDelOption(planInfo.shop.length);
 					};
 					canvas.onmousemove = function(e) {
@@ -619,7 +619,7 @@ console.log(planInfo)
 							planInfo['icon'] = [];
 						}
 						planInfo.icon = pointList;
-						lanCanvas.drawIndex(pointList[0].x, pointList[0].y, planInfo.icon.length - 1);
+						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planInfo.icon.length - 1);
 						updateDelOption(planInfo.icon.length);
 					};
 					canvas.onmousemove = function(e) {
