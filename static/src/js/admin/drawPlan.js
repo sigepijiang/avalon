@@ -239,13 +239,13 @@ Module('drawPlan', function(){
 					var cxt = this.cxt,
 						pointList = this.pointList;
 
-					cxt.putImageData(this.canvasSurface, 0, 0);
+					// cxt.putImageData(this.canvasSurface, 0, 0);
 					for(var i in pointList) {
 						cxt.beginPath();
 						cxt.arc(pointList[i].x , pointList[i].y, 15, 0, Math.PI*2, true);
 						cxt.fill();
 
-						drawIndex(pointList[i].x , pointList[i].y, i);
+						this.drawIndex(pointList[i].x , pointList[i].y, i);
 					}
 				},
 				drawLines: function() {
@@ -349,6 +349,8 @@ console.log(planInfo)
 					case 'icon':
 						iconInit();
 						break;
+					default:
+						iconInit();
 				}
 			});
 
