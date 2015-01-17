@@ -3,152 +3,6 @@
 Module('drawPlan', function(){
     this.run = function(){
         $(function() {
-			//(function(bodyStyle) {
-			// 	var _w = $('#contentContainer').width(),
-			// 		_h,
-			// 		imgBg = new Image(),
-			// 		imgW, imgH;
-
-			// 	imgBg.src = 'http://3.im.guokr.com/ubm_3Qr4e8OTd_dIw1ihmaSvUNRLPRcKxDnkPVX2DRqvAwAAZgIAAEpQ.jpg';
-
-			// 	imgBg.addEventListener('load', function() {
-			// 		var canvas = document.getElementById('canvas'),
-			// 			cxt = canvas.getContext('2d'),
-			// 			colorList = ['red', 'green', 'blue', 'gray', 'black', 'yellow', 'orange'],
-			// 			offsetX = canvas.offsetLeft,
-			// 			offsetY = canvas.offsetTop,
-			// 			tmpCanvasSurface,
-			// 			svgStr = '',
-			// 			svgDataList = [];
-
-			// 		// 创建一个和图片一样大小比例的canvas,初始化canvas
-			// 		imgW = imgBg.width;
-			// 		imgH = imgBg.height;
-			// 		canvas.style.backgroundImage = 'url(' + imgBg.src + ')';
-			// 		canvas.style.backgroundSize = '100% auto';
-			// 		canvas.width = _w;
-			// 		canvas.height = imgH / imgW * _w;
-			// 		cxt.fillStyle = colorList[Math.floor(Math.random() * colorList.length)];
-			// 		tmpCanvasSurface = cxt.getImageData(0, 0, canvas.width, canvas.height);
-
-			// 		// 画线
-			// 		// 规则：
-			// 		//	每一个点用线连接，然后填充
-			// 		function drawLines(coordinateList) {
-			// 			cxt.beginPath();
-			// 			for(var i in coordinateList) {
-			// 				if(i == 0) {
-			// 					cxt.moveTo(coordinateList[i].x, coordinateList[i].y);
-			// 				} else {
-			// 					cxt.lineTo(coordinateList[i].x, coordinateList[i].y);
-			// 				}
-			// 				cxt.stroke();
-			// 			}
-			// 			cxt.lineTo(coordinateList[0].x, coordinateList[0].y);
-			// 			cxt.closePath();
-			// 			cxt.stroke();
-			// 			cxt.fill();
-			// 		}
-
-			// 		// 获取确定的坐标链表
-			// 		function getList() {
-			// 			var $planCoordinate = document.getElementById('planCoordinate'),
-			// 				coordinateStr = $planCoordinate.value,
-			// 				coordinateList,
-			// 				tmpStr;
-
-			// 			if(coordinateStr.length) {
-			// 				coordinateList = coordinateStr.split('\n');
-			// 			} else {
-			// 				coordinateList = [];
-			// 				return coordinateList;
-			// 			}
-
-			// 			for(var i in coordinateList) {
-			// 				tmpStr = coordinateList[i];
-
-			// 				coordinateList[i] = {
-			// 					x: tmpStr.split(',')[0],
-			// 					y: tmpStr.split(',')[1]
-			// 				}
-			// 			}
-
-			// 			return coordinateList;
-			// 		}
-			// 		// 删除正在上一条记录
-			// 		function delData() {
-			// 			var $planCoordinate = document.getElementById('planCoordinate'),
-			// 				coordinateStr = $planCoordinate.value,
-			// 				coordinateList,
-			// 				tmpStr;
-
-			// 			if(coordinateStr.length) {
-			// 				coordinateList = coordinateStr.split('\n');
-			// 			} else {
-			// 				coordinateList = [];
-			// 			}
-
-			// 			if(coordinateList.length == 1) {
-			// 				$planCoordinate.value = '';
-			// 			} else {
-			// 				for(var i in coordinateList) {
-			// 					tmpStr = coordinateList[i];
-
-			// 					if(i == 0) {
-			// 						$planCoordinate.value = tmpStr;
-			// 					} else if(i == coordinateList.length - 1) {
-			// 						return;
-			// 					} else {
-			// 						$planCoordinate.value += '\n' + tmpStr;
-			// 					}
-			// 				}
-			// 			}
-			// 		}
-
-			// 		// 获取当前点的坐标，e为事件event对象
-			// 		function getPoint(e) {
-			// 			var x = e.offsetX,
-			// 				y = e.offsetY;
-			// 			return {
-			// 				x: x,
-			// 				y: y
-			// 			}
-			// 		}
-
-			// 		// 转换为SVG格式
-			// 		function toSVG(coordinateList) {
-			// 			for(var i in coordinateList) {
-			// 				if(i == 0) {
-			// 					svgStr = 'M' + coordinateList[i].x + ',' + coordinateList[i].y;
-			// 				} else {
-			// 					svgStr += 'L' + coordinateList[i].x + ',' + coordinateList[i].y;
-			// 				}
-			// 			}
-
-			// 			svgStr += 'z';
-			// 			return svgStr;
-			// 		}
-
-			// 		// 画平面图
-			// 		function drawPlan(coordinateList) {
-			// 			if(coordinateList.length) {
-			// 				drawLines(coordinateList);
-			// 			}
-			// 		}
-
-			// 		// 获取辅助线的列表，并画辅助线
-			// 		function drawTmpPlan(coordinateList) {
-			// 			if(coordinateList.length) {
-			// 				if(coordinateList.length > 2) {
-			// 					drawLines(coordinateList);
-			// 				}
-			// 			}
-			// 		}
-
-
-			// 		
-			// })(document.body.style);
-
 			var planCanvas = {
 				initComplete: false,
 				_w: 0, // canvas width
@@ -203,7 +57,7 @@ Module('drawPlan', function(){
 						that.offsetY = that.canvas.offsetTop;
 					});
 
-					imgBg.src = canvasBg
+					imgBg.src = canvasBg;
 				},
 				getPoint: function (e) { // 获取当前点的坐标，e为事件event对象
 					var x = (e.clientX + document.body.scrollLeft || e.pageX) - this.offsetX || 0,
@@ -211,7 +65,7 @@ Module('drawPlan', function(){
 					return {
 						x: x,
 						y: y
-					}
+					};
 				},
 				delPoint: function() { // 删除上一个点
 					if(this.pointList.length) {
@@ -227,7 +81,7 @@ Module('drawPlan', function(){
 					this.pointList.push({
 						x: x,
 						y: y
-					})
+					});
 				},
 				getPointList: function() {
 					return this.pointList;
@@ -239,6 +93,8 @@ Module('drawPlan', function(){
 					var cxt = this.cxt,
 						pointList = this.pointList;
 
+					// 清空canvas
+					this.cxt.clearRect(0, 0, this._w, this._h);
 					// cxt.putImageData(this.canvasSurface, 0, 0);
 					for(var i in pointList) {
 						cxt.beginPath();
@@ -326,14 +182,16 @@ Module('drawPlan', function(){
 					}
 					return true;
 				}
-			}
+			};
 
 			var canvasContainer = document.getElementById('contentContainer'),
 				canvas = document.getElementById('canvas'),
 				canvasBg = 'http://3.im.guokr.com/ubm_3Qr4e8OTd_dIw1ihmaSvUNRLPRcKxDnkPVX2DRqvAwAAZgIAAEpQ.jpg',
-				planInfo = !utils.isOwnEmpty(layout) && layout.layout ? layout.layout : {},
+				// planInfo = !utils.isOwnEmpty(layout) && layout.layout ? layout.layout : {},
 				isInit = true;
-console.log(planInfo)
+
+				window.planInfo = !utils.isOwnEmpty(layout) && layout.layout ? layout.layout : {};
+console.log(planInfo);
 			buildingInit();
 			$('a[data-operation]').click(function() {
 				switch($(this).attr('data-operation')) {
@@ -370,7 +228,7 @@ console.log(planInfo)
 
 					},
 					dataType: 'json'
-				})
+				});
 			});
 
 			function buildPointList(list) {
@@ -383,19 +241,22 @@ console.log(planInfo)
 			// 重画该层图形
 			// 用于重画building，white，shop；
 			// icon单独有重画的方法
-			function redraw(list) {
+			function redraw(planDetailObj) {
 				planCanvas.resetCanvas();
 				var point;
-				for(var i in list) {
+				for(var key in planDetailObj) {
+					if(key === 'length') {
+						continue;
+					}
 					planCanvas.clearPointList();
-					for(var j in list[i]) {
-						point = list[i][j];
+					for(var j in planDetailObj[key]) {
+						point = planDetailObj[key][j];
 						planCanvas.addPointToPointList(point.x, point.y);
 					}
 					planCanvas.drawPlan();
-					planCanvas.drawIndex(list[i][0].x, list[i][0].y, i);
+					planCanvas.drawIndex(planDetailObj[key][0].x, planDetailObj[key][0].y, key);
 				}
-				updateDelOption(list.length);
+				updateDelOption(planDetailObj);
 			}
 
 			// 把画icon的index的方法放在了drawPoints里边
@@ -409,15 +270,18 @@ console.log(planInfo)
 				}
 
 				planCanvas.drawPoints();
-				updateDelOption(list.length);
+				updateDelOption(list);
 			}
 
 			// 更新删除的下来菜单
-			function updateDelOption(length) {
+			function updateDelOption(planDetailObj) {
 				var optionHtml = '';
 
-				for(var i = 0; i < length; i++) {
-					optionHtml += '<option value="' + i + '">' + i + '</option>';
+				for(var key in planDetailObj) {
+					if(key === 'length') {
+						continue;
+					}
+					optionHtml += '<option value="' + key + '">' + key + '</option>';
 				}
 				$('#delOption').html(optionHtml);
 			}
@@ -442,7 +306,7 @@ console.log(planInfo)
 						alert('请选取基准零点坐标');
 					}
 					canvas.onclick = function(e) {
-						if(!planInfo['canvas']) {
+						if(!planInfo['canvas'] || !planInfo.canvas.startPoint) {
 							planInfo.canvas = {};
 
 							var point = planCanvas.getPoint(e);
@@ -468,15 +332,19 @@ console.log(planInfo)
 						buildPointList(planCanvas.getPointList());
 					};
 					document.getElementById('drawBtn').onclick = function(e) {
-						var pointList = planCanvas.getPointList();
+						var pointList = planCanvas.getPointList(),
+							planKey;
 						planCanvas.drawPlan();
 
 						if(!planInfo['bg']) {
-							planInfo.bg = [];
+							planInfo.bg = {
+								length: 0
+							};
 						}
-						planInfo.bg.push(pointList);
-						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planInfo.bg.length - 1);
-						updateDelOption(planInfo.bg.length);
+						planKey = planInfo.bg.length++;
+						planInfo.bg[planKey] = pointList;
+						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planKey);
+						updateDelOption(planInfo.bg);
 					};
 					canvas.onmousemove = function(e) {
 						planCanvas.drawTmpPlan(e);
@@ -486,17 +354,17 @@ console.log(planInfo)
 						buildPointList(planCanvas.getPointList());
 					};
 					document.getElementById('delBlockBtn').onclick = function(e) {
-						var index = $('#delOption').val();
+						var key = $('#delOption').val();
 
-						if(index) {
-							var r = confirm('确定要删除模块' + index + '?');
+						if(key) {
+							var r = confirm('确定要删除模块' + key + '?');
 							if(r) {
-								planInfo.bg.splice(index, 1);
+								delete planInfo.bg[key];
 								redraw(planInfo.bg);
-								updateDelOption(planInfo.bg.length);
+								updateDelOption(planInfo.bg);
 							}
 						}
-					}
+					};
 
 					// 初始化已有数据
 					if(planInfo.bg && planInfo.bg.length) {
@@ -516,15 +384,19 @@ console.log(planInfo)
 						buildPointList(planCanvas.getPointList());
 					};
 					document.getElementById('drawBtn').onclick = function(e) {
-						var pointList = planCanvas.getPointList();
+						var pointList = planCanvas.getPointList(),
+							planKey;
 						planCanvas.drawPlan();
 
 						if(!planInfo['white']) {
-							planInfo['white'] = [];
+							planInfo.white = {
+								length: 0
+							};
 						}
-						planInfo.white.push(pointList);
-						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planInfo.white.length - 1);
-						updateDelOption(planInfo.white.length);
+						planKey = planInfo.white.length++;
+						planInfo.white[planKey] = pointList;
+						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planKey);
+						updateDelOption(planInfo.white);
 					};
 					canvas.onmousemove = function(e) {
 						planCanvas.drawTmpPlan(e);
@@ -534,17 +406,18 @@ console.log(planInfo)
 						buildPointList(planCanvas.getPointList());
 					};
 					document.getElementById('delBlockBtn').onclick = function(e) {
-						var index = $('#delOption').val();
+						var key = $('#delOption').val();
 
-						if(index) {
-							var r = confirm('确定要删除模块' + index + '?');
+						if(key) {
+							var r = confirm('确定要删除模块' + key + '?');
 							if(r) {
-								planInfo.white.splice(index, 1);
+								delete planInfo.white[key];
 								redraw(planInfo.white);
-								updateDelOption(planInfo.white.length);
+								updateDelOption(planInfo.white
+									);
 							}
 						}
-					}
+					};
 				});
 
 				// 初始化已有数据
@@ -564,15 +437,19 @@ console.log(planInfo)
 						buildPointList(planCanvas.getPointList());
 					};
 					document.getElementById('drawBtn').onclick = function(e) {
-						var pointList = planCanvas.getPointList();
+						var pointList = planCanvas.getPointList(),
+							planKey;
 						planCanvas.drawPlan();
 
 						if(!planInfo['shop']) {
-							planInfo['shop'] = [];
+							planInfo.shop = {
+								length: 0
+							};
 						}
-						planInfo.shop.push(pointList);
-						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planInfo.shop.length - 1);
-						updateDelOption(planInfo.shop.length);
+						planKey = planInfo.shop.length++;
+						planInfo.shop[planKey] = pointList;
+						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planKey);
+						updateDelOption(planInfo.shop);
 					};
 					canvas.onmousemove = function(e) {
 						planCanvas.drawTmpPlan(e);
@@ -582,17 +459,17 @@ console.log(planInfo)
 						buildPointList(planCanvas.getPointList());
 					};
 					document.getElementById('delBlockBtn').onclick = function(e) {
-						var index = $('#delOption').val();
+						var key = $('#delOption').val();
 
-						if(index) {
-							var r = confirm('确定要删除模块' + index + '?');
+						if(key) {
+							var r = confirm('确定要删除模块' + key + '?');
 							if(r) {
-								planInfo.shop.splice(index, 1);
+								delete planInfo.shop[key];
 								redraw(planInfo.shop);
-								updateDelOption(planInfo.shop.length);
+								updateDelOption(planInfo.shop);
 							}
 						}
-					}
+					};
 				});
 
 				// 初始化已有数据
@@ -616,11 +493,16 @@ console.log(planInfo)
 						var pointList = planCanvas.getPointList();
 
 						if(!planInfo['icon']) {
-							planInfo['icon'] = [];
+							planInfo['icon'] = {
+								length: pointList.length
+							};
 						}
-						planInfo.icon = pointList;
+						for(var index in pointList) {
+							planInfo.icon[index] = pointList[index];
+						}
+						// planInfo.icon = pointList;
 						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planInfo.icon.length - 1);
-						updateDelOption(planInfo.icon.length);
+						updateDelOption(planInfo.icon);
 					};
 					canvas.onmousemove = function(e) {
 						planCanvas.addPoint(e);
@@ -639,10 +521,10 @@ console.log(planInfo)
 							if(r) {
 								planInfo.icon.splice(index, 1);
 								redrawIcon(planInfo.icon);
-								updateDelOption(planInfo.icon.length);
+								updateDelOption(planInfo.icon);
 							}
 						}
-					}
+					};
 				});
 				// 初始化已有数据
 				if(planInfo.icon && planInfo.icon.length) {
@@ -650,5 +532,5 @@ console.log(planInfo)
 				}
 			}
         });
-    }
-})
+    };
+});
