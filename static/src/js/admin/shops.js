@@ -45,7 +45,6 @@ Module('drawPlan', function(){
 			// bg
 			for(var index in tmpInfoList) {
 				tmpSvgStr = toSvgPath(tmpInfoList[index]);
-				console.log(tmpSvgStr);
 
 				path = new Kinetic.Path({
 					data: tmpSvgStr,
@@ -61,7 +60,6 @@ Module('drawPlan', function(){
 			tmpInfoList = planInfo.white;
 			for(var index in tmpInfoList) {
 				tmpSvgStr = toSvgPath(tmpInfoList[index]);
-				console.log(tmpSvgStr);
 
 				path = new Kinetic.Path({
 					data: tmpSvgStr,
@@ -77,7 +75,6 @@ Module('drawPlan', function(){
 			tmpInfoList = planInfo.shop;
 			for(var index in tmpInfoList) {
 				tmpSvgStr = toSvgPath(tmpInfoList[index]);
-				console.log(tmpSvgStr);
 
 				path = new Kinetic.Path({
 					data: tmpSvgStr,
@@ -119,7 +116,6 @@ Module('drawPlan', function(){
 					});
 					$('#shopForm').modal();
 					$('#shopForm').on('hidden.bs.modal', function (e) {
-						console.log(thisData);
 						var shopName = $.trim($('#shopNameInput').val()),
 							shopTel = $.trim($('#shopTelInput').val()),
 							key = thisData.key;
@@ -147,7 +143,6 @@ Module('drawPlan', function(){
 			tmpInfoList = planInfo.icon;
 			for(var index in tmpInfoList) {
 				tmpSvgStr = toSvgAce(tmpInfoList[index]);
-				console.log(tmpSvgStr);
 
 				path = new Kinetic.Path({
 					data: tmpSvgStr,
@@ -199,6 +194,7 @@ Module('drawPlan', function(){
 							return false;
 						}
 
+						console.log(planData);
 						$(this).off('show.bs.modal hidden.bs.modal');
 					});
 				});
