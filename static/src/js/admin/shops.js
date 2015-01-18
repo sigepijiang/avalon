@@ -3,7 +3,7 @@
 Module('drawPlan', function(){
     this.run = function(){
         $(function() {
-			if(!layout || !layout.layout || layout.layout.canvas) {
+			if(!layout || !layout.layout || !layout.layout.canvas) {
 				alert('请先构建店铺');
 				history.back();
 				return false;
