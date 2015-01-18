@@ -9,8 +9,8 @@ Module('drawPlan', function(){
 				return false;
 			}
 			var planInfo = layout.layout,
-				shopData = layout.shop_data ? layout.show_data : {},
-				iconData = layout.icon_data ? layout.icon_data : {},
+				shopData = layout.shop_data ? layout.shop_data : {},
+				iconData = layout.facility_data ? layout.facility_data : {},
 				planData = {
 					shop: shopData,
 					icon: iconData
@@ -71,13 +71,20 @@ Module('drawPlan', function(){
 			}
 
 			// shop
+			var shopColor = {
+					'default': '#edd0ad',
+					'defaultHover': '#fad1a1',
+					'finish': '#7FFF00',
+					'finishHover': '#fad1a1'
+				};
+
 			tmpInfoList = planInfo.shop;
 			for(var index in tmpInfoList) {
 				tmpSvgStr = toSvgPath(tmpInfoList[index]);
 
 				path = new Kinetic.Path({
 					data: tmpSvgStr,
-					fill: '#edd0ad',
+					fill: shopColor.default,
 					stroke: '#fff',
 					strokeWidth: 2
 				});
@@ -85,18 +92,23 @@ Module('drawPlan', function(){
 				// 作为标示当前点击元素
 				path.data = {
 					type: 'shop',
-					index: index
+					index: index,
+					color: shopColor.default,
+					colorHover: shopColor.defaultHover
 				};
 
+				if(planData.shop[index]) {
+					changeColor(path, shopColor.finish, shopColor.defaultHover);
+				}
+
 				path.on('mouseover', function() {
-					this.setFill('#fad1a1');
-					this.setStroke('#fad1a1');
+					this.setFill(this.data.colorHover);
+					this.setStroke(this.data.colorHover);
 					this.moveTo(topLayer);
 					topLayer.drawScene();
 				});
 
 				path.on('mouseout', function() {
-					this.setFill('#edd0ad');
 					this.moveTo(shopLayer);
 					topLayer.draw();
 				});
@@ -105,12 +117,13 @@ Module('drawPlan', function(){
 					var thisData = this.data,
 						isSaving = false,
 						ajaxType = 'post',
-						canClose = false;
+						canClose = false,
+						thisPath = this;
 					$('#shopForm').on('show.bs.modal', function (e) {
 						var shopData = planData.shop[thisData.index];
 						if(shopData) {
 							$('#shopNameInput').val(shopData.name);
-							$('#shopTelInput').val(shopData.tel);
+							$('#shopTelInput').val(shopData.phone);
 							ajaxType = 'put';
 						} else {
 							$('#shopNameInput').val('');
@@ -148,7 +161,7 @@ Module('drawPlan', function(){
 								data: JSON.stringify(planData.shop[index]),
 								success: function(d) {
 									canClose = true;
-									planData.shop[index].id = d.resultd.result.id;
+									planData.shop[index].id = d.result.id;
 									$('#shopForm').modal('hide');
 								},
 								error: function(d) {
@@ -167,10 +180,14 @@ Module('drawPlan', function(){
 						} else {
 							alert('数据不全，不保存');
 							delete planData.shop[index];
-							// return false;
 						}
 					});
 					$('#shopForm').on('hidden.bs.modal', function (e) {
+						if(planData.shop[thisPath.data.index]) {
+							changeColor(thisPath, shopColor.finish, shopColor.finishHover);
+						} else {
+							changeColor(thisPath, shopColor.default, shopColor.defaultHover);
+						}
 						$(this).off('show.bs.modal hide.bs.modal hidden.bs.modal');
 					});
 				});
@@ -188,7 +205,7 @@ Module('drawPlan', function(){
 
 				path = new Kinetic.Path({
 					data: tmpSvgStr,
-					fill: '#edd0ad',
+					fill: shopColor.default,
 					stroke: '#fff',
 					strokeWidth: 2
 				});
@@ -196,18 +213,23 @@ Module('drawPlan', function(){
 				// 作为标示当前点击元素
 				path.data = {
 					type: 'icon',
-					index: index
+					index: index,
+					color: shopColor.default,
+					colorHover: shopColor.defaultHover
 				};
 
+				if(planData.icon[index]) {
+					changeColor(path, shopColor.finish, shopColor.defaultHover);
+				}
+
 				path.on('mouseover', function() {
-					this.setFill('#fad1a1');
-					this.setStroke('#fad1a1');
+					this.setFill(shopColor.defaultHover);
+					this.setStroke(shopColor.defaultHover);
 					this.moveTo(topLayer);
 					topLayer.drawScene();
 				});
 
 				path.on('mouseout', function() {
-					this.setFill('#edd0ad');
 					this.moveTo(shopLayer);
 					topLayer.draw();
 				});
@@ -216,11 +238,12 @@ Module('drawPlan', function(){
 					var thisData = this.data,
 						isSaving = false,
 						ajaxType = 'post',
-						canClose = false;
+						canClose = false,
+						thisPath = this;
 					$('#iconForm').on('show.bs.modal', function (e) {
 						var iconData = planData.icon[thisData.index];
 						if(iconData) {
-							$('#iconType').val(iconData.value);
+							$('#iconType').val(iconData.facility_type);
 							ajaxType = 'put';
 						} else {
 							$('#iconType').val('');
@@ -256,7 +279,7 @@ Module('drawPlan', function(){
 								data: JSON.stringify(planData.icon[index]),
 								success: function(d) {
 									canClose = true;
-									planData.icon[index].id = d.resultd.result.id;
+									planData.icon[index].id = d.result.id;
 									$('#iconForm').modal('hide');
 								},
 								error: function(d) {
@@ -279,6 +302,11 @@ Module('drawPlan', function(){
 						}
 					});
 					$('#iconForm').on('hidden.bs.modal', function (e) {
+						if(planData.icon[thisPath.data.index]) {
+							changeColor(thisPath, shopColor.finish, shopColor.finishHover);
+						} else {
+							changeColor(thisPath, shopColor.default, shopColor.defaultHover);
+						}
 						console.log(planData);
 						$(this).off('show.bs.modal hidden.bs.modal');
 					});
@@ -296,9 +324,19 @@ Module('drawPlan', function(){
 			stage.add(topLayer);
 
 			$('#saveBtn').click(function() {
-				location.back();
+				history.back();
 			});
 
+			function changeColor(path, color, hoverColor) {
+				path.data.color = color;
+				path.data.colorHover = hoverColor;
+				path.moveTo(shopLayer);
+				path.setFill(color);
+				path.setStroke('#fff');
+
+				shopLayer.draw();
+				// path.moveTo(topLayer);
+			}
 
 			function toSvgPath(pointList) {
 				var svgStr = '';
