@@ -8,8 +8,11 @@ Module('drawPlan', function(){
 				history.back();
 				return false;
 			}
-			var planInfo = layout.layout,
-				planData = {
+			var planInfo = layout.layout;
+				planData = layout.shop_data ? {
+					shop: layout.shop_data,
+					icon: layout.icon_data
+				} : {
 					shop: {
 
 					},
@@ -87,7 +90,7 @@ Module('drawPlan', function(){
 				// 作为标示当前点击元素
 				path.data = {
 					type: 'shop',
-					key: index
+					index: index
 				};
 
 				path.on('mouseover', function() {
@@ -104,33 +107,76 @@ Module('drawPlan', function(){
 				});
 
 				path.on('click', function() {
-					var thisData = this.data;
+					var thisData = this.data,
+						isSaving = false,
+						ajaxType = 'post',
+						canClose = false;
 					$('#shopForm').on('show.bs.modal', function (e) {
-						var shopData = planData.shop[thisData.key];
+						var shopData = planData.shop[thisData.index];
 						if(shopData) {
 							$('#shopNameInput').val(shopData.name);
 							$('#shopTelInput').val(shopData.tel);
+							isCreate = 'put';
 						} else {
 							$('#shopNameInput').val('');
 							$('#shopTelInput').val('');
+							isCreate = 'post';
 						}
 					});
 					$('#shopForm').modal();
-					$('#shopForm').on('hidden.bs.modal', function (e) {
-						var shopName = $.trim($('#shopNameInput').val()),
-							shopTel = $.trim($('#shopTelInput').val()),
-							key = thisData.key;
-						if(shopName && shopTel) {
-							planData.shop[key] = {
-								name: shopName,
-								tel: shopTel
-							}
-						} else {
-							delete planData.shop[key];
+					$('#shopForm').on('hide.bs.modal', function (e) {
+						if(canClose) {
+							return true;
+						}
+						if(isSaving) {
+							alert('正在保存数据');
 							return false;
 						}
 
-						$(this).off('show.bs.modal hidden.bs.modal');
+						var shopName = $.trim($('#shopNameInput').val()),
+							shopTel = $.trim($('#shopTelInput').val()),
+							index = thisData.index;
+						if(shopName && shopTel) {
+							planData.shop[index] = {
+								floor_id: floor_id,
+								name: shopName,
+								phone: shopTel,
+								index: index,
+								id: planData.shop[index] ? planData.shop[index].id : undefined
+							};
+
+							isSaving = true;
+							$.ajax({
+								url: '/apis/apollo/market/shop.json',
+								method: ajaxType,
+								contentType: 'application/json',
+								data: JSON.stringify(planData.shop[index]),
+								success: function(d) {
+									canClose = true;
+									planData.shop[index].id = d.resultd.result.id;
+									$('#shopForm').modal('hide');
+								},
+								error: function(d) {
+									var r = confirm('保存失败,关闭后丢失此次保存的数据~！');
+									if(r) {
+										canClose = true;
+										delete planData.shop[index];
+										$('#shopForm').modal('hide');
+									} else {
+										isSaving = false;
+									}
+								},
+								dataType: 'json'
+							});
+							return false;
+						} else {
+							alert('数据不全，不保存');
+							delete planData.shop[index];
+							// return false;
+						}
+					});
+					$('#shopForm').on('hidden.bs.modal', function (e) {
+						$(this).off('show.bs.modal hide.bs.modal hidden.bs.modal');
 					});
 				});
 
@@ -210,6 +256,10 @@ Module('drawPlan', function(){
 			stage.add(staticLayer);
 			stage.add(shopLayer);
 			stage.add(topLayer);
+
+			$('#saveBtn').click(function() {
+				
+			});
 
 
 			function toSvgPath(pointList) {
