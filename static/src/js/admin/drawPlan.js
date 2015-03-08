@@ -89,19 +89,21 @@ Module('drawPlan', function(){
 				clearPointList: function() {
 					this.pointList = [];
 				},
-				drawPoints: function() { // 用于画icon
-					var cxt = this.cxt,
-						pointList = this.pointList;
+				drawPoints: function(pointObj) { // 用于画icon
+					var cxt = this.cxt;
 
 					// 清空canvas
 					this.cxt.clearRect(0, 0, this._w, this._h);
 					// cxt.putImageData(this.canvasSurface, 0, 0);
-					for(var i in pointList) {
+					for(var i in pointObj) {
+						if(i === 'length') {
+							continue;
+						}
 						cxt.beginPath();
-						cxt.arc(pointList[i].x , pointList[i].y, 15, 0, Math.PI*2, true);
+						cxt.arc(pointObj[i].x , pointObj[i].y, 15, 0, Math.PI*2, true);
 						cxt.fill();
 
-						this.drawIndex(pointList[i].x , pointList[i].y, i);
+						this.drawIndex(pointObj[i].x , pointObj[i].y, i);
 					}
 				},
 				drawLines: function() {
@@ -190,8 +192,7 @@ Module('drawPlan', function(){
 				// planInfo = !utils.isOwnEmpty(layout) && layout.layout ? layout.layout : {},
 				isInit = true;
 
-				window.planInfo = !utils.isOwnEmpty(layout) && layout.layout ? layout.layout : {};
-console.log(planInfo);
+			window.planInfo = !utils.isOwnEmpty(layout) && layout.layout ? layout.layout : {};
 			buildingInit();
 			$('a[data-operation]').click(function() {
 				switch($(this).attr('data-operation')) {
@@ -261,16 +262,16 @@ console.log(planInfo);
 
 			// 把画icon的index的方法放在了drawPoints里边
 			// icon比较特殊，一个点就代表一个block
-			function redrawIcon(list) {
+			function redrawIcon(planDetailObj) {
 				planCanvas.resetCanvas();
 				var point;
-				for(var i in list) {
-					point = list[i];
+				for(var i in planDetailObj) {
+					point = planDetailObj[i];
 					planCanvas.addPointToPointList(point.x, point.y);
 				}
 
-				planCanvas.drawPoints();
-				updateDelOption(list);
+				planCanvas.drawPoints(planDetailObj);
+				updateDelOption(planDetailObj);
 			}
 
 			// 更新删除的下来菜单
@@ -369,6 +370,8 @@ console.log(planInfo);
 					// 初始化已有数据
 					if(planInfo.bg && planInfo.bg.length) {
 						redraw(planInfo.bg);
+					} else {
+						redraw([]);
 					}
 				}
 			}
@@ -423,6 +426,8 @@ console.log(planInfo);
 				// 初始化已有数据
 				if(planInfo.white && planInfo.white.length) {
 					redraw(planInfo.white);
+				} else {
+					redraw([]);
 				}
 			}
 
@@ -475,6 +480,8 @@ console.log(planInfo);
 				// 初始化已有数据
 				if(planInfo.shop && planInfo.shop.length) {
 					redraw(planInfo.shop);
+				} else {
+					redraw([]);
 				}
 			}
 
@@ -485,29 +492,28 @@ console.log(planInfo);
 				planCanvas.resetCanvas(function() {
 					// canvas取点处理
 					canvas.onclick = function(e) {
-						planCanvas.addPoint(e);
-						buildPointList(planCanvas.getPointList());
-						planCanvas.drawPoints();
+						var curPos = planCanvas.getPoint(e);
+
+						planKey = planInfo.icon.length++;
+						planInfo.icon[planKey] = curPos;
+						planCanvas.drawPoints(planInfo.icon);
+						updateDelOption(planInfo.icon);
 					};
 					document.getElementById('drawBtn').onclick = function(e) {
-						var pointList = planCanvas.getPointList();
+						// do nothing
+					};
+					canvas.onmousemove = function(e) {
+						var curPos = planCanvas.getPoint(e);
 
 						if(!planInfo['icon']) {
 							planInfo['icon'] = {
-								length: pointList.length
+								length: 0
 							};
 						}
-						for(var index in pointList) {
-							planInfo.icon[index] = pointList[index];
-						}
-						// planInfo.icon = pointList;
-						planCanvas.drawIndex(pointList[0].x, pointList[0].y, planInfo.icon.length - 1);
-						updateDelOption(planInfo.icon);
-					};
-					canvas.onmousemove = function(e) {
-						planCanvas.addPoint(e);
-						planCanvas.drawPoints();
-						planCanvas.delPoint();
+						planKey = planInfo.icon.length++;
+						planInfo.icon[planKey] = curPos;
+						planCanvas.drawPoints(planInfo.icon);
+						delete planInfo.icon[--planInfo.icon.length];
 					};
 					document.getElementById('delBtn').onclick = function(e) {
 						planCanvas.delPoint();
@@ -519,7 +525,7 @@ console.log(planInfo);
 						if(index) {
 							var r = confirm('确定要删除模块' + index + '?');
 							if(r) {
-								planInfo.icon.splice(index, 1);
+								delete planInfo.icon[index];
 								redrawIcon(planInfo.icon);
 								updateDelOption(planInfo.icon);
 							}
@@ -529,6 +535,8 @@ console.log(planInfo);
 				// 初始化已有数据
 				if(planInfo.icon && planInfo.icon.length) {
 					redrawIcon(planInfo.icon);
+				} else {
+					redrawIcon([]);
 				}
 			}
         });
