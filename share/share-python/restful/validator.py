@@ -39,7 +39,7 @@ class resful_validator(object):
             result.update(schema(params))
         except voluptuous.MultipleInvalid as error_group:
             for e in error_group.errors:
-                errors[e.path[0]] = e.message
+                errors[e.path[0].schema] = e.message
         return result, errors
 
     def _get_params(self):
