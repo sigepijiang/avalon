@@ -188,12 +188,47 @@ Module('drawPlan', function(){
 
 			var canvasContainer = document.getElementById('contentContainer'),
 				canvas = document.getElementById('canvas'),
-				canvasBg = 'http://3.im.guokr.com/ubm_3Qr4e8OTd_dIw1ihmaSvUNRLPRcKxDnkPVX2DRqvAwAAZgIAAEpQ.jpg',
+				canvasBg = '',
 				// planInfo = !utils.isOwnEmpty(layout) && layout.layout ? layout.layout : {},
 				isInit = true;
 
 			window.planInfo = !utils.isOwnEmpty(layout) && layout.layout ? layout.layout : {};
-			buildingInit();
+			if(!utils.isOwnEmpty(planInfo) && planInfo.bgImg) {
+				canvasBg = planInfo.bgImg;
+				buildingInit();
+			} else {
+				$('#canvasBgModal').modal();
+			}
+			$('#bgInput').change(function(){
+				avalon.ajaxupload.upload(
+					'/apis/aphrodite/image.json',
+					$(this),
+					{
+						success: function(d) {
+							var data = $.parseJSON(d);
+							if(data.ok && data.result) {
+								$('#bgTmpImg').attr('src', data.result.url);
+							} else {
+								console.error(data);
+								alert('出错了');
+							}
+						}
+					}
+				);
+			});
+			$('#canvasBgModal').on('hide.bs.modal', function (e) {
+				canvasBg = $('#bgTmpImg').attr('src');
+				if(!canvasBg) {
+					alert('选择背景');
+					return false;
+				}
+				if(planInfo.bgImg) {
+					planCanvas.canvas.style.backgroundImage = 'url(' + canvasBg + ')';
+				} else {
+					buildingInit();
+				}
+				planInfo.bgImg = canvasBg;
+			});
 			$('a[data-operation]').click(function() {
 				switch($(this).attr('data-operation')) {
 					case 'bg':
@@ -230,6 +265,10 @@ Module('drawPlan', function(){
 					},
 					dataType: 'json'
 				});
+			});
+
+			$('#bgBtn').click(function() {
+				$('#canvasBgModal').modal();
 			});
 
 			function buildPointList(list) {
