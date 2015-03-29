@@ -258,7 +258,9 @@ Module('drawPlan', function(){
 						layout: planInfo
 					}),
 					success: function(d) {
-
+						if(d.ok) {
+							location.href = url_parent;
+						}
 					},
 					error: function(d) {
 
