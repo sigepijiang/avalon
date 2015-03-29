@@ -24,7 +24,7 @@ Module('drawPlan', function(){
 					var that = this;
 					this.canvas = canvasEle;
 					this.cxt = this.canvas.getContext('2d');
-					this._w = canvasW !== 0 ? canvasW : $(canvasContainer).width();
+					this._w = canvasW ? canvasW : $(canvasContainer).width();
 
 					// init canvas
 					var imgBg = new Image();
@@ -223,7 +223,8 @@ Module('drawPlan', function(){
 					return false;
 				}
 				if(planInfo.bgImg) {
-					planCanvas.canvas.style.backgroundImage = 'url(' + canvasBg + ')';
+					planCanvas.init(canvasContainer, canvas, canvasBg, null, null, buildingInit);
+					// planCanvas.canvas.style.backgroundImage = 'url(' + canvasBg + ')';
 				} else {
 					buildingInit();
 				}
