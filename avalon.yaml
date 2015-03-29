@@ -1,7 +1,7 @@
 DEVELOPMENT: &dev
     VERSION: '0.3.1'
 
-    DOMAIN: 'dev.wishstone.me'
+    DOMAIN: 'dev.yougouoo.com'
     ENABLE_SQL_ECHO: false
     MEMCACHED: 
         - '0.0.0.0:11211'
@@ -47,8 +47,8 @@ DEVELOPMENT: &dev
 
 PRODUCTION:
     <<: *dev
-    DOMAIN: 'wishstone.me'
+    DOMAIN: 'yougouoo.com'
 
     NGINX:
         CHROOT: 'env/'
-        LISTEN: 80 
+        LISTEN: 8080
