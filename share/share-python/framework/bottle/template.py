@@ -35,6 +35,8 @@ def init_jinja2():
         request=request, url_for=url_for, user_meta=user_meta,
     )
     jinja2_env.filters['tojson'] = json.dumps
+    jinja2_env.filters['unicode'] = lambda d: d.decode(
+        'utf-8') if isinstance(d, str) else d
 
 
 # DONT'T USE the view, template or Jinja2Template of bottle.
