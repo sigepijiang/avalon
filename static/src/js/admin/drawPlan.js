@@ -254,10 +254,9 @@ Module('drawPlan', function(){
 					url: '/apis/apollo/market/floor.json',
 					method: 'post',
 					contentType: 'application/json',
-					data: JSON.stringify({
-						floor_id: floor_id,
-						layout: planInfo
-					}),
+					data: JSON.stringify(
+						$.extend({}, layout, {layout: planInfo, floor_id: floor_id})
+					),
 					success: function(d) {
 						if(d.ok) {
 							location.href = url_parent;
