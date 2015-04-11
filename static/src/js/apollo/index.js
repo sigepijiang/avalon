@@ -14,21 +14,25 @@
 Module('index', function(){
     this.run = function(){
         $(function() {
-			if(!layout || !layout.layout || !layout.layout.canvas) {
-				alert('请先构建店铺');
-				history.back();
+			if(!floorData || !floorData.length) {
+				console.log('还没构建商店');
 				return false;
 			}
-			var planInfo = layout.layout,
-				shopData = layout.shop_data ? layout.shop_data : {},
-				iconData = layout.facility_data ? layout.facility_data : {},
+			var thisFloorData = floorData[0].layout.data,
+				planInfo = thisFloorData.layout,
+				shopData = thisFloorData.shop_data ? thisFloorData.shop_data : {},
+				iconData = thisFloorData.facility_data ? thisFloorData.facility_data : {},
 				planData = {
 					shop: shopData,
 					icon: iconData
 				};
 			var	canvasInfo = planInfo.canvas,
-				_w = canvasInfo.width,
-				_h = canvasInfo.height;
+				wWidth = $(window).width(),
+				scale = wWidth * 0.7 / canvasInfo.realWidth,
+				_w = wWidth * 0.7,
+				// _w = canvasInfo.height,
+				_h = scale * canvasInfo.realHeight,
+				startPoint = canvasInfo.startPoint;
 
 			var stage = new Kinetic.Stage({
 				container: 'canvasContainer',
@@ -125,89 +129,12 @@ Module('index', function(){
 				});
 
 				path.on('click', function() {
-					var thisData = this.data,
-						isSaving = false,
-						ajaxType = 'post',
-						canClose = false,
-						thisPath = this;
-					$('#shopForm').on('show.bs.modal', function (e) {
-						var shopData = planData.shop[thisData.index];
-						if(shopData) {
-							$('#shopNameInput').val(shopData.name);
-							$('#shopTelInput').val(shopData.phone);
-							ajaxType = 'put';
-						} else {
-							$('#shopNameInput').val('');
-							$('#shopTelInput').val('');
-							ajaxType = 'post';
-						}
-					});
-					$('#shopForm').modal();
-					$('#shopForm').on('hide.bs.modal', function (e) {
-						if(canClose) {
-							return true;
-						}
-						if(isSaving) {
-							alert('正在保存数据');
-							return false;
-						}
-
-						var shopName = $.trim($('#shopNameInput').val()),
-							shopTel = $.trim($('#shopTelInput').val()),
-							index = thisData.index;
-						if(shopName && shopTel) {
-							planData.shop[index] = {
-								floor_id: floor_id,
-								name: shopName,
-								phone: shopTel,
-								index: index,
-								id: planData.shop[index] ? planData.shop[index].id : undefined
-							};
-
-							isSaving = true;
-							$.ajax({
-								url: '/apis/apollo/market/shop.json',
-								method: ajaxType,
-								contentType: 'application/json',
-								data: JSON.stringify(planData.shop[index]),
-								success: function(d) {
-									canClose = true;
-									planData.shop[index].id = d.result.id;
-									$('#shopForm').modal('hide');
-								},
-								error: function(d) {
-									var r = confirm('保存失败,关闭后丢失此次保存的数据~！');
-									if(r) {
-										canClose = true;
-										delete planData.shop[index];
-										$('#shopForm').modal('hide');
-									} else {
-										isSaving = false;
-									}
-								},
-								dataType: 'json'
-							});
-							return false;
-						} else {
-							alert('数据不全，不保存');
-							delete planData.shop[index];
-						}
-					});
-					$('#shopForm').on('hidden.bs.modal', function (e) {
-						if(planData.shop[thisPath.data.index]) {
-							changeColor(thisPath, shopColor.finish, shopColor.finishHover);
-						} else {
-							changeColor(thisPath, shopColor.default, shopColor.defaultHover);
-						}
-						$(this).off('show.bs.modal hide.bs.modal hidden.bs.modal');
-					});
+					console.log(shopData[this.data.index]);
+					alert(shopData[this.data.index].name);
 				});
 
 				shopLayer.add(path);
 			}
-			$('#shopForm').on('shown.bs.modal', function (e) {
-				$('#shopNameInput').focus();
-			});
 
 			// icon
 			tmpInfoList = planInfo.icon;
@@ -246,97 +173,16 @@ Module('index', function(){
 				});
 
 				path.on('click', function() {
-					var thisData = this.data,
-						isSaving = false,
-						ajaxType = 'post',
-						canClose = false,
-						thisPath = this;
-					$('#iconForm').on('show.bs.modal', function (e) {
-						var iconData = planData.icon[thisData.index];
-						if(iconData) {
-							$('#iconType').val(iconData.facility_type);
-							ajaxType = 'put';
-						} else {
-							$('#iconType').val('');
-							ajaxType = 'post';
-						}
-
-					});
-					$('#iconForm').modal();
-					$('#iconForm').on('hide.bs.modal', function (e) {
-						if(canClose) {
-							return true;
-						}
-						if(isSaving) {
-							alert('正在保存数据');
-							return false;
-						}
-
-						var iconSelect = $('#iconType').val(),
-							index = thisData.index;
-						if(iconSelect) {
-							planData.icon[index] = {
-								floor_id: floor_id,
-								facility_type: iconSelect,
-								index: index,
-								id: planData.icon[index] ? planData.icon[index].id : undefined
-							};
-
-							isSaving = true;
-							$.ajax({
-								url: '/apis/apollo/market/facility.json',
-								method: ajaxType,
-								contentType: 'application/json',
-								data: JSON.stringify(planData.icon[index]),
-								success: function(d) {
-									canClose = true;
-									planData.icon[index].id = d.result.id;
-									$('#iconForm').modal('hide');
-								},
-								error: function(d) {
-									var r = confirm('保存失败,关闭后丢失此次保存的数据~！');
-									if(r) {
-										canClose = true;
-										delete planData.icon[index];
-										$('#iconForm').modal('hide');
-									} else {
-										isSaving = false;
-									}
-								},
-								dataType: 'json'
-							});
-							return false;
-						} else {
-							alert('数据不全，不保存');
-							delete planData.icon[index];
-							// return false;
-						}
-					});
-					$('#iconForm').on('hidden.bs.modal', function (e) {
-						if(planData.icon[thisPath.data.index]) {
-							changeColor(thisPath, shopColor.finish, shopColor.finishHover);
-						} else {
-							changeColor(thisPath, shopColor.default, shopColor.defaultHover);
-						}
-						console.log(planData);
-						$(this).off('show.bs.modal hidden.bs.modal');
-					});
+					console.log(iconData[this.data.index]);
+					alert(iconData[this.data.index].facility_type);
 				});
 
 				shopLayer.add(path);
 			}
 
-			$('#iconForm').on('shown.bs.modal', function (e) {
-				$('#iconType').focus();
-			});
-
 			stage.add(staticLayer);
 			stage.add(shopLayer);
 			stage.add(topLayer);
-
-			$('#saveBtn').click(function() {
-				history.back();
-			});
 
 			function changeColor(path, color, hoverColor) {
 				path.data.color = color;
@@ -350,12 +196,20 @@ Module('index', function(){
 			}
 
 			function toSvgPath(pointList) {
-				var svgStr = '';
+				var svgStr = '',
+					curPoint = {
+						x: 0,
+						y: 0
+					};
 				for(var i in pointList) {
+					curPoint.x = pointList[i].x - startPoint.x;
+					curPoint.y = pointList[i].y - startPoint.y;
+					curPoint.x *= scale;
+					curPoint.y *= scale;
 					if(i == 0) {
-						svgStr = 'M' + pointList[i].x + ',' + pointList[i].y;
+						svgStr = 'M' + curPoint.x + ',' + curPoint.y;
 					} else {
-						svgStr += 'L' + pointList[i].x + ',' + pointList[i].y;
+						svgStr += 'L' + curPoint.x + ',' + curPoint.y;
 					}
 				}
 
@@ -364,10 +218,15 @@ Module('index', function(){
 			}
 
 			function toSvgAce(point) {
-				var startPointX = endPointX = point.x,
-					startPointY = point.y -15,
-					endPointY = point.y - 14.9999,
-					svgStr = 'M' + startPointX + ',' + startPointY + 'A15,15,0,1,1,' + endPointX + ',' + endPointY + 'Z';
+				var startPointX = endPointX = point.x - startPoint.x,
+					startPointY = point.y - startPoint.y - 15,
+					endPointY = point.y - startPoint.y - 14.9999,
+					svgStr;
+				startPointX *= scale;
+				startPointY *= scale;
+				endPointX *= scale;
+				endPointY *= scale;
+				svgStr = 'M' + startPointX + ',' + startPointY + 'A15,15,0,1,1,' + endPointX + ',' + endPointY + 'Z';
 
 				return svgStr;
 			}
