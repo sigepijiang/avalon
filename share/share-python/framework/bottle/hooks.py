@@ -32,7 +32,7 @@ def save_session():
         simplejson.dumps(request.session or {}))
     response.set_cookie(
         'session_id', request.session.session_id,
-        domain=app.config.domain, path='/'
+        domain=app.config.domain, path='/', max_age=7 * 86400
     )
 
 

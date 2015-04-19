@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from bottle import request
+from bottle import request, redirect, url
 
 from .errors import NotFound
 
@@ -52,7 +52,8 @@ class MethodView(object):
         return meth(*args, **kwargs)
 
     def authorize(self):
-        pass
+        if not request.ukey:
+            return redirect(url('zeus:account.login', success=request.url))
 
     def auto_signin(self):
         pass
