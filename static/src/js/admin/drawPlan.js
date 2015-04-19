@@ -254,10 +254,9 @@ Module('drawPlan', function(){
 					url: '/apis/apollo/market/floor.json',
 					method: 'post',
 					contentType: 'application/json',
-					data: JSON.stringify({
-						floor_id: floor_id,
-						layout: planInfo
-					}),
+					data: JSON.stringify(
+						$.extend({}, layout, {layout: planInfo, floor_id: floor_id})
+					),
 					success: function(d) {
 						if(d.ok) {
 							location.href = url_parent;
@@ -345,25 +344,37 @@ Module('drawPlan', function(){
 
 				function buildingCb() {
 					// canvas取点处理
-					if(!planInfo.canvas || !planInfo.canvas.startPoint) {
+					if(!planInfo.canvas || !planInfo.canvas.startPoint || !planInfo.canvas.endPoint) {
 						alert('请选取基准零点坐标');
 					}
 					canvas.onclick = function(e) {
-						if(!planInfo['canvas'] || !planInfo.canvas.startPoint) {
-							planInfo.canvas = {};
+						if(!planInfo['canvas'] || !planInfo.canvas.startPoint || !planInfo.canvas.endPoint) {
+							planInfo.canvas = planInfo.canvas ? planInfo.canvas : {};
 
 							var point = planCanvas.getPoint(e);
-							var r = confirm('确认选择(' + point.x + ',' + point.y + ')点作为基准零点？');
+							var pointDesc = planInfo.canvas.startPoint ? '结束点' : '开始点';
+							var r = confirm('确认选择(' + point.x + ',' + point.y + ')点作为' + pointDesc + '？');
 
 							if(r) {
-								planInfo.canvas.startPoint = {
-									x: point.x,
-									y: point.y
-								};
+								if(!planInfo.canvas.startPoint) {
+									planInfo.canvas.startPoint = {
+										x: point.x,
+										y: point.y
+									};
+								} else {
+									planInfo.canvas.endPoint = {
+										x: point.x,
+										y: point.y
+									};
+								}
 
 								if(!planInfo.canvas.width || !planInfo.canvas.height) {
 									planInfo.canvas.width = planCanvas._w;
 									planInfo.canvas.height = planCanvas._h;
+								}
+								if(planInfo.canvas.startPoint && planInfo.canvas.endPoint) {
+									planInfo.canvas.realWidth = planInfo.canvas.endPoint.x - planInfo.canvas.startPoint.x;
+									planInfo.canvas.realHeight = planInfo.canvas.endPoint.y - planInfo.canvas.startPoint.y;
 								}
 							} else {
 								alert('请重新选择基准点坐标');
