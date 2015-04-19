@@ -27,9 +27,9 @@ Module('index', function(){
 					icon: iconData
 				};
 			var	canvasInfo = planInfo.canvas,
-				wWidth = $(window).width(),
-				scale = wWidth * 0.7 / canvasInfo.realWidth,
-				_w = wWidth * 0.7,
+				wWidth = $('#canvasContainer').width(),
+				scale = wWidth / canvasInfo.realWidth,
+				_w = wWidth,
 				// _w = canvasInfo.height,
 				_h = scale * canvasInfo.realHeight,
 				startPoint = canvasInfo.startPoint;
