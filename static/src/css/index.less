@@ -156,30 +156,36 @@ html, body {
                 color: #0f2b37;
                 clear: both;
                 cursor: pointer;
+                span {
+                    float: none;
+                }
             }
             li.focus {
-                display: inline-block;
-                padding: 0 1em;
-                margin: 0 auto;
-                background-color: #fcc94f;
-                color: white;
-                border-radius: 1em;
+                span {
+                    display: inline-block;
+                    padding: 0 1em;
+                    margin: 0 auto;
+                    background-color: #fcc94f;
+                    color: white;
+                    border-radius: 1em;
+                }
             }
         }
         &.row-style {
             .shop-list {
                 flex: 1;
                 li {
+                    height: 2em;
                     line-height: 2em;
                     text-align: center;
                 }
                 &.left{
-                    li.focus {
+                    li.focus span {
                         float: right;
                     }
                 }
                 &.right{
-                    li.focus {
+                    li.focus span {
                         float: left;
                     }
                 }

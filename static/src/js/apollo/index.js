@@ -26,6 +26,25 @@ Module('index', function(){
 					shop: shopData,
 					icon: iconData
 				};
+
+			// 初始化列表
+			var shopId = 0,
+				shopName = '',
+				shopTmpl = '<li data-index="{shopId}"><span>{shopName}</span></li>',
+				shopHtml,
+				$shopList = $('.shopList');
+			for(var index in shopData) {
+				shopId = index;
+				shopName = shopData[index].name;
+				shopHtml = shopTmpl.replace('{shopId}', shopId)
+									.replace('{shopName}', shopName);
+				if(index < 10) {
+					$($shopList[0]).append(shopHtml);
+				} else {
+					$($shopList[1]).append(shopHtml);
+				}
+			}
+
 			var	canvasInfo = planInfo.canvas,
 				wWidth = $('#canvasContainer').width(),
 				scale = wWidth / canvasInfo.realWidth,
@@ -91,7 +110,8 @@ Module('index', function(){
 					'defaultHover': '#fad1a1',
 					'finish': '#7FFF00',
 					'finishHover': '#fad1a1'
-				};
+				},
+				shopPathObj = {};
 
 			tmpInfoList = planInfo.shop;
 			for(var index in tmpInfoList) {
@@ -112,20 +132,51 @@ Module('index', function(){
 					colorHover: shopColor.defaultHover
 				};
 
+				shopPathObj[index] = path;
+
 				if(planData.shop[index]) {
 					changeColor(path, shopColor.finish, shopColor.defaultHover);
 				}
+
+				$shopList.find('li[data-index=' + index + ']').hover(function(e) {
+					var index = $(this).data('index'),
+						thisPath = shopPathObj[index];
+
+					$shopList.find('li[data-index]').removeClass('focus');
+					$(this).addClass('focus');
+					showShopData(index);
+
+					thisPath.setFill(thisPath.data.colorHover);
+					thisPath.setStroke(thisPath.data.colorHover);
+					thisPath.moveTo(topLayer);
+					topLayer.drawScene();
+				}, function(e) {
+					var index = $(this).data('index'),
+						thisPath = shopPathObj[index];
+
+					// $(this).removeClass('focus');
+
+					thisPath.moveTo(shopLayer);
+					topLayer.draw();
+				});
 
 				path.on('mouseover', function() {
 					this.setFill(this.data.colorHover);
 					this.setStroke(this.data.colorHover);
 					this.moveTo(topLayer);
 					topLayer.drawScene();
+
+					showShopData(this.data.index);
+
+					$shopList.find('li[data-index]').removeClass('focus');
+					$shopList.find('li[data-index=' + this.data.index + ']').addClass('focus');
 				});
 
 				path.on('mouseout', function() {
 					this.moveTo(shopLayer);
 					topLayer.draw();
+
+					// $shopList.find('li[data-index=' + this.data.index + ']').removeClass('focus');
 				});
 
 				path.on('click', function() {
@@ -134,6 +185,10 @@ Module('index', function(){
 				});
 
 				shopLayer.add(path);
+
+				function showShopData(index) {
+					$('#phone').text(shopData[index].phone);
+				}
 			}
 
 			// icon
