@@ -142,15 +142,15 @@ Module('drawPlan', function(){
 						}
 
 						var shopName = $.trim($('#shopNameInput').val()),
-							shopTel = $.trim($('#shopTelInput').val()),
-							index = thisData.index;
-						if(shopName && shopTel) {
+							shopTel  = $.trim($('#shopTelInput').val()),
+							index    = thisData.index;
+						if(shopName && shopTel && shopType) {
 							planData.shop[index] = {
-								floor_id: floor_id,
-								name: shopName,
-								phone: shopTel,
-								index: index,
-								id: planData.shop[index] ? planData.shop[index].id : undefined
+								floor_id : floor_id,
+								name     : shopName,
+								phone    : shopTel,
+								type     : shopType,
+								id       : planData.shop[index] ? planData.shop[index].id : undefined
 							};
 
 							isSaving = true;

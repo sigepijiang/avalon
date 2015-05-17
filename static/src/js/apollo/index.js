@@ -106,12 +106,13 @@ Module('index', function(){
 
 			// shop
 			var shopColor = {
-					'default': '#edd0ad',
+					'default': '#c2c1c1',
 					'defaultHover': '#fad1a1',
 					'finish': '#7FFF00',
 					'finishHover': '#fad1a1'
 				},
-				shopPathObj = {};
+				shopPathObj = {},
+				lastPath;
 
 			tmpInfoList = planInfo.shop;
 			for(var index in tmpInfoList) {
@@ -135,7 +136,7 @@ Module('index', function(){
 				shopPathObj[index] = path;
 
 				if(planData.shop[index]) {
-					changeColor(path, shopColor.finish, shopColor.defaultHover);
+					changeColor(path, shopColor.finish, shopColor.finishHover);
 				}
 
 				$shopList.find('li[data-index=' + index + ']').hover(function(e) {
@@ -154,13 +155,16 @@ Module('index', function(){
 					var index = $(this).data('index'),
 						thisPath = shopPathObj[index];
 
-					// $(this).removeClass('focus');
-
 					thisPath.moveTo(shopLayer);
 					topLayer.draw();
 				});
 
 				path.on('mouseover', function() {
+					if(lastPath) {
+						lastPath.moveTo(shopLayer);
+						topLayer.draw();
+					}
+
 					this.setFill(this.data.colorHover);
 					this.setStroke(this.data.colorHover);
 					this.moveTo(topLayer);
@@ -173,10 +177,7 @@ Module('index', function(){
 				});
 
 				path.on('mouseout', function() {
-					this.moveTo(shopLayer);
-					topLayer.draw();
-
-					// $shopList.find('li[data-index=' + this.data.index + ']').removeClass('focus');
+					lastPath = this;
 				});
 
 				path.on('click', function() {
