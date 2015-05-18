@@ -95,10 +95,10 @@ Module('index', function(){
 				tmpSvgStr = toSvgPath(tmpInfoList[index]);
 
 				path = new Kinetic.Path({
-					data: tmpSvgStr,
-					fill: '#fff',
-					stroke: '#fff',
-					strokeWidth: 2
+					data        : tmpSvgStr,
+					fill        : '#fff',
+					stroke      : '#fff',
+					strokeWidth : 2
 				});
 
 				staticLayer.add(path);
@@ -106,10 +106,10 @@ Module('index', function(){
 
 			// shop
 			var shopColor = {
-					'default': '#c2c1c1',
-					'defaultHover': '#fad1a1',
-					'finish': '#7FFF00',
-					'finishHover': '#fad1a1'
+					'default'      : '#c2c1c1',
+					'defaultHover' : '#fad1a1',
+					'finish'       : '#7FFF00',
+					'finishHover'  : '#fad1a1'
 				},
 				shopPathObj = {},
 				lastPath;
@@ -193,48 +193,76 @@ Module('index', function(){
 			}
 
 			// icon
-			tmpInfoList = planInfo.icon;
-			for(var index in tmpInfoList) {
-				tmpSvgStr = toSvgAce(tmpInfoList[index]);
+			var iconImgObj = {
+				'counter'    : '',
+				'restaurant' : '',
+				'wc'         : 'http://2.im.guokr.com/zMzEh7Yd8yf4bkDyDZhX-CCQqlyGKo6sinZmtzVZ_3QeAAAAHgAAAFBO.png',
+				'escalator'  : '',
+				'lift'       : '',
+				'stair'      : '',
+				'exit'       : '',
+				'hydrant'    : '',
+				'garbage'    : '',
+				'phone'      : '',
+				'default'    : 'http://2.im.guokr.com/zMzEh7Yd8yf4bkDyDZhX-CCQqlyGKo6sinZmtzVZ_3QeAAAAHgAAAFBO.png'
+			},
+			img = new Image(),
+			imgLoadedLength = 0,
+			tmpPoint;
 
-				path = new Kinetic.Path({
-					data: tmpSvgStr,
-					fill: shopColor.default,
-					stroke: '#fff',
-					strokeWidth: 2
-				});
+			img.onload = function() {
+				tmpInfoList = planInfo.icon;
+				for(var index in tmpInfoList) {
+					if(index === 'length') {
+						continue;
+					}
+					tmpPoint = toCurPoint(tmpInfoList[index]);
 
-				// 作为标示当前点击元素
-				path.data = {
-					type: 'icon',
-					index: index,
-					color: shopColor.default,
-					colorHover: shopColor.defaultHover
-				};
+					circle = new Kinetic.Circle({
+						x                 : tmpPoint.x,
+						y                 : tmpPoint.y,
+						radius            : 15,
+						fillPatternImage  : img,
+						fillPatternOffset : {
+							x : 15,
+							y : 15
+						},
+						stroke            : '#fff',
+						strokeWidth       : 2
+					});
 
-				if(planData.icon[index]) {
-					changeColor(path, shopColor.finish, shopColor.defaultHover);
+					// 作为标示当前点击元素
+					circle.data = {
+						type: 'icon',
+						index: index,
+						color: shopColor.default,
+						colorHover: shopColor.defaultHover
+					};
+
+					if(planData.icon[index]) {
+						changeIcon(circle, iconImgObj[iconData[index].facility_type], '');
+					}
+
+					circle.on('mouseover', function() {
+						this.setStroke(this.colorHover);
+						this.moveTo(topLayer);
+						topLayer.drawScene();
+					});
+
+					circle.on('mouseout', function() {
+						this.moveTo(shopLayer);
+						topLayer.draw();
+					});
+
+					circle.on('click', function() {
+						console.log(iconData[this.data.index]);
+						alert(iconData[this.data.index].facility_type);
+					});
+
+					shopLayer.add(circle);
 				}
-
-				path.on('mouseover', function() {
-					this.setFill(shopColor.defaultHover);
-					this.setStroke(shopColor.defaultHover);
-					this.moveTo(topLayer);
-					topLayer.drawScene();
-				});
-
-				path.on('mouseout', function() {
-					this.moveTo(shopLayer);
-					topLayer.draw();
-				});
-
-				path.on('click', function() {
-					console.log(iconData[this.data.index]);
-					alert(iconData[this.data.index].facility_type);
-				});
-
-				shopLayer.add(path);
 			}
+			img.src = iconImgObj.default;
 
 			stage.add(staticLayer);
 			stage.add(shopLayer);
@@ -249,6 +277,20 @@ Module('index', function(){
 
 				shopLayer.draw();
 				// path.moveTo(topLayer);
+			}
+
+			function changeIcon(circle, iconImg, colorHover) {
+				var tmpIconImg = new Image();
+				tmpIconImg.onload = function() {
+					circle.data.iconImg = tmpIconImg;
+					circle.data.colorHover = colorHover;
+					circle.moveTo(shopLayer);
+					circle.fillPatternImage(tmpIconImg);
+					circle.setStroke('#fff');
+
+					shopLayer.draw();
+				}
+				tmpIconImg.src = iconImg;
 			}
 
 			function toSvgPath(pointList) {
@@ -273,18 +315,16 @@ Module('index', function(){
 				return svgStr;
 			}
 
-			function toSvgAce(point) {
+			function toCurPoint(point) {
 				var startPointX = endPointX = point.x - startPoint.x,
-					startPointY = point.y - startPoint.y - 15,
-					endPointY = point.y - startPoint.y - 14.9999,
-					svgStr;
+					startPointY = point.y - startPoint.y;
 				startPointX *= scale;
 				startPointY *= scale;
-				endPointX *= scale;
-				endPointY *= scale;
-				svgStr = 'M' + startPointX + ',' + startPointY + 'A15,15,0,1,1,' + endPointX + ',' + endPointY + 'Z';
 
-				return svgStr;
+				return {
+					x: startPointX,
+					y: startPointY
+				}
 			}
         });
     }
