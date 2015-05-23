@@ -194,17 +194,29 @@ Module('index', function(){
 
 			// icon
 			var iconImgObj = {
-				'counter'    : '',
-				'restaurant' : '',
-				'wc'         : 'http://2.im.guokr.com/zMzEh7Yd8yf4bkDyDZhX-CCQqlyGKo6sinZmtzVZ_3QeAAAAHgAAAFBO.png',
-				'escalator'  : '',
-				'lift'       : '',
-				'stair'      : '',
-				'exit'       : '',
+				'counter'    : 'http://2.im.guokr.com/zMzEh7Yd8yf4bkDyDZhX-CCQqlyGKo6sinZmtzVZ_3QeAAAAHgAAAFBO.png',
+				'restaurant' : 'http://1.im.guokr.com/ufnehDTWN5D4KakS7exqzZ5a3wlLdnU_gAKXtcIE1kQeAAAAHgAAAFBO.png',
+				'wc'         : 'http://2.im.guokr.com/vddqM5gwEBycIeZHuSjii-G1Gt6Sf7m7IuWLWD65-AseAAAAHgAAAFBO.png',
+				'escalator'  : 'http://1.im.guokr.com/r8Cfqf3gvIxbX1sDI7bfczdYm847jL6YBJ9UstwnZIIeAAAAHgAAAFBO.png',
+				'lift'       : 'http://3.im.guokr.com/neUItUoHnJFwTQsudQlpZAUUnKjSZ_pGWIpql_cFU-keAAAAHgAAAFBO.png',
+				'stair'      : 'http://2.im.guokr.com/n8zv7Upu7CZZ2MmeQwru4OtXjaIxeP9ideCa3OH8nGQeAAAAHgAAAFBO.png',
+				'exit'       : 'http://1.im.guokr.com/80gUja9-txuQjDmOkW4aoCIEhJqOMdDL0ZeZH7syES0eAAAAHgAAAFBO.png',
 				'hydrant'    : '',
-				'garbage'    : '',
-				'phone'      : '',
-				'default'    : 'http://2.im.guokr.com/zMzEh7Yd8yf4bkDyDZhX-CCQqlyGKo6sinZmtzVZ_3QeAAAAHgAAAFBO.png'
+				'garbage'    : 'http://1.im.guokr.com/FQedsDDSHnyhFwkOh7dNCPnEvY0pHR6a4SNMhUvhCLQeAAAAHgAAAFBO.png',
+				'phone'      : 'http://2.im.guokr.com/sj96j3NVj-OeBGEqw4Elk9fX-0kJy58mfF--ZfaxUt0eAAAAHgAAAFBO.png',
+				'default'    : 'http://3.im.guokr.com/zto7vzw5TI9mlVNHD5aJe2nyiFkT5Ptdc1Z_jPhFVB0eAAAAHgAAAFBO.png'
+			},
+			iconImgBg = {
+				'counter'    : '#fa4848',
+				'restaurant' : '#8ccc1c',
+				'wc'         : '#37b3ed',
+				'escalator'  : '#ff8400',
+				'lift'       : '#fd8300',
+				'stair'      : '#ff8400',
+				'exit'       : '#fa4848',
+				'hydrant'    : '',
+				'garbage'    : '#2fa137',
+				'phone'      : '#8ccc1c'
 			},
 			img = new Image(),
 			imgLoadedLength = 0,
@@ -235,16 +247,15 @@ Module('index', function(){
 					circle.data = {
 						type: 'icon',
 						index: index,
-						color: shopColor.default,
-						colorHover: shopColor.defaultHover
+						colorHover: shopColor.default
 					};
 
 					if(planData.icon[index]) {
-						changeIcon(circle, iconImgObj[iconData[index].facility_type], '');
+						changeIcon(circle, iconImgObj[iconData[index].facility_type], iconImgBg[iconData[index].facility_type]);
 					}
 
 					circle.on('mouseover', function() {
-						this.setStroke(this.colorHover);
+						this.setStroke(this.data.colorHover);
 						this.moveTo(topLayer);
 						topLayer.drawScene();
 					});
@@ -283,7 +294,7 @@ Module('index', function(){
 				var tmpIconImg = new Image();
 				tmpIconImg.onload = function() {
 					circle.data.iconImg = tmpIconImg;
-					circle.data.colorHover = colorHover;
+					circle.data.colorHover = colorHover || shopColor.default;
 					circle.moveTo(shopLayer);
 					circle.fillPatternImage(tmpIconImg);
 					circle.setStroke('#fff');
