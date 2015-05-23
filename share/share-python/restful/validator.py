@@ -34,11 +34,14 @@ class resful_validator(object):
     def _validate(self, params):
         result = {}
         errors = {}
-        schema = voluptuous.Schema(self.validators)
+        schema = voluptuous.Schema(self.validators, extra=True)
         try:
             result.update(schema(params))
         except voluptuous.MultipleInvalid as error_group:
             for e in error_group.errors:
+		if isinstance(e.path[0], (str, unicode)):
+                    errors[e.path[0]] = e.message
+                    continue
                 errors[e.path[0].schema] = e.message
         return result, errors
 

@@ -55,11 +55,13 @@ html, body {
     }
 }
 .nav-wrap {
-    position: relative;
+    position: fixed;
+    width: 100%;
     min-width: 1000px;
     max-width: 1280px;
     color: white;
     background-color: #ea2b2c;
+    z-index: 99;
     nav {
         padding: 15px;
         .mall-name {
@@ -89,6 +91,9 @@ html, body {
     min-width: 1000px;
     margin: 0;
     padding: 0;
+    section {
+        padding: 60px 0 0;
+    }
     .header-wrap {
         position: relative;
         color: white;
@@ -147,6 +152,7 @@ html, body {
         }
     }
     .canvas-wrap {
+        padding-bottom: 60px;
         display: flex;
         margin: 20px auto;
         .shop-list {
